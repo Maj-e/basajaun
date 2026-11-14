@@ -1,11 +1,27 @@
-// Population alerts (W3-F2), from alerts.json written by scripts/exposure.py (W3-B1).
-// On the map: a halo + label on critical and high alerts once they start. On the right: a collapsed panel with the count and the list.
-// No file → nothing is shown (never placeholder numbers).
+// Alerts (W3-F2, typed in W3-F5), from alerts.json written by scripts/exposure.py (W3-B1, W3-B8).
+// One fire can have several alerts, one per type (population, smoke, wind, contamination), each with a message.
+// Panel on the right: filter chips per type + the most severe alerts. On the map (box "Alerts on the map"):
+// one ring per type around the fire, concentric so they never hide each other. No file → nothing is shown.
 import { map } from "./map.js";
 import { CONFIG } from "./config.js";
 
 const H = 3600 * 1000;
 const RANK = { critical: 0, high: 1, medium: 2, low: 3 };
+const MAX_SHOWN = 30; // large episodes can have hundreds of alerts: list and map the most severe
+const ICON = {
+  population: '<path d="M8 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm-4.5 6c0-2.5 2-4.2 4.5-4.2s4.5 1.7 4.5 4.2Z"/>',
+  smoke: '<path d="M4.5 12.5h7a2.6 2.6 0 0 0 .3-5.2A3.6 3.6 0 0 0 5 6.6a2.9 2.9 0 0 0-.5 5.9Z"/>',
+  wind: '<path d="M2 6h7.5a2 2 0 1 0-2-2M2 9.5h10a2 2 0 1 1-2 2M2 13h5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+  contamination: '<path d="M8 2.2S4 7 4 9.8a4 4 0 0 0 8 0C12 7 8 2.2 8 2.2Z"/>',
+};
+const TYPES = {
+  population: { label: "Population", color: "#ff6b6b", ring: 22 },
+  smoke: { label: "Smoke", color: "#c3b1e1", ring: 30 },
+  contamination: { label: "Water", color: "#5aa9ff", ring: 38 },
+  wind: { label: "Wind", color: "#7fe3f0", ring: 46 },
+};
+const typeOf = (a) => TYPES[a.type] ? a.type : "population";
+const icon = (t) => `<svg class="alert-icon" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">${ICON[t]}</svg>`;
 const $ = (id) => document.getElementById(id);
 const fmtPop = (n) => `≈${Math.round(n).toLocaleString("en")}`;
 const fmtTime = (t) => {
@@ -15,13 +31,12 @@ const fmtTime = (t) => {
 
 let alerts = [];
 let shownKey = null;
+let lastArgs = null;
 const markers = new Map();
-const MAX_SHOWN = 30; // large episodes (e.g. a whole country) can have hundreds of alerts: list and map the most severe
-let labelsOn = false;
+const selected = new Set(); // empty = all types
 
-// Alerts on the map (circle + "≈N people within 5 km"): only when the box is ticked; the list on the right is always there
+// Alerts on the map: only when the box is ticked; the list on the right is always there
 export function setAlertLabels(on) {
-  labelsOn = on;
   document.body.classList.toggle("alert-labels", on);
 }
 
@@ -32,7 +47,7 @@ export async function loadAlerts() {
     const data = await r.json();
     alerts = (Array.isArray(data) ? data : data.alerts ?? [])
       .filter((a) => a.since && Array.isArray(a.center))
-      .map((a) => ({ ...a, t: Date.parse(a.since) / H }));
+      .map((a) => ({ ...a, t: Date.parse(a.since) / H, kind: typeOf(a), key: `${a.fire_id}-${typeOf(a)}` }));
   } catch {
     alerts = [];
   }
@@ -42,31 +57,53 @@ export async function loadAlerts() {
     list.hidden = !list.hidden;
     $("alerts-toggle").setAttribute("aria-expanded", String(!list.hidden));
   };
+  renderFilters();
   return alerts;
 }
 
+// Filter chips: one per type present in the episode
+function renderFilters() {
+  const present = Object.keys(TYPES).filter((t) => alerts.some((a) => a.kind === t));
+  const el = $("alerts-filters");
+  if (!el) return;
+  el.hidden = present.length < 2;
+  el.innerHTML = `<button type="button" data-type="" aria-pressed="${!selected.size}">All</button>` +
+    present.map((t) => `<button type="button" data-type="${t}" aria-pressed="${selected.has(t)}" style="--c:${TYPES[t].color}">${icon(t)}${TYPES[t].label}</button>`).join("");
+  el.querySelectorAll("button").forEach((b) => (b.onclick = () => {
+    const t = b.dataset.type;
+    if (!t) selected.clear(); else if (selected.has(t)) selected.delete(t); else selected.add(t);
+    renderFilters();
+    shownKey = null;
+    if (lastArgs) renderAlerts(...lastArgs);
+  }));
+}
+
 function marker(a) {
+  const ty = TYPES[a.kind];
   const el = document.createElement("div");
   el.className = `alert-mark risk-${a.risk}`;
-  el.style.setProperty("--c", a.color);
-  el.innerHTML = `<button type="button" class="halo" aria-label="${a.risk} alert: ${fmtPop(a.pop_5km)} people within 5 km"></button><span class="label">${fmtPop(a.pop_5km)} people within 5 km</span>`;
-  el.querySelector(".halo").onclick = () => new maplibregl.Popup({ offset: 30 }).setLngLat(a.center).setHTML(
-    `<strong style="color:${a.color};text-transform:uppercase">${a.risk} alert</strong>` +
+  el.style.setProperty("--c", ty.color);
+  el.style.setProperty("--r", `${ty.ring}px`);
+  el.innerHTML = `<button type="button" class="halo" aria-label="${ty.label} alert: ${a.message ?? ""}"></button>` +
+    (a.kind === "population" ? `<span class="label">${a.message ?? `${fmtPop(a.pop_5km)} people within 5 km`}</span>` : "");
+  el.querySelector(".halo").onclick = () => new maplibregl.Popup({ offset: ty.ring + 6 }).setLngLat(a.center).setHTML(
+    `<strong style="color:${ty.color}">${ty.label} · ${a.risk}</strong>` +
+    `<p class="popup-msg">${a.message ?? ""}</p>` +
     `<table class="popup"><tr><th>Within 1 km</th><td>${fmtPop(a.pop_1km)} people</td></tr>` +
     `<tr><th>Within 5 km</th><td>${fmtPop(a.pop_5km)} people</td></tr>` +
     `<tr><th>Within 10 km</th><td>${fmtPop(a.pop_10km)} people</td></tr>` +
-    `<tr><th>Since</th><td>${fmtTime(a.t)}</td></tr>` +
-    (a.wind_toward_population ? `<tr><th>Wind</th><td>toward people</td></tr>` : "") + `</table>`).addTo(map);
+    `<tr><th>Since</th><td>${fmtTime(a.t)}</td></tr></table>`).addTo(map);
   return new maplibregl.Marker({ element: el }).setLngLat(a.center);
 }
 
-// Alerts that have started at `hour` and belong to the current scope (inScope(alert) → boolean).
+// Alerts that have started at `hour`, belong to the current scope (inScope(alert) → boolean) and match the filters
 export function renderAlerts(hour, inScope) {
+  lastArgs = [hour, inScope];
   if (!alerts.length) return;
   const active = alerts
-    .filter((a) => a.t <= hour && inScope(a))
-    .sort((a, b) => RANK[a.risk] - RANK[b.risk] || b.pop_5km - a.pop_5km);
-  const key = active.map((a) => a.fire_id).join(",");
+    .filter((a) => a.t <= hour && inScope(a) && (!selected.size || selected.has(a.kind)))
+    .sort((a, b) => RANK[a.risk] - RANK[b.risk] || (b.pop_5km ?? 0) - (a.pop_5km ?? 0));
+  const key = active.map((a) => a.key).join(",");
   if (key === shownKey) return;
   shownKey = key;
 
@@ -76,20 +113,20 @@ export function renderAlerts(hour, inScope) {
   const top = active.slice(0, MAX_SHOWN);
   $("alerts-list").innerHTML = active.length
     ? top.map((a) => `
-      <li><button type="button" data-fire="${a.fire_id}">
-        <span class="risk" style="--c:${a.color}">${a.risk}</span>
-        <span class="who"><b>${fmtPop(a.pop_5km)}</b> people within 5 km</span>
-        <span class="when">since ${fmtTime(a.t)}${a.wind_toward_population ? " · wind toward people" : ""}</span>
+      <li><button type="button" data-key="${a.key}" style="--c:${TYPES[a.kind].color}">
+        <span class="risk">${icon(a.kind)}${TYPES[a.kind].label} · <em style="color:${a.color}">${a.risk}</em></span>
+        <span class="who">${a.message ?? `${fmtPop(a.pop_5km)} people within 5 km`}</span>
+        <span class="when">since ${fmtTime(a.t)}</span>
       </button></li>`).join("") +
       (active.length > MAX_SHOWN ? `<li class="none">+ ${active.length - MAX_SHOWN} more · zoom in to see them</li>` : "")
     : `<li class="none">No alert at this time</li>`;
-  $("alerts-list").querySelectorAll("[data-fire]").forEach((b) => (b.onclick = () => {
-    const a = active.find((x) => String(x.fire_id) === b.dataset.fire);
+  $("alerts-list").querySelectorAll("[data-key]").forEach((b) => (b.onclick = () => {
+    const a = active.find((x) => x.key === b.dataset.key);
     map?.flyTo({ center: a.center, zoom: 10 });
   }));
 
   if (!map) return;
-  const onMap = new Set(top.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.fire_id));
-  for (const [id, m] of markers) if (!onMap.has(id)) { m.remove(); markers.delete(id); }
-  for (const a of active) if (onMap.has(a.fire_id) && !markers.has(a.fire_id)) markers.set(a.fire_id, marker(a).addTo(map));
+  const onMap = new Set(top.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.key));
+  for (const [k, m] of markers) if (!onMap.has(k)) { m.remove(); markers.delete(k); }
+  for (const a of top) if (onMap.has(a.key) && !markers.has(a.key)) markers.set(a.key, marker(a).addTo(map));
 }
