@@ -71,6 +71,7 @@ export function renderAlerts(hour, inScope) {
   shownKey = key;
 
   $("alerts-count").textContent = active.length;
+  if ($("mb-alerts")) $("mb-alerts").textContent = active.length;
   $("alerts-toggle").classList.toggle("has-critical", active.some((a) => a.risk === "critical"));
   const top = active.slice(0, MAX_SHOWN);
   $("alerts-list").innerHTML = active.length

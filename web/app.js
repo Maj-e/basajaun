@@ -13,7 +13,7 @@ const H = 3600 * 1000;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const presenter = new URLSearchParams(location.search).get("demo") === "1";
 const fmtDay = (d, opts = {}) => new Date(`${d}T00:00:00Z`).toLocaleString("en", { day: "numeric", month: "short", timeZone: "UTC", ...opts });
-const PADDING = { top: 130, bottom: 200, left: 60, right: 60 };
+const PADDING = CONFIG.framePadding;
 
 // [[west, south], [east, north]] of a Polygon or MultiPolygon, for fitBounds.
 function boundsOf(geometry) {
@@ -187,7 +187,13 @@ async function main() {
     document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
   }));
   // Map panel: always visible on desktop, folded on small screens
-  if (window.matchMedia("(max-width: 760px)").matches) $("panel-details").open = false;
+  // Mobile: Layers / Alerts / Legend open as bottom sheets, one at a time (tap again to close)
+  document.querySelectorAll("#mobile-bar [data-sheet]").forEach((b) => (b.onclick = () => {
+    const name = b.dataset.sheet, open = !document.body.classList.contains(`sheet-${name}`);
+    document.body.classList.remove("sheet-layers", "sheet-alerts", "sheet-legend");
+    document.querySelectorAll("#mobile-bar [data-sheet]").forEach((o) => o.setAttribute("aria-pressed", "false"));
+    if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-pressed", "true"); }
+  }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
   // Demo button: the pitch episodes, opened in presenter mode (paused, keyboard)
   const demoList = CONFIG.demoEpisodes.map((id) => CONFIG.episodes.find((e) => e.id === id)).filter(Boolean);
