@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:26:52Z",
+  "updated_at": "2026-11-14T22:37:00Z",
   "layers": [
     {
       "id": "hotspots",
@@ -70,7 +70,7 @@
         "gw_vulnerability",
         "gw_chemical_status"
       ],
-      "updated_at": "2026-11-14T21:50:10Z"
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "spread",
@@ -125,7 +125,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T21:16:29Z"
+      "updated_at": "2026-11-14T21:44:39Z"
     },
     {
       "id": "wind",
@@ -205,10 +205,28 @@
       "legend": [
         {
           "color": "#3d8bd4",
-          "text": "Lakes, reservoirs, rivers"
+          "text": "Lakes, reservoirs"
         }
       ],
-      "updated_at": "2026-11-14T21:50:10Z"
+      "updated_at": "2026-11-14T22:34:27Z"
+    },
+    {
+      "id": "rivers",
+      "name": "Rivers",
+      "file": "processed/rivers.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "roads",
@@ -243,7 +261,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T21:50:10Z"
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "fire_stations",
@@ -261,7 +279,7 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T21:50:10Z"
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "water_points",
@@ -300,7 +318,7 @@
           "text": "Water point"
         }
       ],
-      "updated_at": "2026-11-14T21:50:10Z"
+      "updated_at": "2026-11-14T22:34:27Z"
     }
   ]
 }

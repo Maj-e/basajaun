@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:26:52Z",
+  "updated_at": "2026-11-14T22:34:19Z",
   "layers": [
     {
       "id": "hotspots",
@@ -57,7 +57,7 @@
         "gw_vulnerability",
         "gw_chemical_status"
       ],
-      "updated_at": "2026-11-14T21:48:29Z"
+      "updated_at": "2026-11-14T22:34:08Z"
     },
     {
       "id": "spread",
@@ -112,7 +112,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T20:49:13Z"
+      "updated_at": "2026-11-14T20:41:36Z"
     },
     {
       "id": "wind",
@@ -192,10 +192,28 @@
       "legend": [
         {
           "color": "#3d8bd4",
-          "text": "Lakes, reservoirs, rivers"
+          "text": "Lakes, reservoirs"
         }
       ],
-      "updated_at": "2026-11-14T21:48:18Z"
+      "updated_at": "2026-11-14T22:34:08Z"
+    },
+    {
+      "id": "rivers",
+      "name": "Rivers",
+      "file": "episodes/sierra-bermeja-2021-09/rivers.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T22:34:08Z"
     },
     {
       "id": "roads",
@@ -230,7 +248,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T21:48:18Z"
+      "updated_at": "2026-11-14T22:34:08Z"
     },
     {
       "id": "fire_stations",
@@ -248,7 +266,7 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T21:48:18Z"
+      "updated_at": "2026-11-14T22:34:08Z"
     },
     {
       "id": "water_points",
@@ -287,7 +305,7 @@
           "text": "Water point"
         }
       ],
-      "updated_at": "2026-11-14T21:48:18Z"
+      "updated_at": "2026-11-14T22:34:08Z"
     },
     {
       "id": "groundwater",
