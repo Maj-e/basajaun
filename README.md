@@ -84,47 +84,46 @@ ulinautas/
 │   └── workflows/
 │       ├── ci.yml                  # tests + validación del contrato en cada PR
 │       ├── deploy.yml              # publica web/ en GitHub Pages en cada push a main
-│       └── update-data.yml         # regenera los datos cada 30 min
+│       ├── e2e.yml                 # valida los datos servidos por la URL publicada
+│       └── update-data.yml         # regenera los datos recientes cada 30 min (solo si son válidos)
 │
 ├── data/
 │   └── raw/                        # CSV FIRMS descargados (no versionados)
 │
-├── scripts/                        # pista DATOS
+├── scripts/                        # BACKEND (B1–B4)
 │   ├── config.py                   # zona (bbox), fechas, rutas, umbrales de riesgo
+│   ├── make_sample.py              # datos de ejemplo generados desde el contrato
 │   ├── download_firms.py           # descarga MODIS + VIIRS desde la API FIRMS
-│   ├── harmonize.py                # normaliza los dos sensores → focos.geojson + resumen_diario.json
-│   ├── fires.py                    # deduplicación + agrupación en incendios → incendios.geojson
+│   ├── harmonize.py                # normalización MODIS / VIIRS
+│   ├── export_focos.py             # focos.geojson (ya estilizado) + resumen_diario.json
+│   ├── dedup.py                    # deduplicación MODIS / VIIRS
+│   ├── fires.py                    # agrupación en incendios → incendios.geojson
+│   ├── series.py                   # series temporales por hora
 │   ├── population.py               # recorte WorldPop → poblacion.tif / poblacion.png
+│   ├── weather.py                  # viento y meteorología por hora → meteo.geojson
 │   ├── exposure.py                 # población expuesta + riesgo + viento → alertas.json
-│   ├── weather.py                  # viento y meteorología por hora → meteo.json
 │   ├── osm.py                      # agua, rutas, bomberos + distancias por incendio
-│   ├── live.py                     # últimas 48 h para el modo en vivo
+│   ├── make_manifest.py            # manifest.json: lista de capas disponibles
+│   ├── validate.py                 # valida web/data/ contra docs/schemas/
+│   ├── check_site.py               # prueba de extremo a extremo sobre la URL publicada
 │   └── tests/
 │       └── test_harmonize.py
 │
-└── web/                            # pista FRONT — todo lo que está aquí se publica
+└── web/                            # FRONT (F) — todo lo que está aquí se publica
     ├── CNAME                       # nombre de dominio
     ├── index.html                  # estructura de la página (mapa + paneles + línea de tiempo)
     ├── style.css
-    ├── app.js                      # crea el mapa, carga los datos, conecta los módulos
+    ├── app.js                      # crea el mapa, conecta los módulos
     ├── state.js                    # estado global compartido (fecha, filtros, hora, capas)
-    ├── filters.js                  # filtros por fecha, sensor, confianza
+    ├── filters.js                  # filtros por fecha, sensor, confianza + banda de estado
     ├── calendar.js                 # calendario mensual de focos
     ├── timeline.js                 # reproducción temporal (play / pausa / velocidad)
     ├── alerts.js                   # panel de alertas por población
     ├── live.js                     # modo en vivo (recarga periódica)
-    ├── layers/                     # una capa = un archivo
-    │   ├── index.js                # registro de capas → genera el panel de capas
-    │   ├── focos.js
-    │   ├── incendios.js
-    │   ├── poblacion.js
-    │   ├── viento.js
-    │   ├── meteo.js
-    │   ├── agua.js
-    │   ├── rutas.js
-    │   ├── bomberos.js
-    │   └── relieve.js
+    ├── layers/
+    │   └── loader.js               # cargador genérico: lee manifest.json y crea cada capa
     └── data/
+        ├── manifest.json           # capas disponibles (generado por el backend)
         ├── sample/                 # datos de ejemplo del contrato (para desarrollar el front sin esperar)
         └── processed/              # salidas de los scripts (versionadas y publicadas)
             ├── demo/               # episodio fijo para la reproducción
@@ -135,7 +134,7 @@ ulinautas/
 
 - **Los scripts escriben en `web/data/processed/`**, nunca en otro lugar: así el sitio local y el publicado leen las mismas rutas.
 - **En el front, rutas siempre relativas** (`data/processed/focos.geojson`, nunca `/data/...`), para que funcione en el dominio y en `github.io/ulinautas/`.
-- **Una capa = un archivo en `web/layers/`** que exporta `{ id, nombre, agregar(map), mostrar(visible) }` y se registra en `layers/index.js`. Agregar una capa no toca nada más.
+- **Una capa = un archivo de datos ya estilizado + una entrada en `web/data/manifest.json`.** El cargador genérico del front (`web/layers/loader.js`) la muestra sin código nuevo; el campo `activa` sirve de interruptor.
 - **Un solo estado** en `state.js`: los módulos leen `state` y lo cambian con `setState()`; se suscriben con `subscribe()` para reaccionar.
 - **`data/raw/` no se versiona** (peso); `web/data/processed/` sí (la demo funciona sin volver a ejecutar nada).
 
@@ -197,9 +196,8 @@ Cada push a `main` despliega `web/` en GitHub Pages (`.github/workflows/deploy.y
 
 | Rol | Carpeta |
 |---|---|
-| **D1, D2** — Datos | `scripts/`, `docs/contrato_datos.md` |
-| **F** — Front | `web/` |
-| **O** — DevOps | `.github/`, `Makefile`, `requirements.txt`, despliegue y dominio |
+| **B1–B4** — Backend | `scripts/`, `docs/`, `.github/workflows/ci.yml`, `e2e.yml`, `update-data.yml`, `Makefile` |
+| **F** — Front / DevOps | `web/`, `.github/workflows/deploy.yml`, dominio |
 
 - Una tarea de `TODO.md` = una rama `feature/<id>-<nombre>` = un PR corto, con el CI en verde antes del merge.
 - `main` siempre funciona y siempre está publicado.
