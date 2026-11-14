@@ -1,0 +1,100 @@
+{
+  "updated_at": "2026-11-14T18:27:26Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "processed/hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "sensor",
+        "satellite",
+        "timestamp_utc",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "text": "High confidence"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium confidence"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low confidence"
+        }
+      ],
+      "updated_at": "2026-11-14T18:27:15Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "processed/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T18:27:15Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "processed/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T18:27:24Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "processed/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T18:27:24Z"
+    }
+  ]
+}
