@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T20:27:09Z",
+  "updated_at": "2026-11-14T20:45:07Z",
   "default": "sierra-bermeja-2021-09",
   "episodes": [
     {
@@ -44,6 +44,26 @@
       "dir": "episodes/los-angeles-2025-01",
       "manifest": "episodes/los-angeles-2025-01/manifest.json",
       "skip": [
+        "osm"
+      ]
+    },
+    {
+      "id": "live",
+      "name": "Live · Iberian Peninsula · last 48 h",
+      "bbox": [
+        -9.6,
+        35.9,
+        3.4,
+        43.9
+      ],
+      "live": true,
+      "dir": "processed/live",
+      "manifest": "processed/live/manifest.json",
+      "skip": [
+        "population",
+        "weather",
+        "spread",
+        "exposure",
         "osm"
       ]
     }

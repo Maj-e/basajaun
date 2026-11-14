@@ -64,6 +64,7 @@ One entry per **whole** hour of the period (`t` = hours since 1970, integer), ze
 }
 ```
 Each episode has its own data folder (`dir`) and **its own manifest** (`manifest`), both relative to `web/data/`; the manifest's `file` paths point into that folder. The front end loads `default` first; switching episode = loading another `manifest`. `bbox` is west, south, east, north. `skip` lists pipeline steps that episode doesn't run (front end ignores it).
+A **live** episode (`"live": true`, no `start` / `end`) covers today and yesterday; its data in `processed/live/` is published by `update-data.yml` every 30 min and never committed.
 Build an episode with `make data EPISODE=<id>`; without `EPISODE`, the default one. Chile keeps its files in `processed/` + `manifest.json`, which the current front end reads, until the episode selector (W4-F2) reads this file.
 
 ### Rules shared by every file

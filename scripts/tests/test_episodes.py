@@ -120,3 +120,34 @@ def test_broken_episodes_fail(data_dir, change, expected):
     doc = json.loads(json.dumps(DOC))
     change(doc)
     assert any(expected in e for e in errors_for(doc, data_dir)), errors_for(doc, data_dir)
+
+
+# --- live episode (W4-B4) -------------------------------------------------------
+
+from datetime import date  # noqa: E402
+
+LIVE = {"id": "live", "name": "Live", "bbox": [-9.6, 35.9, 3.4, 43.9], "live": True,
+        "dir": "processed/live", "manifest": "processed/live/manifest.json", "skip": ["weather"]}
+
+
+def test_live_period_is_today_and_yesterday():
+    assert config.live_dates(date(2026, 3, 1)) == ("2026-02-28", "2026-03-01")
+
+
+def test_live_episode_resolves_with_a_moving_period():
+    out = subprocess.run([sys.executable, "scripts/config.py"], cwd=ROOT, env={**os.environ, "EPISODE": "live"},
+                         capture_output=True, text=True, check=True).stdout
+    assert f"→ {date.today().isoformat()}" in out
+    assert "processed/live" in out
+
+
+def test_live_episode_needs_no_dates_nor_committed_data(data_dir):
+    doc = json.loads(json.dumps(DOC))
+    doc["episodes"].append(LIVE)  # processed/live/ doesn't exist in data_dir: fine, it's only on the site
+    assert errors_for(doc, data_dir) == []
+
+
+def test_fixed_episode_still_needs_dates(data_dir):
+    doc = json.loads(json.dumps(DOC))
+    del doc["episodes"][1]["start"]
+    assert any("'start' is a required property" in e for e in errors_for(doc, data_dir))
