@@ -16,6 +16,13 @@ const fmtTime = (t) => {
 let alerts = [];
 let shownKey = null;
 const markers = new Map();
+let labelsOn = false;
+
+// Alerts on the map (circle + "≈N people within 5 km"): only when the box is ticked; the list on the right is always there
+export function setAlertLabels(on) {
+  labelsOn = on;
+  document.body.classList.toggle("alert-labels", on);
+}
 
 export async function loadAlerts() {
   try {
@@ -41,7 +48,14 @@ function marker(a) {
   const el = document.createElement("div");
   el.className = `alert-mark risk-${a.risk}`;
   el.style.setProperty("--c", a.color);
-  el.innerHTML = `<span class="halo"></span><span class="label">${fmtPop(a.pop_5km)} people within 5 km</span>`;
+  el.innerHTML = `<button type="button" class="halo" aria-label="${a.risk} alert: ${fmtPop(a.pop_5km)} people within 5 km"></button><span class="label">${fmtPop(a.pop_5km)} people within 5 km</span>`;
+  el.querySelector(".halo").onclick = () => new maplibregl.Popup({ offset: 30 }).setLngLat(a.center).setHTML(
+    `<strong style="color:${a.color};text-transform:uppercase">${a.risk} alert</strong>` +
+    `<table class="popup"><tr><th>Within 1 km</th><td>${fmtPop(a.pop_1km)} people</td></tr>` +
+    `<tr><th>Within 5 km</th><td>${fmtPop(a.pop_5km)} people</td></tr>` +
+    `<tr><th>Within 10 km</th><td>${fmtPop(a.pop_10km)} people</td></tr>` +
+    `<tr><th>Since</th><td>${fmtTime(a.t)}</td></tr>` +
+    (a.wind_toward_population ? `<tr><th>Wind</th><td>toward people</td></tr>` : "") + `</table>`).addTo(map);
   return new maplibregl.Marker({ element: el }).setLngLat(a.center);
 }
 
