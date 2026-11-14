@@ -1,0 +1,34 @@
+{
+  "actualizado": "2026-11-14T16:42:54Z",
+  "capas": [
+    {
+      "id": "focos",
+      "nombre": "Focos de calor",
+      "archivo": "sample/focos.geojson",
+      "tipo": "circle",
+      "temporal": true,
+      "activa": true,
+      "popup": [
+        "sensor",
+        "satelite",
+        "fecha_hora_utc",
+        "confianza",
+        "frp"
+      ],
+      "leyenda": [
+        {
+          "color": "#d7301f",
+          "texto": "Confianza alta"
+        },
+        {
+          "color": "#fc8d59",
+          "texto": "Confianza media"
+        },
+        {
+          "color": "#fdcc8a",
+          "texto": "Confianza baja"
+        }
+      ]
+    }
+  ]
+}
