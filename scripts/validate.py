@@ -12,6 +12,7 @@ Which schema applies is decided by the file name:
     daily_summary.json   -> daily_summary.schema.json
     alerts.json          -> alerts.schema.json
     hourly_series.json   -> hourly_series.schema.json
+    episodes.json        -> episodes.schema.json  (+ checks each episode's folder and manifest exist)
     any other *.geojson  -> geojson_layer.schema.json (generic styled layer)
     any other *.json     -> error: not part of the contract
 
@@ -38,6 +39,7 @@ SCHEMA_BY_NAME = [
     ("daily_summary.json", "daily_summary.schema.json"),
     ("alerts.json", "alerts.schema.json"),
     ("hourly_series.json", "hourly_series.schema.json"),
+    ("episodes.json", "episodes.schema.json"),
     ("*.geojson", "geojson_layer.schema.json"),
 ]
 DATA_SUFFIXES = {".json", ".geojson"}
@@ -91,6 +93,30 @@ def check_manifest(manifest: dict, data_dir: Path) -> list[str]:
     return errors
 
 
+def check_episodes(doc: dict, data_dir: Path) -> list[str]:
+    """Checks a schema can't express: unique ids, default exists, folders and manifests exist, sane bbox / dates."""
+    errors = []
+    ids = [e.get("id") for e in doc.get("episodes", [])]
+    for dup in sorted({i for i in ids if ids.count(i) > 1}):
+        errors.append(f"episodes: duplicate id '{dup}'")
+    if doc.get("default") not in ids:
+        errors.append(f"default: '{doc.get('default')}' is not one of the episode ids")
+    for e in doc.get("episodes", []):
+        eid = e.get("id")
+        bbox = e.get("bbox") or []
+        if len(bbox) == 4 and not (bbox[0] < bbox[2] and bbox[1] < bbox[3]):
+            errors.append(f"episodes/{eid}: bbox must be west < east and south < north")
+        if isinstance(e.get("start"), str) and isinstance(e.get("end"), str) and e["start"] > e["end"]:
+            errors.append(f"episodes/{eid}: start is after end")
+        for key in ("dir", "manifest"):
+            if isinstance(e.get(key), str):
+                target = data_dir / e[key]
+                exists = target.is_dir() if key == "dir" else target.is_file()
+                if not exists:
+                    errors.append(f"episodes/{eid}: {key} '{e[key]}' does not exist (run make data EPISODE={eid})")
+    return errors
+
+
 def validate_file(path: Path, registry: Registry, data_dir: Path = DATA_DIR) -> list[str]:
     """Return the list of contract errors for one file (empty = valid)."""
     schema_name = schema_for(path)
@@ -105,6 +131,8 @@ def validate_file(path: Path, registry: Registry, data_dir: Path = DATA_DIR) -> 
     validator = Draft202012Validator(schema, registry=registry)
     errors = [_format_error(e) for e in sorted(validator.iter_errors(data), key=lambda e: list(e.absolute_path))]
 
+    if schema_name == "episodes.schema.json" and isinstance(data, dict):
+        errors += check_episodes(data, data_dir)
     if schema_name == "manifest.schema.json" and isinstance(data, dict):
         # `file` paths are relative to web/data/, wherever the manifest lives
         errors += check_manifest(data, data_dir)

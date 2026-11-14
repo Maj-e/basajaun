@@ -3,6 +3,7 @@
 Downloads, from the live URL, everything the page needs for its data:
     - the data files named in the published config.js (manifest, daily summary, land outline…)
     - every file listed in the published manifest.json
+    - if data/episodes.json is published: every episode's manifest and the files it lists
 validates each one against the contract (same rules as validate.py) and times the first page load.
 
 Fails (exit 1) if any file is missing, broken or off-contract, or if the first page load
@@ -142,11 +143,37 @@ def check_site(base_url: str = DEFAULT_URL, max_load_s: float = DEFAULT_MAX_LOAD
                                                  first_load=bool(layer.get("active"))))
                     already.add(rel)
 
-        # 3. Contract validation of every downloaded data file (manifest last: it checks the others exist)
+        # 2b. Other episodes (W4-B5): their manifests and layer files, not part of the first load
+        episodes_path = "data/episodes.json"
+        resp, _, _ = fetch(session, urljoin(base_url, episodes_path), buster)
+        if resp is not None and resp.status_code == 200:
+            report.files.append(download(session, base_url, episodes_path, root, buster, first_load=False))
+            try:
+                episodes = json.loads((root / episodes_path).read_text(encoding="utf-8")).get("episodes", [])
+            except (json.JSONDecodeError, AttributeError, FileNotFoundError):
+                episodes = []  # reported by the contract validation below
+            already = {f.path for f in report.files}
+            for episode in episodes:
+                ep_manifest = f"data/{episode.get('manifest', '')}"
+                if ep_manifest not in already:
+                    report.files.append(download(session, base_url, ep_manifest, root, buster, first_load=False))
+                    already.add(ep_manifest)
+                try:
+                    layers = json.loads((root / ep_manifest).read_text(encoding="utf-8")).get("layers", [])
+                except (json.JSONDecodeError, AttributeError, FileNotFoundError, IsADirectoryError):
+                    layers = []
+                for layer in layers:
+                    rel = f"data/{layer.get('file', '')}"
+                    if rel not in already:
+                        report.files.append(download(session, base_url, rel, root, buster, first_load=False))
+                        already.add(rel)
+
+        # 3. Contract validation of every downloaded data file
+        #    (manifests after the layer files, episodes.json last: they check that what they list exists)
         registry = validate.load_registry()
         data_dir = root / "data"
         data_files = [f for f in report.files if f.path.startswith("data/") and not f.errors]
-        data_files.sort(key=lambda f: f.path == manifest_path)
+        data_files.sort(key=lambda f: (f.path == episodes_path, f.path.endswith("manifest.json")))
         for f in data_files:
             path = root / f.path
             in_static = Path(f.path).relative_to("data").parts[0] in validate.SKIPPED_DIRS

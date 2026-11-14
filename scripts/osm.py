@@ -34,7 +34,8 @@ OVERPASS_URLS = [
     "https://overpass.kumi.systems/api/interpreter",
 ]
 PAD_DEG = 0.2          # ~20 km around the BBOX, for distances near the edge
-TIMEOUT_S = 600
+TIMEOUT_S = 300            # Overpass servers turn big requests away first when they are busy
+MAXSIZE_BYTES = 512 * 1024 * 1024
 USER_AGENT = "ulinautas-hackathon/0.1"
 
 ROAD_TYPES = ("primary", "secondary", "tertiary", "track", "path")
@@ -62,7 +63,7 @@ def overpass_query(bbox=BBOX, pad=PAD_DEG) -> str:
     west, south, east, north = bbox
     b = f"({south - pad},{west - pad},{north + pad},{east + pad})"
     roads = "|".join(ROAD_TYPES)
-    return f"""[out:json][timeout:{TIMEOUT_S}][maxsize:1073741824];
+    return f"""[out:json][timeout:{TIMEOUT_S}][maxsize:{MAXSIZE_BYTES}];
 (
   way["highway"~"^({roads})$"]{b};
   way["natural"="water"]{b};
@@ -299,7 +300,12 @@ def main() -> None:
     parser.add_argument("--refresh", action="store_true", help="download the Overpass data again")
     args = parser.parse_args()
 
-    raw = download(refresh=args.refresh)
+    try:
+        raw = download(refresh=args.refresh)
+    except RuntimeError as exc:
+        # Context layers only: keep whatever is already there and let the rest of make data go on
+        print(f"[SKIP] OpenStreetMap unavailable ({exc}). Previous OSM files kept; retry later with: uv run scripts/osm.py")
+        return
     print("Parsing OSM data...")
     layers = parse(load_elements(raw))
     print(f"  roads {len(layers['roads'])} · water {len(layers['water'])} · fire stations {len(layers['stations'])}")
