@@ -44,7 +44,10 @@
         "end",
         "n_hotspots",
         "frp_max",
-        "area_km2"
+        "area_km2",
+        "dist_road_km",
+        "dist_water_km",
+        "dist_fire_station_km"
       ],
       "updated_at": "2026-11-14T19:10:21Z"
     },

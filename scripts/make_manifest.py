@@ -44,7 +44,8 @@ LAYERS: list[dict] = [
         "type": "fill",
         "temporal": False,
         "active": True,
-        "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2"],
+        "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
+                  "dist_road_km", "dist_water_km", "dist_fire_station_km"],
     },
     {
         "id": "spread",
@@ -99,6 +100,8 @@ LAYERS: list[dict] = [
         "type": "fill",
         "temporal": False,
         "active": False,
+        "popup": ["name", "kind"],
+        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs, rivers"}],
     },
     {
         "id": "roads",
@@ -107,6 +110,15 @@ LAYERS: list[dict] = [
         "type": "line",
         "temporal": False,
         "active": False,
+        "popup": ["name", "highway"],
+        # Colors match osm.ROAD_STYLE
+        "legend": [
+            {"color": "#f2a541", "text": "Primary"},
+            {"color": "#f6c667", "text": "Secondary"},
+            {"color": "#f9dfa0", "text": "Tertiary"},
+            {"color": "#b08968", "text": "Track"},
+            {"color": "#9c8b7a", "text": "Path"},
+        ],
     },
     {
         "id": "fire_stations",
@@ -115,6 +127,8 @@ LAYERS: list[dict] = [
         "type": "circle",
         "temporal": False,
         "active": False,
+        "popup": ["name"],
+        "legend": [{"color": "#2b8cbe", "text": "Fire station"}],
     },
 ]
 
