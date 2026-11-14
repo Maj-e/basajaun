@@ -28,7 +28,7 @@ Measurement for the demo area and period defined by B2 in `scripts/config.py`. W
 - Size at or below that threshold → **one single file** (`web/data/processed/hotspots.geojson`).
 - Size above that threshold → **one file per day**.
 
-The size that counts is the raw GeoJSON on disk (`data/raw/focos_bruto.geojson`), before deduplication. Properties follow `docs/data_contract.md`: `satellite`, `date`, `confidence`, `radius`, `stroke`. `frp` may be `null`.
+The size that counts is the raw GeoJSON on disk (`data/raw/focos_bruto.geojson`), before deduplication. Properties follow `docs/data_contract.md`: `satellite`, `date`, `confidence`, `radius`, `border`. `frp` may be `null`.
 
 ## Result
 

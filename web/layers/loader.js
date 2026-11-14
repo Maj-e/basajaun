@@ -15,7 +15,7 @@ const BUILDERS = {
       paint: {
         "circle-color": ["coalesce", ["get", "color"], "#888888"],
         "circle-radius": ["coalesce", ["get", "radius"], 5],
-        "circle-stroke-color": ["coalesce", ["get", "stroke"], "#ffffff"],
+        "circle-stroke-color": ["coalesce", ["get", "border"], "#ffffff"],
         "circle-stroke-width": 1.5,
         "circle-opacity": ["coalesce", ["get", "opacity"], 0.9],
       },
@@ -78,7 +78,7 @@ export async function loadLayers() {
   if (!response.ok) throw new Error(`Manifest unavailable (${response.status})`);
   const manifest = await response.json();
 
-  for (const layer of manifest.layers.filter((l) => l.enabled)) {
+  for (const layer of manifest.layers.filter((l) => l.active)) {
     const build = BUILDERS[layer.type];
     if (!build) {
       console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`);
@@ -121,7 +121,7 @@ class Legend {
       .map(
         (l) =>
           `<h3>${l.name}</h3>` +
-          l.legend.map((item) => `<div><span style="background:${item.color}"></span>${item.label}</div>`).join("")
+          l.legend.map((item) => `<div><span style="background:${item.color}"></span>${item.text}</div>`).join("")
       )
       .join("");
     if (!this.layers.length) this.el.hidden = true;

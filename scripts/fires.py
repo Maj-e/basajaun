@@ -23,7 +23,7 @@ def cluster_fires(hotspots_path: Path, fires_output_path: Path, update_hotspots:
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     if not features:
-        fires_fc = {"type": "FeatureCollection", "updated": updated, "features": []}
+        fires_fc = {"type": "FeatureCollection", "updated_at": updated, "features": []}
         fires_output_path.parent.mkdir(parents=True, exist_ok=True)
         fires_output_path.write_text(json.dumps(fires_fc, separators=(",", ":")))
         print(f"[SAVED] {fires_output_path} (0 fires)")
@@ -49,7 +49,7 @@ def cluster_fires(hotspots_path: Path, fires_output_path: Path, update_hotspots:
     if update_hotspots:
         for feat, fid in zip(features, fire_ids):
             feat["properties"]["fire_id"] = fid
-        raw_fc["updated"] = updated
+        raw_fc["updated_at"] = updated
         hotspots_path.write_text(json.dumps(raw_fc, separators=(",", ":")))
 
     fire_records = []
@@ -60,8 +60,8 @@ def cluster_fires(hotspots_path: Path, fires_output_path: Path, update_hotspots:
 
         n_hotspots = int(len(cluster))
         frp_max = round(float(cluster["frp"].astype(float).max()), 1)
-        start_dt = str(cluster["datetime_utc"].min())
-        end_dt = str(cluster["datetime_utc"].max())
+        start_dt = str(cluster["timestamp_utc"].min())
+        end_dt = str(cluster["timestamp_utc"].max())
         t_start = round(float(cluster["t"].astype(float).min()), 2)
         t_end = round(float(cluster["t"].astype(float).max()), 2)
         color, opacity = fire_style(frp_max, n_hotspots)
@@ -86,7 +86,7 @@ def cluster_fires(hotspots_path: Path, fires_output_path: Path, update_hotspots:
     else:
         fires_fc = {"type": "FeatureCollection", "features": []}
 
-    fires_fc["updated"] = updated
+    fires_fc["updated_at"] = updated
     fires_output_path.parent.mkdir(parents=True, exist_ok=True)
     fires_output_path.write_text(json.dumps(fires_fc, separators=(",", ":")))
     print(f"[SAVED] {fires_output_path} ({len(fire_records)} fire groups from {len(features)} hotspots)")

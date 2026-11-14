@@ -69,7 +69,7 @@ def row_to_feature(row: pd.Series, source: str) -> dict:
             "confidence": str(row["confidence"]),
             "color": "#d7301f",
             "radius": 6.0,
-            "stroke": "#222222",
+            "border": "#222222",
         },
     }
 
