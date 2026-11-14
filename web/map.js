@@ -41,7 +41,7 @@ try {
     container: "map",
     style,
     bounds: CONFIG.view,
-    fitBoundsOptions: { padding: { top: 130, bottom: 200, left: 60, right: 60 } },
+    fitBoundsOptions: { padding: CONFIG.framePadding },
     attributionControl: { compact: true },
     dragRotate: false,
   });
