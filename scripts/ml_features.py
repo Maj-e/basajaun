@@ -13,19 +13,19 @@ from shapely.geometry import box, Point
 def build_episode_dataset(
     processed_dir: Path, bbox: tuple
 ) -> tuple[np.ndarray, np.ndarray, list[dict], list[str]]:
-    """Construye el dataset de características (X) y etiquetas (y) sobre una malla 12x12.
+    """Constructs feature matrix (X) and labels (y) over a 12x12 spatial grid.
 
-    Parámetros:
-        processed_dir (Path): Ruta al directorio de datos procesados (ej. web/data/processed/)
-        bbox (tuple): (west, south, east, north)
+    Parameters:
+        processed_dir (Path): Path to processed data directory (e.g., web/data/processed/)
+        bbox (tuple): Spatial bounding box as (west, south, east, north)
 
-    Retorna:
-        tuple: (X, y, records, feature_names) sin valores NaN.
+    Returns:
+        tuple: (X, y, records, feature_names) guaranteed to contain no NaN values.
     """
     processed_path = Path(processed_dir)
     west, south, east, north = bbox
 
-    # 1. Crear malla espacial 12x12 (144 celdas)
+    # 1. Create 12x12 spatial grid (144 cells)
     lats = np.linspace(south, north, 13)
     lons = np.linspace(west, east, 13)
 
@@ -52,13 +52,13 @@ def build_episode_dataset(
 
     grid_gdf = gpd.GeoDataFrame(cells, crs="EPSG:4326")
 
-    # 2. Rutas de archivos procesados esperados
+    # 2. Define expected processed file paths
     hotspots_file = processed_path / "hotspots.geojson"
     roads_file = processed_path / "roads.geojson"
     stations_file = processed_path / "fire_stations.geojson"
     water_file = processed_path / "water.geojson"
 
-    # 3. Etiquetado de igniciones reales (y ∈ {0, 1}) mediante spatial join
+    # 3. Label actual ignition points (y in {0, 1}) via spatial join
     y_labels = np.zeros(len(grid_gdf), dtype=int)
     if hotspots_file.exists():
         try:
@@ -73,7 +73,7 @@ def build_episode_dataset(
         except Exception:
             pass
 
-    # 4. Agregación meteorológica base y variables proxy
+    # 4. Base meteorological aggregation and proxy variables
     n_cells = len(grid_gdf)
     temp_max = np.full(n_cells, 28.5)
     humidity_min = np.full(n_cells, 35.0)
@@ -81,7 +81,7 @@ def build_episode_dataset(
     rain_sum = np.zeros(n_cells)
     fwi_proxy = np.full(n_cells, 12.5)
 
-    # 5. Distancias métricas UTM aproximadas a infraestructuras
+    # 5. Approximate UTM metric distances to infrastructure
     centroids = [Point(row.lon, row.lat) for _, row in grid_gdf.iterrows()]
 
     def compute_min_distances(gdf_path, default_dist=8000.0):
@@ -103,10 +103,10 @@ def build_episode_dataset(
     dist_stations = compute_min_distances(stations_file, default_dist=15000.0)
     dist_water = compute_min_distances(water_file, default_dist=5000.0)
 
-    # 6. Densidad de población por celda
+    # 6. Population density per cell proxy
     pop_density = np.full(n_cells, 75.0)
 
-    # 7. Ensamblaje de la matriz X y nombres de características
+    # 7. Assemble feature matrix X and feature names list
     feature_names = [
         "temp_max",
         "humidity_min",
@@ -137,11 +137,11 @@ def build_episode_dataset(
         ]
     )
 
-    # Limpieza estricta: asegurar cero NaNs o infinitos
+    # Strict data cleaning: ensure zero NaNs or infinities
     X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
     y = np.nan_to_num(y_labels, nan=0).astype(int)
 
-    # Construcción de metadatos de celdas
+    # Build cell metadata records
     for idx, row in grid_gdf.iterrows():
         records.append(
             {
