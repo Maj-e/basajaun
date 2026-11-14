@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:13:10Z",
+  "updated_at": "2026-11-14T21:52:44Z",
   "layers": [
     {
       "id": "hotspots",
@@ -49,9 +49,13 @@
         "landcover",
         "dist_road_km",
         "dist_water_km",
-        "dist_fire_station_km"
+        "dist_fire_station_km",
+        "dist_water_point_km",
+        "gw_body",
+        "gw_vulnerability",
+        "gw_chemical_status"
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T21:50:10Z"
     },
     {
       "id": "spread",
@@ -106,7 +110,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T21:13:08Z"
+      "updated_at": "2026-11-14T21:44:39Z"
     },
     {
       "id": "wind",
@@ -173,7 +177,7 @@
           "text": "Lakes, reservoirs, rivers"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T21:50:10Z"
     },
     {
       "id": "roads",
@@ -208,7 +212,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T21:50:10Z"
     },
     {
       "id": "fire_stations",
@@ -226,7 +230,46 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T21:50:10Z"
+    },
+    {
+      "id": "water_points",
+      "name": "Water points for firefighting",
+      "file": "processed/water_points.geojson",
+      "type": "circle",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name",
+        "kind"
+      ],
+      "legend": [
+        {
+          "color": "#0077b6",
+          "text": "Firefighting tank / suction point"
+        },
+        {
+          "color": "#00b4d8",
+          "text": "Hydrant"
+        },
+        {
+          "color": "#48cae4",
+          "text": "Water tank"
+        },
+        {
+          "color": "#90e0ef",
+          "text": "Well"
+        },
+        {
+          "color": "#ade8f4",
+          "text": "Spring"
+        },
+        {
+          "color": "#caf0f8",
+          "text": "Water point"
+        }
+      ],
+      "updated_at": "2026-11-14T21:50:10Z"
     }
   ]
 }

@@ -51,7 +51,8 @@ LAYERS: list[dict] = [
         "active": True,
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
                   "slope_deg", "landcover",
-                  "dist_road_km", "dist_water_km", "dist_fire_station_km"],
+                  "dist_road_km", "dist_water_km", "dist_fire_station_km",
+                  "dist_water_point_km", "gw_body", "gw_vulnerability", "gw_chemical_status"],
     },
     {
         "id": "spread",
@@ -136,6 +137,39 @@ LAYERS: list[dict] = [
         "active": False,
         "popup": ["name"],
         "legend": [{"color": "#2b8cbe", "text": "Fire station"}],
+    },
+    {
+        "id": "water_points",
+        "name": "Water points for firefighting",
+        "file": "processed/water_points.geojson",
+        "type": "circle",
+        "temporal": False,
+        "active": False,
+        "popup": ["name", "kind"],
+        # Colors match osm.WATER_POINT_COLORS
+        "legend": [
+            {"color": "#0077b6", "text": "Firefighting tank / suction point"},
+            {"color": "#00b4d8", "text": "Hydrant"},
+            {"color": "#48cae4", "text": "Water tank"},
+            {"color": "#90e0ef", "text": "Well"},
+            {"color": "#ade8f4", "text": "Spring"},
+            {"color": "#caf0f8", "text": "Water point"},
+        ],
+    },
+    {
+        "id": "groundwater",
+        "name": "Groundwater (ash leachate risk)",
+        "file": "processed/groundwater.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["name", "vulnerability", "chemical_status", "at_risk_chemical", "geology"],
+        # Colors match groundwater.STYLE
+        "legend": [
+            {"color": "#8e44ad", "text": "High vulnerability (karst / poor or at-risk chemical status)"},
+            {"color": "#5b8def", "text": "Medium (porous aquifer)"},
+            {"color": "#9fb8c9", "text": "Low"},
+        ],
     },
 ]
 

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T20:19:27Z",
+  "updated_at": "2026-11-14T21:53:42Z",
   "layers": [
     {
       "id": "hotspots",
@@ -45,9 +45,15 @@
         "n_hotspots",
         "frp_max",
         "area_km2",
+        "slope_deg",
+        "landcover",
         "dist_road_km",
         "dist_water_km",
-        "dist_fire_station_km"
+        "dist_fire_station_km",
+        "dist_water_point_km",
+        "gw_body",
+        "gw_vulnerability",
+        "gw_chemical_status"
       ],
       "updated_at": "2026-11-14T20:19:24Z"
     },
@@ -63,6 +69,7 @@
         "horizon_hours",
         "wind_speed_kmh",
         "wind_to_deg",
+        "slope_deg",
         "spread_km",
         "area_km2"
       ],

@@ -259,6 +259,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the 3 layers show in the panel with no new front-end code and fires carry the 3 distances
   - Depends on: W2-B2
 
+- [x] **W3-B7** · Water points + groundwater (ash leachate risk) · **B4**
+  - OSM water points for firefighting (hydrants, firefighting tanks / suction points, tanks, wells, springs) in the same Overpass query as W3-B4 → `water_points.geojson` + `dist_water_point_km` per fire
+  - EEA WISE groundwater bodies (Europe) → `groundwater.geojson` styled by vulnerability to ash leachate (karst or poor / at-risk chemical status = high) + `gw_body`, `gw_vulnerability`, `gw_chemical_status` per fire
+  - `docs/frontend_layers.md`: every layer / file the front end can use, kept up to date by the backend
+  - Files: `scripts/osm.py`, `scripts/groundwater.py`
+  - **Done when:** both layers pass the validator, fires carry the new fields, the front-end doc lists them
+  - Depends on: W3-B4
+
 - [ ] **W3-F1** · Layer panel + temporal layers + relief · **F**
   - Checkbox panel generated from the manifest (one checkbox per `active` layer)
   - New `arrows` type in the loader: `symbol` layer with `icon-rotate: ["get","rotation"]`, `icon-size: ["get","size"]`
@@ -309,7 +317,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** switching episodes works on the published URL, offline basemap included
   - Depends on: W4-B5
 
-- [ ] **W4-B4** · Automatic refresh with validation · **B4**
+- [x] **W4-B4** · Automatic refresh with validation · **B4**
   - `.github/workflows/update-data.yml` every 30 min + manual trigger + after each deploy: downloads the last 48 h (`live` episode in `web/data/episodes.json`) → pipeline → **`validate.py`** → publishes the site **only if valid**, without committing the data; otherwise the last good live data is published
   - Data in `web/data/processed/live/` (the demo episode is untouched)
   - `FIRMS_MAP_KEY` in the repository secrets, never in the browser
