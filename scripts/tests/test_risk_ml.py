@@ -10,8 +10,12 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from risk_ml import (
+    apply_platt_calibrator,
+    brier_score_np,
     classify_risk_tier,
+    compute_local_contributions,
     fit_logistic_l2,
+    fit_platt_calibrator,
     pr_auc_score_np,
     predict_proba,
     roc_auc_score_np,
@@ -32,11 +36,32 @@ def test_logistic_l2_separates_high_risk_conditions():
     assert pr_auc_score_np(y, probs) > 0.85
 
 
+def test_platt_calibration_improves_brier_without_changing_auc():
+    rng = np.random.default_rng(21)
+    y = np.array([0] * 180 + [1] * 20)
+    raw_probs = np.where(y == 1, rng.uniform(0.65, 0.95, size=200), rng.uniform(0.35, 0.64, size=200))
+    a, b = fit_platt_calibrator(raw_probs, y)
+    cal_probs = apply_platt_calibrator(raw_probs, a, b)
+    assert roc_auc_score_np(y, cal_probs) == roc_auc_score_np(y, raw_probs)
+    assert brier_score_np(y, cal_probs) < brier_score_np(y, raw_probs)
+
+
+def test_local_contributions_rank_dominant_driver():
+    X = np.array([[0.0, 0.0], [3.0, -1.0]])
+    params = np.array([1.5, -0.5, 0.0])
+    mean = np.array([0.0, 0.0])
+    std = np.array([1.0, 1.0])
+    contribs = compute_local_contributions(X, params, mean, std, ["temp_max", "humidity_min"], top_k=2)
+    assert contribs[0] == []
+    assert contribs[1][0]["feature"] == "temp_max"
+    assert contribs[1][0]["share_pct"] == 90.0
+
+
 def test_risk_tier_thresholds():
-    assert classify_risk_tier(0.82) == "critical"
-    assert classify_risk_tier(0.55) == "high"
-    assert classify_risk_tier(0.30) == "moderate"
-    assert classify_risk_tier(0.10) == "low"
+    assert classify_risk_tier(0.42) == "critical"
+    assert classify_risk_tier(0.24) == "high"
+    assert classify_risk_tier(0.11) == "moderate"
+    assert classify_risk_tier(0.03) == "low"
 
 
 def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
@@ -85,8 +110,8 @@ def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
     errors = validate_file(out_file, load_registry())
     assert errors == []
     assert len(fc["features"]) == 144
-    assert "model_metrics" in fc
     assert fc["model_metrics"]["val_roc_auc"] is not None
+    assert fc["model_metrics"]["brier_score"] is not None
     sample_props = fc["features"][0]["properties"]
-    for key in ("cell_id", "ignition_prob", "risk_pct", "risk_level", "drivers", "recommended_action"):
+    for key in ("cell_id", "ignition_prob", "risk_pct", "risk_level", "top_drivers", "drivers", "recommended_action"):
         assert key in sample_props
