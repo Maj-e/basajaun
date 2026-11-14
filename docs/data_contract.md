@@ -88,6 +88,9 @@ Build an episode with `make data EPISODE=<id>`; without `EPISODE`, the default o
 One point per grid cell (5×5 over the bbox) and per hour. Wind is the **surface wind at 10 m** above ground, one level only:
 `speed` (km/h) + `direction` (degrees, where the wind comes **from**), and the same wind as `u`, `v` (m/s, where it blows **to**; `u` = east, `v` = north). Particles and fire spread models read `u` / `v`.
 
+### Combined risk + evacuation (W3-B9)
+`scripts/risk_score.py` adds to every fire in `fires.geojson`: `risk_score` (0–100), `risk_level` (`low` / `medium` / `high` / `extreme`), `risk_factors` (`fire`, `people`, `smoke`, `strong wind`), `evacuate_people` (fire + 1 km + 6 h spread) and `warn_people` (the rest within 5 km). Four factors of 0–2 points; the level comes from the total, raised by the combinations: smoke + people ≥ medium, fire + strong wind ≥ high, all four = extreme. Layers `fire_risk.geojson` (fires coloured by level) and `evacuation.geojson` (zones). Thresholds: `RISK_SCORE` in `scripts/config.py`.
+
 ### Rules shared by every file
 - **Style computed by the backend:** each Feature carries its display properties (`color`, `radius`, `border`, `opacity`, `rotation`, `size`, `width` depending on the layer type). The front end never picks colors.
 - **Timestamp:** each JSON file has `updated_at` (ISO 8601 UTC) at root level (in GeoJSON: a property of the `FeatureCollection`). The front end shows "Data from DD/MM HH:MM".

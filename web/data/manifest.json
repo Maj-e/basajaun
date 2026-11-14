@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:54:49Z",
+  "updated_at": "2026-11-14T23:14:57Z",
   "layers": [
     {
       "id": "hotspots",
@@ -81,9 +81,69 @@
         "dist_water_point_km",
         "gw_body",
         "gw_vulnerability",
-        "gw_chemical_status"
+        "gw_chemical_status",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
       ],
-      "updated_at": "2026-11-14T22:34:27Z"
+      "updated_at": "2026-11-14T23:14:40Z"
+    },
+    {
+      "id": "fire_risk",
+      "name": "Fire risk (smoke · people · wind)",
+      "file": "processed/fire_risk.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#67000d",
+          "text": "Extreme: fire + people + smoke + strong wind"
+        },
+        {
+          "color": "#d7301f",
+          "text": "High (fire + strong wind, or high score)"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium (smoke + people, or medium score)"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-14T23:14:40Z"
+    },
+    {
+      "id": "evacuation",
+      "name": "Evacuation zone (fire + 1 km + 6 h spread)",
+      "file": "processed/evacuation.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#e31a1c",
+          "text": "Evacuate: fire + 1 km + 6 h spread"
+        }
+      ],
+      "updated_at": "2026-11-14T23:14:40Z"
     },
     {
       "id": "spread",
@@ -138,7 +198,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T21:16:29Z"
+      "updated_at": "2026-11-14T21:44:39Z"
     },
     {
       "id": "wind",
