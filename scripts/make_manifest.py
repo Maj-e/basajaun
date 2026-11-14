@@ -37,9 +37,12 @@ LAYERS: list[dict] = [
         "active": True,
         "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp", "country", "region"],
         "legend": [
-            {"color": "#d7301f", "text": "High confidence"},
-            {"color": "#fc8d59", "text": "Medium confidence"},
-            {"color": "#fdcc8a", "text": "Low confidence"},
+            {"color": "#ffd9a8", "text": "FRP ≥ 300 MW (fire intensity)"},
+            {"color": "#f9a957", "text": "100–300 MW"},
+            {"color": "#ec8128", "text": "30–100 MW"},
+            {"color": "#c95b17", "text": "10–30 MW"},
+            {"color": "#9a3d12", "text": "< 10 MW"},
+            {"color": "#ec8128", "text": "MODIS · 1 km pixel", "shape": "ring"},
         ],
     },
     {
