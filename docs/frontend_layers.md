@@ -20,6 +20,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 | id | Name | Default | Front page today |
 |---|---|---|---|
 | `sierra-bermeja-2021-09` | Sierra Bermeja (Málaga) · Sep 2021 | ✅ | — (needs the selector, W4-F2) |
+| `spain-2025-08` | Spain · Aug 2025 (1 km cells) | | — |
 | `chile-2026-02` | Chile–Argentina border · Feb 2026 | | ✅ (`manifest.json`) |
 | `los-angeles-2025-01` | Los Angeles · Jan 2025 | | — |
 | `live` | Live · Iberian Peninsula · last 48 h | | — (needs the Live button, W4-F1) |
@@ -27,6 +28,8 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 ## Layers
 
 ✅ = in that episode's manifest · — = not available there
+
+`spain-2025-08` (whole peninsula, 1 km cells) has: `hotspots`, `regions`, `fires`, `spread`, `population`, `wind`, `weather`, `wind_particles`, `water`, `rivers`.
 
 | id | Type | Active | Time | Sierra Bermeja | Chile | Los Angeles | Live | Popup fields | Style properties |
 |---|---|---|---|---|---|---|---|---|---|
@@ -71,7 +74,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | File | Use | Shape |
 |---|---|---|
-| `…/alerts.json` | alert panel | `{updated_at, alerts: [{fire_id, type, risk, since, message, pop_1km, pop_5km, pop_10km, wind_toward_population, center, color, …}]}`, sorted most → least severe. **`type`**: `population` / `wind` (`wind_kmh`) / `smoke` (`smoke_people`, `wind_kmh`) / `contamination` (`gw_body`, `gw_vulnerability`); a fire can have one alert per type. Chile and Sierra Bermeja |
+| `…/alerts.json` | alert panel | `{updated_at, alerts: [{fire_id, type, risk, since, message, pop_1km, pop_5km, pop_10km, wind_toward_population, center, color, …}]}`, sorted most → least severe. **`type`**: `population` / `wind` (`wind_kmh`) / `smoke` (`smoke_people`, `wind_kmh`) / `contamination` (`gw_body`, `gw_vulnerability`); a fire can have one alert per type. Chile, Sierra Bermeja, Spain Aug 2025 |
 | `…/daily_summary.json` | calendar, timeline strip | `{updated_at, "YYYY-MM-DD": {hotspots, total_frp, modis, viirs, no_data}}` |
 | `…/hourly_series.json` | counter, small chart | `{updated_at, series: [{t, count, total_frp}]}`, every whole hour |
 | `episodes.json` | episode selector | see above |
@@ -88,7 +91,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
-| 2026-11-15 | Typed alerts (W3-B8): `type` + `message` on every alert; new `wind`, `smoke`, `contamination` alerts (Chile 129 alerts, Sierra Bermeja 16) |
+| 2026-11-15 | Typed alerts (W3-B8): `type` + `message` on every alert; new `wind`, `smoke`, `contamination` alerts (Chile 129 alerts, Sierra Bermeja 16, Spain Aug 2025 1,437) |
 | 2026-11-14 | Rivers moved out of `water` into their own `rivers` line layer (a fill layer closed each river into a bogus polygon); the validator now rejects a layer whose geometries don't match its type |
 | 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
 | 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |

@@ -112,7 +112,10 @@
               "type": {
                 "const": "wind"
               }
-            }
+            },
+            "required": [
+              "type"
+            ]
           },
           "then": {
             "required": [
@@ -126,7 +129,10 @@
               "type": {
                 "const": "smoke"
               }
-            }
+            },
+            "required": [
+              "type"
+            ]
           },
           "then": {
             "required": [
@@ -141,7 +147,10 @@
               "type": {
                 "const": "contamination"
               }
-            }
+            },
+            "required": [
+              "type"
+            ]
           },
           "then": {
             "required": [

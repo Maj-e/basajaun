@@ -353,7 +353,7 @@ def run_exposure(data_dir: Path = PROCESSED) -> Path | None:
                          optional("spread.geojson"), optional("groundwater.geojson"))
     result["alerts"] = sorted(result["alerts"] + extra,
                               key=lambda a: (RISK_RANK[a["risk"]], -a["pop_1km"], -a["pop_5km"], a["type"]))
-    alerts_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
+    alerts_path.write_text(json.dumps(result, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
 
     counts = {lvl: sum(1 for a in result["alerts"] if a["risk"] == lvl) for lvl in RISK_LEVELS}
     types = {t: sum(1 for a in result["alerts"] if a["type"] == t) for t in ("population", "wind", "smoke", "contamination")}
