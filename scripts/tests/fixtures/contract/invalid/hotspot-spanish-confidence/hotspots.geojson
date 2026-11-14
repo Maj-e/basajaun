@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "updated": "2026-02-14T08:00:00Z",
+  "updated_at": "2026-02-14T08:00:00Z",
   "features": [
     {
       "type": "Feature",
@@ -15,13 +15,13 @@
         "id": "VIIRS_N20_20260214_0742_-33.4569_-70.6483",
         "sensor": "VIIRS",
         "satellite": "NOAA-20",
-        "datetime_utc": "2026-02-14T07:42:00Z",
+        "timestamp_utc": "2026-02-14T07:42:00Z",
         "date": "2026-02-14",
         "t": 493927.7,
         "confidence": "alta",
         "frp": 18.4,
         "brightness_k": 342.1,
-        "daynight": "N",
+        "day_night": "N",
         "resolution_m": 375,
         "detected_by": [
           "VIIRS"
@@ -29,7 +29,7 @@
         "fire_id": null,
         "color": "#d7301f",
         "radius": 6.2,
-        "stroke": "#222222"
+        "border": "#222222"
       }
     },
     {
@@ -45,13 +45,13 @@
         "id": "MODIS_A_20260214_1805_56.7264_-111.3790",
         "sensor": "MODIS",
         "satellite": "Aqua",
-        "datetime_utc": "2026-02-14T18:05:00Z",
+        "timestamp_utc": "2026-02-14T18:05:00Z",
         "date": "2026-02-14",
         "t": 493927.7,
         "confidence": "medium",
         "frp": 18.4,
         "brightness_k": 342.1,
-        "daynight": "N",
+        "day_night": "N",
         "resolution_m": 1000,
         "detected_by": [
           "MODIS"
@@ -59,7 +59,7 @@
         "fire_id": null,
         "color": "#fc8d59",
         "radius": 6.2,
-        "stroke": "#ffffff"
+        "border": "#ffffff"
       }
     },
     {
@@ -75,13 +75,13 @@
         "id": "VIIRS_N21_20260214_0412_-37.8136_144.9631",
         "sensor": "VIIRS",
         "satellite": "NOAA-21",
-        "datetime_utc": "2026-02-14T04:12:00Z",
+        "timestamp_utc": "2026-02-14T04:12:00Z",
         "date": "2026-02-14",
         "t": 493927.7,
         "confidence": "low",
         "frp": 18.4,
         "brightness_k": 342.1,
-        "daynight": "N",
+        "day_night": "N",
         "resolution_m": 375,
         "detected_by": [
           "VIIRS"
@@ -89,7 +89,7 @@
         "fire_id": null,
         "color": "#fdcc8a",
         "radius": 6.2,
-        "stroke": "#222222"
+        "border": "#222222"
       }
     }
   ]

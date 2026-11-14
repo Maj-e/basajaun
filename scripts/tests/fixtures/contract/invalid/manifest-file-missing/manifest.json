@@ -1,5 +1,5 @@
 {
-  "updated": "2026-02-14T08:00:00Z",
+  "updated_at": "2026-02-14T08:00:00Z",
   "layers": [
     {
       "id": "hotspots",
@@ -7,8 +7,8 @@
       "file": "hotspots.geojson",
       "type": "circle",
       "temporal": true,
-      "enabled": true,
-      "updated": "2026-02-14T08:00:00Z",
+      "active": true,
+      "updated_at": "2026-02-14T08:00:00Z",
       "popup": [
         "sensor",
         "confidence",
@@ -17,7 +17,7 @@
       "legend": [
         {
           "color": "#d7301f",
-          "label": "High confidence"
+          "text": "High confidence"
         }
       ]
     },
@@ -27,7 +27,7 @@
       "file": "weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "enabled": false
+      "active": false
     }
   ]
 }

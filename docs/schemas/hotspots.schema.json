@@ -26,21 +26,21 @@
         "properties": {
           "type": "object",
           "required": [
-            "id", "sensor", "satellite", "datetime_utc", "date", "t", "confidence",
-            "frp", "brightness_k", "daynight", "resolution_m", "detected_by", "fire_id",
-            "color", "radius", "stroke"
+            "id", "sensor", "satellite", "timestamp_utc", "date", "t", "confidence",
+            "frp", "brightness_k", "day_night", "resolution_m", "detected_by", "fire_id",
+            "color", "radius", "border"
           ],
           "properties": {
             "id": { "type": "string", "minLength": 1 },
             "sensor": { "enum": ["MODIS", "VIIRS"] },
             "satellite": { "enum": ["Terra", "Aqua", "S-NPP", "NOAA-20", "NOAA-21"] },
-            "datetime_utc": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+            "timestamp_utc": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
             "date": { "$ref": "common.schema.json#/$defs/date" },
             "t": { "$ref": "common.schema.json#/$defs/hoursSince1970" },
             "confidence": { "enum": ["low", "medium", "high"] },
             "frp": { "type": "number", "minimum": 0 },
             "brightness_k": { "type": "number", "exclusiveMinimum": 0 },
-            "daynight": { "enum": ["D", "N"] },
+            "day_night": { "enum": ["D", "N"] },
             "resolution_m": { "enum": [375, 1000] },
             "detected_by": {
               "type": "array",
@@ -51,7 +51,7 @@
             "fire_id": { "type": ["integer", "null"] },
             "color": { "$ref": "common.schema.json#/$defs/hexColor" },
             "radius": { "type": "number", "exclusiveMinimum": 0 },
-            "stroke": { "$ref": "common.schema.json#/$defs/hexColor" }
+            "border": { "$ref": "common.schema.json#/$defs/hexColor" }
           }
         }
       }

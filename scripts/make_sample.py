@@ -130,7 +130,7 @@ def main():
     # 2. daily_summary.json
     (SAMPLE / "daily_summary.json").write_text(json.dumps(daily_summary, indent=2), encoding="utf-8")
 
-    # 3. alerts.json (root array per contract)
+    # 3. alerts.json (object with updated_at + alerts list, per contract)
     center_lon = round((west + east) / 2, 2)
     center_lat = round((south + north) / 2, 2)
     alerts = [
@@ -157,7 +157,8 @@ def main():
             "center": [round(center_lon + 0.25, 2), round(center_lat - 0.25, 2)],
         },
     ]
-    (SAMPLE / "alerts.json").write_text(json.dumps(alerts, indent=2), encoding="utf-8")
+    alerts_doc = {"updated_at": now_iso, "alerts": alerts}
+    (SAMPLE / "alerts.json").write_text(json.dumps(alerts_doc, indent=2), encoding="utf-8")
 
     # 4. manifest.json
     manifest = {

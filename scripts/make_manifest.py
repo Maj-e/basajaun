@@ -5,7 +5,7 @@ in the manifest only when its file is present under web/data/, so the front end
 never asks for a missing file.
 
 Adding a layer = its script writes the file + one entry in LAYERS
-(`enabled: False` until it has been checked on the published URL).
+(`active: False` until it has been checked on the published URL).
 """
 from __future__ import annotations
 
@@ -29,12 +29,12 @@ LAYERS: list[dict] = [
         "file": "processed/hotspots.geojson",
         "type": "circle",
         "temporal": True,
-        "enabled": True,
-        "popup": ["sensor", "satellite", "datetime_utc", "confidence", "frp"],
+        "active": True,
+        "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp"],
         "legend": [
-            {"color": "#d7301f", "label": "High confidence"},
-            {"color": "#fc8d59", "label": "Medium confidence"},
-            {"color": "#fdcc8a", "label": "Low confidence"},
+            {"color": "#d7301f", "text": "High confidence"},
+            {"color": "#fc8d59", "text": "Medium confidence"},
+            {"color": "#fdcc8a", "text": "Low confidence"},
         ],
     },
     {
@@ -43,7 +43,7 @@ LAYERS: list[dict] = [
         "file": "processed/fires.geojson",
         "type": "fill",
         "temporal": False,
-        "enabled": False,
+        "active": False,
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2"],
     },
     {
@@ -53,10 +53,10 @@ LAYERS: list[dict] = [
         "type": "image",
         "corners": BBOX_CORNERS,
         "temporal": False,
-        "enabled": False,
+        "active": False,
         "legend": [
-            {"color": "#fee5d9", "label": "< 10 people/km²"},
-            {"color": "#a50f15", "label": "> 1000 people/km²"},
+            {"color": "#fee5d9", "text": "< 10 people/km²"},
+            {"color": "#a50f15", "text": "> 1000 people/km²"},
         ],
     },
     {
@@ -65,13 +65,13 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
-        "enabled": False,
-        "popup": ["datetime_utc", "speed", "direction"],
+        "active": False,
+        "popup": ["timestamp_utc", "speed", "direction"],
         "legend": [
-            {"color": "#91cf60", "label": "< 15 km/h"},
-            {"color": "#fee08b", "label": "15–30 km/h"},
-            {"color": "#fc8d59", "label": "30–45 km/h"},
-            {"color": "#d7301f", "label": "≥ 45 km/h"},
+            {"color": "#91cf60", "text": "< 15 km/h"},
+            {"color": "#fee08b", "text": "15–30 km/h"},
+            {"color": "#fc8d59", "text": "30–45 km/h"},
+            {"color": "#d7301f", "text": "≥ 45 km/h"},
         ],
     },
     {
@@ -80,8 +80,8 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "circle",
         "temporal": True,
-        "enabled": False,
-        "popup": ["datetime_utc", "temperature", "humidity", "rain", "speed"],
+        "active": False,
+        "popup": ["timestamp_utc", "temperature", "humidity", "rain", "speed"],
     },
     {
         "id": "water",
@@ -89,7 +89,7 @@ LAYERS: list[dict] = [
         "file": "processed/water.geojson",
         "type": "fill",
         "temporal": False,
-        "enabled": False,
+        "active": False,
     },
     {
         "id": "roads",
@@ -97,7 +97,7 @@ LAYERS: list[dict] = [
         "file": "processed/roads.geojson",
         "type": "line",
         "temporal": False,
-        "enabled": False,
+        "active": False,
     },
     {
         "id": "fire_stations",
@@ -105,7 +105,7 @@ LAYERS: list[dict] = [
         "file": "processed/fire_stations.geojson",
         "type": "circle",
         "temporal": False,
-        "enabled": False,
+        "active": False,
     },
 ]
 
@@ -115,12 +115,12 @@ def utc_now() -> str:
 
 
 def file_updated(path: Path) -> str:
-    """`updated` of a data file: its own `updated` field if it has one, else its modification time."""
+    """`updated_at` of a data file: its own `updated_at` field if it has one, else its modification time."""
     if path.suffix in {".json", ".geojson"}:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-            if isinstance(data, dict) and isinstance(data.get("updated"), str):
-                return data["updated"]
+            if isinstance(data, dict) and isinstance(data.get("updated_at"), str):
+                return data["updated_at"]
         except json.JSONDecodeError:
             pass
     mtime = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
@@ -132,8 +132,8 @@ def build_manifest(data_dir: Path = DATA_DIR, layers: list[dict] = LAYERS) -> di
     for layer in layers:
         path = data_dir / layer["file"]
         if path.is_file():
-            present.append({**layer, "updated": file_updated(path)})
-    return {"updated": utc_now(), "layers": present}
+            present.append({**layer, "updated_at": file_updated(path)})
+    return {"updated_at": utc_now(), "layers": present}
 
 
 def main() -> None:
@@ -143,7 +143,7 @@ def main() -> None:
     listed = {layer["id"] for layer in manifest["layers"]}
     for layer in LAYERS:
         if layer["id"] in listed:
-            state = "enabled" if layer["enabled"] else "disabled"
+            state = "active" if layer["active"] else "disabled"
             print(f"  + {layer['id']:<14} {layer['file']} ({state})")
         else:
             print(f"  - {layer['id']:<14} {layer['file']} not found, skipped")

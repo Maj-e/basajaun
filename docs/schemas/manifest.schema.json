@@ -3,9 +3,9 @@
   "$id": "manifest.schema.json",
   "title": "manifest.json — layers available to the front-end loader",
   "type": "object",
-  "required": ["updated", "layers"],
+  "required": ["updated_at", "layers"],
   "properties": {
-    "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
     "layers": {
       "type": "array",
       "items": { "$ref": "#/$defs/layer" }
@@ -14,7 +14,7 @@
   "$defs": {
     "layer": {
       "type": "object",
-      "required": ["id", "name", "file", "type", "temporal", "enabled"],
+      "required": ["id", "name", "file", "type", "temporal", "active"],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
         "name": { "type": "string", "minLength": 1 },
@@ -25,17 +25,17 @@
         },
         "type": { "enum": ["circle", "fill", "line", "image", "arrows"] },
         "temporal": { "type": "boolean" },
-        "enabled": { "type": "boolean" },
-        "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+        "active": { "type": "boolean" },
+        "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
         "popup": { "type": "array", "items": { "type": "string" } },
         "legend": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["color", "label"],
+            "required": ["color", "text"],
             "properties": {
               "color": { "$ref": "common.schema.json#/$defs/hexColor" },
-              "label": { "type": "string" }
+              "text": { "type": "string" }
             }
           }
         },

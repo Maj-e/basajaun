@@ -3,9 +3,9 @@
   "$id": "alerts.schema.json",
   "title": "alerts.json — one record per fire with exposed population and risk",
   "type": "object",
-  "required": ["updated", "alerts"],
+  "required": ["updated_at", "alerts"],
   "properties": {
-    "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
     "alerts": {
       "type": "array",
       "description": "Sorted from most to least severe",

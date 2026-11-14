@@ -13,6 +13,8 @@ Which schema applies is decided by the file name:
     alerts.json          -> alerts.schema.json
     any other *.geojson  -> geojson_layer.schema.json (generic styled layer)
     any other *.json     -> error: not part of the contract
+
+web/data/static/ is skipped: fixed front-end assets (e.g. the land outline), not pipeline data.
 """
 from __future__ import annotations
 
@@ -37,6 +39,7 @@ SCHEMA_BY_NAME = [
     ("*.geojson", "geojson_layer.schema.json"),
 ]
 DATA_SUFFIXES = {".json", ".geojson"}
+SKIPPED_DIRS = {"static"}  # top-level folders of web/data/ that hold front-end assets, not contract data
 
 
 def load_registry(schemas_dir: Path = SCHEMAS_DIR) -> Registry:
@@ -107,7 +110,11 @@ def validate_file(path: Path, registry: Registry, data_dir: Path = DATA_DIR) -> 
 
 
 def find_data_files(data_dir: Path = DATA_DIR) -> list[Path]:
-    return sorted(p for p in data_dir.rglob("*") if p.is_file() and p.suffix in DATA_SUFFIXES)
+    return sorted(
+        p for p in data_dir.rglob("*")
+        if p.is_file() and p.suffix in DATA_SUFFIXES
+        and p.relative_to(data_dir).parts[0] not in SKIPPED_DIRS
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

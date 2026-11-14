@@ -42,10 +42,10 @@
     },
     "featureCollection": {
       "type": "object",
-      "required": ["type", "updated", "features"],
+      "required": ["type", "updated_at", "features"],
       "properties": {
         "type": { "const": "FeatureCollection" },
-        "updated": { "$ref": "#/$defs/datetimeUtc" },
+        "updated_at": { "$ref": "#/$defs/datetimeUtc" },
         "features": { "type": "array" }
       }
     }
