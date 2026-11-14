@@ -14,6 +14,7 @@ PIPELINE := \
 	series \
 	population \
 	weather \
+	spread \
 	exposure \
 	osm \
 	make_manifest \

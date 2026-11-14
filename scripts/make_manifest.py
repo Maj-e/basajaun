@@ -48,6 +48,15 @@ LAYERS: list[dict] = [
                   "dist_road_km", "dist_water_km", "dist_fire_station_km"],
     },
     {
+        "id": "spread",
+        "name": "6h spread estimate",
+        "file": "processed/spread.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "spread_km", "area_km2"],
+    },
+    {
         "id": "population",
         "name": "Population density",
         "file": "processed/population.png",
