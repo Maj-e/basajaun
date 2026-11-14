@@ -209,14 +209,18 @@ body {
 #alerts-list button { width: 100%; text-align: left; display: grid; gap: 2px; padding: 8px; border-radius: 6px;
   background: none; border: 0; color: var(--ink); font: 13px var(--font-ui); cursor: pointer; }
 #alerts-list button:hover { background: #172236; }
-#alerts-list .risk { font: 600 11px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
+#alerts-list .risk { display: inline-flex; align-items: center; gap: 5px; font: 600 11px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--c); }
+#alerts-list .risk em { font-style: normal; }
+#alerts-list .who { font-size: 13px; }
+.alert-icon { width: 13px; height: 13px; flex: none; }
+.popup-msg { margin: 4px 0; font-size: 12px; max-width: 240px; }
 #alerts-list .when { color: var(--ink-3); font-size: 12px; }
 #alerts-list .none { color: var(--ink-3); padding: 8px; font-size: 13px; }
 .alert-mark { position: relative; width: 0; height: 0; display: none; }
 body.alert-labels .alert-mark { display: block; }
-.alert-mark .halo { position: absolute; left: -24px; top: -24px; width: 48px; height: 48px; border-radius: 50%; padding: 0;
+.alert-mark .halo { position: absolute; left: calc(-1 * var(--r, 24px)); top: calc(-1 * var(--r, 24px)); width: calc(2 * var(--r, 24px)); height: calc(2 * var(--r, 24px)); border-radius: 50%; padding: 0;
   background: none; border: 2px solid var(--c); box-shadow: 0 0 14px var(--c); cursor: pointer; opacity: .9; }
-.alert-mark.risk-high .halo { left: -18px; top: -18px; width: 36px; height: 36px; border-width: 1.5px; }
+.alert-mark.risk-high .halo { border-width: 1.5px; }
 .alert-mark .label { position: absolute; left: 30px; top: -10px; white-space: nowrap; font: 600 12px var(--font-ui);
   color: var(--ink); background: var(--band); border: 1px solid var(--c); border-radius: 4px; padding: 2px 6px; pointer-events: none; }
 @media (max-width: 760px) { .alerts { top: auto; bottom: 250px; width: calc(100vw - 40px); } }
@@ -339,3 +343,10 @@ body.alert-labels .alert-mark { display: block; }
   .mobile-bar span { font-family: var(--font-data); color: var(--ink); }
   .timeline { min-height: var(--tl-h); }
 }
+
+/* ---------- Alert type filters ---------- */
+.alert-filters { display: flex; flex-wrap: wrap; gap: 4px; width: 100%; padding: 6px; background: var(--band); border: 1px solid var(--grid); border-radius: 8px; }
+.alert-filters button { display: inline-flex; align-items: center; gap: 4px; font: 600 11px var(--font-ui); color: var(--ink-2);
+  background: #172236; border: 1px solid var(--land-edge); border-radius: 999px; padding: 3px 9px; cursor: pointer; }
+.alert-filters button svg { width: 12px; height: 12px; color: var(--c, var(--ink-2)); }
+.alert-filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--c, var(--frp-4)); }
