@@ -148,3 +148,39 @@ def test_main_skips_when_overpass_is_down(monkeypatch, capsys):
     monkeypatch.setattr("sys.argv", ["osm.py"])
     osm.main()  # must not raise: make data keeps going
     assert "[SKIP] OpenStreetMap unavailable" in capsys.readouterr().out
+
+
+# --- water points for firefighting (W3-B7) ---------------------------------------
+
+WATER_POINT_ELEMENTS = [
+    {"type": "node", "lon": LON + 0.01, "lat": LAT, "tags": {"emergency": "fire_hydrant"}},
+    {"type": "node", "lon": LON + 0.02, "lat": LAT, "tags": {"emergency": "suction_point"}},
+    {"type": "node", "lon": LON + 0.03, "lat": LAT, "tags": {"natural": "spring", "name": "Fuente"}},
+    {"type": "node", "lon": LON + 0.04, "lat": LAT, "tags": {"man_made": "water_well"}},
+    {"type": "way", "geometry": square(0.05, 0.0, 0.001), "tags": {"man_made": "water_tank"}},
+    {"type": "node", "lon": LON + 0.06, "lat": LAT, "tags": {"amenity": "water_point"}},
+]
+
+
+def test_water_points_are_parsed_and_styled():
+    layers = osm.parse(ELEMENTS + WATER_POINT_ELEMENTS)
+    kinds = sorted(layers["water_points"]["kind"])
+    assert kinds == ["fire_water", "hydrant", "spring", "tank", "water_point", "well"]
+    out = osm.water_points_layer(layers["water_points"], box(LON - 1, LAT - 1, LON + 1, LAT + 1))
+    assert all(g.geom_type == "Point" for g in out.geometry)  # the tank way became its centroid
+    assert dict(zip(out["kind"], out["color"]))["hydrant"] == osm.WATER_POINT_COLORS["hydrant"]
+
+
+def test_fire_gets_distance_to_nearest_water_point():
+    layers = osm.parse(ELEMENTS + WATER_POINT_ELEMENTS)
+    fire = gpd.GeoDataFrame(geometry=[box(LON - 0.001, LAT - 0.001, LON + 0.001, LAT + 0.001)], crs="EPSG:4326")
+    assert 0.7 < osm.add_distances(fire, layers).iloc[0]["dist_water_point_km"] < 1.0  # hydrant ~0.9 km east
+
+
+def test_cache_name_changes_with_the_query():
+    assert osm.raw_file_for("query A") != osm.raw_file_for("query B")
+
+
+def test_manifest_legend_matches_water_point_colors():
+    [layer] = [l for l in make_manifest.LAYERS if l["id"] == "water_points"]
+    assert [item["color"] for item in layer["legend"]] == list(osm.WATER_POINT_COLORS.values())

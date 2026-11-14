@@ -64,7 +64,8 @@
         "weather",
         "spread",
         "exposure",
-        "osm"
+        "osm",
+        "groundwater"
       ]
     }
   ]
