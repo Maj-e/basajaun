@@ -187,6 +187,15 @@ async function main() {
     document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
   }));
   // Map panel: always visible on desktop, folded on small screens
+  // Demo disclaimer (W5-F2): once per visitor, never in presenter mode
+  const presenterMode = new URLSearchParams(location.search).get("demo") === "1";
+  let dismissed = false;
+  try { dismissed = localStorage.getItem("ulinautas-demo-banner") === "closed"; } catch { /* storage blocked: show it */ }
+  $("demo-banner").hidden = presenterMode || dismissed;
+  $("demo-banner-close").onclick = () => {
+    $("demo-banner").hidden = true;
+    try { localStorage.setItem("ulinautas-demo-banner", "closed"); } catch { /* fine, it just shows again next time */ }
+  };
   // Mobile: Layers / Alerts / Legend open as bottom sheets, one at a time (tap again to close)
   document.querySelectorAll("#mobile-bar [data-sheet]").forEach((b) => (b.onclick = () => {
     const name = b.dataset.sheet, open = !document.body.classList.contains(`sheet-${name}`);

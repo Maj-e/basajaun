@@ -38,9 +38,24 @@ Frozen in task **W0-B1** (B1 + F). Every script and the front end follow it; any
 
 ### `web/data/processed/alerts.json`
 ```json
-{ "updated_at": "2026-02-14T08:00:00Z", "alerts": [{ "fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" }] }
+{ "updated_at": "2026-02-14T08:00:00Z", "alerts": [
+  { "fire_id": 12, "type": "population", "risk": "critical", "since": "2026-02-14T07:42:00Z", "message": "≈23,400 people within 5 km",
+    "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" },
+  { "fire_id": 12, "type": "smoke", "risk": "high", "since": "2026-02-14T09:00:00Z", "message": "Smoke toward ≈12,000 people (wind 25 km/h from W)",
+    "smoke_people": 12000, "wind_kmh": 25.0, "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false,
+    "center": [-70.65, -33.46], "color": "#d7301f" }
+] }
 ```
-An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe.
+An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe. One fire can have several alerts, one per **`type`** (W3-B8), each with a short `message`:
+
+| `type` | When | Extra fields |
+|---|---|---|
+| `population` | people within 1 / 5 / 10 km of the fire (W3-B1) | — |
+| `wind` | strongest surface wind (10 m) during the fire's active hours ≥ 30 km/h (high) / 45 km/h (critical) | `wind_kmh` |
+| `smoke` | people in a ±30° sector downwind, as far as the wind carries the smoke in 2 h (max 25 km); calm (< 5 km/h) = none | `smoke_people`, `wind_kmh` |
+| `contamination` | fire or its 6 h spread over a medium / high vulnerability aquifer (ash leachate, Europe only) | `gw_body`, `gw_vulnerability` |
+
+Every type also carries the fire's `pop_1km` / `pop_5km` / `pop_10km`, `center` and `since`. Thresholds: `ALERT_THRESHOLDS` in `scripts/config.py`. Alerts need `population.tif`: an episode without population has no `alerts.json`.
 
 ### `web/data/processed/hourly_series.json`
 ```json
@@ -72,6 +87,9 @@ Build an episode with `make data EPISODE=<id>`; without `EPISODE`, the default o
 ### Surface wind in `weather.geojson`
 One point per grid cell (5×5 over the bbox) and per hour. Wind is the **surface wind at 10 m** above ground, one level only:
 `speed` (km/h) + `direction` (degrees, where the wind comes **from**), and the same wind as `u`, `v` (m/s, where it blows **to**; `u` = east, `v` = north). Particles and fire spread models read `u` / `v`.
+
+### Combined risk + evacuation (W3-B9)
+`scripts/risk_score.py` adds to every fire in `fires.geojson`: `risk_score` (0–100), `risk_level` (`low` / `medium` / `high` / `extreme`), `risk_factors` (`fire`, `people`, `smoke`, `strong wind`), `evacuate_people` (fire + 1 km + 6 h spread) and `warn_people` (the rest within 5 km). Four factors of 0–2 points; the level comes from the total, raised by the combinations: smoke + people ≥ medium, fire + strong wind ≥ high, all four = extreme. Layers `fire_risk.geojson` (fires coloured by level) and `evacuation.geojson` (zones). Thresholds: `RISK_SCORE` in `scripts/config.py`.
 
 ### Rules shared by every file
 - **Style computed by the backend:** each Feature carries its display properties (`color`, `radius`, `border`, `opacity`, `rotation`, `size`, `width` depending on the layer type). The front end never picks colors.

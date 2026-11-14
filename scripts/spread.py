@@ -18,10 +18,29 @@ FIRES_PATH = PROCESSED / "fires.geojson"
 WEATHER_PATH = PROCESSED / "weather.geojson"
 SPREAD_PATH = PROCESSED / "spread.geojson"
 
-UTM_CRS = "EPSG:32719"
 WGS84_CRS = "EPSG:4326"
-_TO_UTM = Transformer.from_crs(WGS84_CRS, UTM_CRS, always_xy=True).transform
-_TO_WGS84 = Transformer.from_crs(UTM_CRS, WGS84_CRS, always_xy=True).transform
+
+
+def utm_crs_for(lon: float, lat: float) -> str:
+    """UTM zone of a point (EPSG:326xx north, 327xx south): distances and areas in true metres there.
+
+    A fixed zone (the old EPSG:32719, Chile) distorts ellipses and areas for fires far from it,
+    e.g. Sierra Bermeja (zone 30N) came out about twice its real area.
+    """
+    zone = min(60, max(1, int((lon + 180.0) // 6.0) + 1))
+    return f"EPSG:{32600 + zone if lat >= 0 else 32700 + zone}"
+
+
+_TRANSFORMERS: dict[str, tuple] = {}
+
+
+def transformers_for(lon: float, lat: float) -> tuple:
+    """(to_utm, to_wgs84) transform functions for the point's UTM zone, cached per zone."""
+    crs = utm_crs_for(lon, lat)
+    if crs not in _TRANSFORMERS:
+        _TRANSFORMERS[crs] = (Transformer.from_crs(WGS84_CRS, crs, always_xy=True).transform,
+                              Transformer.from_crs(crs, WGS84_CRS, always_xy=True).transform)
+    return _TRANSFORMERS[crs]
 
 DEFAULT_HORIZON_HOURS = 6.0
 
@@ -127,7 +146,8 @@ def generate_spread(
         frp_max = float(props.get("frp_max", 20.0))
         slope_deg = float(props.get("slope_deg", 0.0))
 
-        geom_utm = shapely.transform(geom_wgs, lambda coords: np.column_stack(_TO_UTM(coords[:, 0], coords[:, 1])))
+        to_utm, to_wgs84 = transformers_for(centroid_wgs.x, centroid_wgs.y)
+        geom_utm = shapely.transform(geom_wgs, lambda coords: np.column_stack(to_utm(coords[:, 0], coords[:, 1])))
         proj_utm, spread_km, wind_to_deg = build_spread_ellipse_utm(
             geom_utm,
             wind_speed_kmh=wind_speed,
@@ -136,7 +156,7 @@ def generate_spread(
             slope_deg=slope_deg,
             horizon_hours=horizon_hours,
         )
-        proj_wgs = shapely.transform(proj_utm, lambda coords: np.column_stack(_TO_WGS84(coords[:, 0], coords[:, 1])))
+        proj_wgs = shapely.transform(proj_utm, lambda coords: np.column_stack(to_wgs84(coords[:, 0], coords[:, 1])))
         area_km2 = round(proj_utm.area / 1_000_000.0, 2)
 
         spread_features.append({

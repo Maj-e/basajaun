@@ -15,6 +15,8 @@ try:
 except ImportError:
     PROCESSED = Path("web/data/processed")
 
+from alert_types import typed_alerts
+
 RISK_LEVELS = ["low", "medium", "high", "critical"]
 
 RISK_RANK = {
@@ -297,8 +299,10 @@ def compute_alerts(
 
         alerts.append({
             "fire_id": fire_id,
+            "type": "population",
             "risk": risk,
             "since": since,
+            "message": f"≈{pop_5km:,} people within 5 km" + (" · wind toward them" if wind_toward_pop else ""),
             "pop_1km": pop_1km,
             "pop_5km": pop_5km,
             "pop_10km": pop_10km,
@@ -340,10 +344,20 @@ def run_exposure(data_dir: Path = PROCESSED) -> Path | None:
     )
 
     result = compute_alerts(fires_data, pop_path, meteo_data)
-    alerts_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+
+    # Typed alerts (W3-B8): wind, smoke, water contamination, built on the population alerts
+    def optional(name):
+        path = data_dir / name
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    extra = typed_alerts(fires_data, result["alerts"], pop_path, meteo_data,
+                         optional("spread.geojson"), optional("groundwater.geojson"))
+    result["alerts"] = sorted(result["alerts"] + extra,
+                              key=lambda a: (RISK_RANK[a["risk"]], -a["pop_1km"], -a["pop_5km"], a["type"]))
+    alerts_path.write_text(json.dumps(result, separators=(",", ":"), ensure_ascii=False), encoding="utf-8")
 
     counts = {lvl: sum(1 for a in result["alerts"] if a["risk"] == lvl) for lvl in RISK_LEVELS}
-    print(f"Alerts generated ({len(result['alerts'])} total) -> {alerts_path} | breakdown: {counts}")
+    types = {t: sum(1 for a in result["alerts"] if a["type"] == t) for t in ("population", "wind", "smoke", "contamination")}
+    print(f"Alerts generated ({len(result['alerts'])} total) -> {alerts_path} | risk {counts} | type {types}")
     return alerts_path
 
 

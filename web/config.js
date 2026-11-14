@@ -26,6 +26,15 @@ export const CONFIG = {
   // The backend "weather" layer is drawn as rain (blue, sized by mm/h, only where it rains). Exception to
   // "the style comes from the data": weather.geojson is shared with the wind and its colors are wind speed.
   rainLayer: { id: "weather", name: "Rain" },
+  // Legend additions per layer (front-side styles, and what a size or a shape means); appended to the manifest legend
+  legendExtras: {
+    hotspots: [{ note: "Dot size grows with fire intensity" }],
+    fires: [{ color: "#de2d26", text: "Fire outline (grouped hotspots)" }],
+    spread: [{ color: "#fb6a4a", text: "Possible extent in 6 h" }, { note: "Estimate from wind + slope, not a forecast" }],
+    wind: [{ note: "Arrow points where the wind blows; bigger = faster" }],
+    weather: [{ color: "#9ecae1", text: "< 2 mm/h" }, { color: "#4292c6", text: "2–8 mm/h" }, { color: "#08519c", text: "> 8 mm/h" },
+              { note: "Bigger, darker patch = heavier rain (current hour)" }],
+  },
   // Stacking order, bottom to top (unknown layers go just under the hotspots)
   layerOrder: ["population", "groundwater", "regions", "water", "weather", "spread", "roads", "fires",
                "fire_stations", "water_points", "hotspots", "wind"],

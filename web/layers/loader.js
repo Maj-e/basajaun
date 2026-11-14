@@ -305,7 +305,9 @@ export function setHour(hour) {
 export function setLayerVisible(id, visible) {
   const entry = layers.get(id);
   if (!map || !entry) return;
+  entry.visible = visible;
   entry.mapLayerIds.forEach((l) => map.setLayoutProperty(l, "visibility", visible ? "visible" : "none"));
+  if (legendEl) renderLegend(legendEl);
 }
 
 // Keep one fire's hotspots. `null` restores every hotspot.
@@ -350,13 +352,23 @@ function enablePopup(layer, mapLayerIds) {
 }
 
 // Legend built from the manifest, in the #legend aside.
+// Legend of every visible layer (manifest legend + CONFIG.legendExtras); redrawn when a box is ticked.
+let legendEl = null;
+const SHAPE_BY_TYPE = { circle: "dot", fill: "area", image: "area", line: "line", arrows: "arrow", rain: "dot" };
+const ARROW = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1 10 6H7.4v5H4.6V6H2z" fill="currentColor"/></svg>`;
 export function renderLegend(el) {
-  const withLegend = [...layers.values()].map((l) => l.layer).filter((l) => l.legend?.length && isDefaultVisible(l));
-  el.hidden = !withLegend.length;
-  el.innerHTML = withLegend.map((l) =>
-    `<h2>${l.name}</h2>` +
-    l.legend.map((item) => `<div class="legend-item"><i class="${item.shape === "ring" ? "ring" : "dot"}" style="--c:${item.color}"></i>${item.text}</div>`).join("")
-  ).join("");
+  legendEl = el;
+  const shown = [...layers.values()].filter((e) => !e.lazy && (e.visible ?? isDefaultVisible(e.layer)));
+  const blocks = shown.map(({ layer }) => {
+    const items = [...(layer.legend ?? []), ...(CONFIG.legendExtras[layer.id] ?? [])];
+    if (!items.length) return "";
+    const shape = SHAPE_BY_TYPE[layer.type] ?? "dot";
+    return `<h2>${layer.name}</h2>` + items.map((item) => item.note
+      ? `<div class="legend-note">${item.note}</div>`
+      : `<div class="legend-item"><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</div>`).join("");
+  }).filter(Boolean);
+  el.hidden = !blocks.length;
+  el.innerHTML = blocks.join("");
 }
 
 // Checkbox per loaded layer, in the layers panel.

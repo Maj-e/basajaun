@@ -81,6 +81,33 @@ IS_LIVE = bool(EPISODE.get("live"))          # live episode: the period moves wi
 START_DATE, END_DATE = live_dates() if IS_LIVE else (EPISODE["start"], EPISODE["end"])
 SKIP = set(EPISODE.get("skip", []))           # pipeline steps this episode doesn't run
 
+# Typed alerts (W3-B8): simple, documented thresholds read by scripts/alert_types.py
+ALERT_THRESHOLDS = {
+    "wind_high_kmh": 30.0,        # strong surface wind on an active fire -> high
+    "wind_critical_kmh": 45.0,    # -> critical
+    "smoke_range_km": 25.0,       # how far downwind the smoke sector can reach at most
+    "smoke_transport_hours": 2.0, # sector length = wind speed × these hours (capped by smoke_range_km)
+    "smoke_min_wind_kmh": 5.0,    # calmer than this: no downwind direction (the population alert covers it)
+    "smoke_half_angle_deg": 30.0, # sector = downwind direction ± this angle
+    "smoke_min_people": 100,      # below this, no smoke alert
+    "smoke_medium_people": 1_000,
+    "smoke_high_people": 10_000,
+    "smoke_critical_people": 50_000,
+}
+
+# Combined risk score + evacuation (W3-B9): read by scripts/risk_score.py
+RISK_SCORE = {
+    "fire_intense_frp_mw": 100.0,    # fire factor = 2 when frp_max reaches this ...
+    "fire_intense_hotspots": 20,     # ... or the fire has this many hotspots
+    "people_some": 1_000,            # people within 5 km -> people factor 1
+    "people_many": 10_000,           # -> people factor 2
+    "smoke_many": 10_000,            # smoke alert reaching this many people -> smoke factor 2 (any smoke alert = 1)
+    "wind_strong_kmh": 20.0,         # strongest surface wind during the fire -> wind factor 1
+    "wind_very_strong_kmh": 30.0,    # -> wind factor 2
+    "evacuate_buffer_km": 1.0,       # evacuation zone = fire + this buffer + 6 h spread
+    "warn_radius_km": 5.0,           # warning zone = within this radius, outside the evacuation zone
+}
+
 _paths = episode_paths(EPISODE)
 RAW = _paths["raw"]
 PROCESSED = _paths["processed"]
