@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T18:04:32Z",
+  "updated_at": "2026-11-14T18:22:30Z",
   "layers": [
     {
       "id": "hotspots",
@@ -29,7 +29,72 @@
           "text": "Low confidence"
         }
       ],
-      "updated_at": "2026-11-14T17:57:52Z"
+      "updated_at": "2026-11-14T18:22:28Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "processed/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T18:22:28Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "processed/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T18:22:29Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "processed/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T18:22:29Z"
     }
   ]
 }
