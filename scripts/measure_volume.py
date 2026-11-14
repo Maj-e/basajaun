@@ -1,31 +1,24 @@
 import json
-import os
-from datetime import date, timedelta
+import sys
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv
 
-load_dotenv()
-MAP_KEY = os.environ["FIRMS_MAP_KEY"]
+from config import BBOX, END_DATE, FIRMS_MAP_KEY, RAW, START_DATE
+from download_firms import BASE_SOURCES, api_source
 
-BBOX = (-72.0, -38.0, -70.0, -33.0)  # west, south, east, north — from B2
-START_DATE = date.fromisoformat("2026-02-01")
-END_DATE = date.fromisoformat("2026-02-14")  # inclusive
-
-# Codes confirmed with data_availability. Archive example:
-SOURCES = [
-    "MODIS_SP",
-    "VIIRS_SNPP_SP",
-    "VIIRS_NOAA20_SP",
-    "VIIRS_NOAA21_SP",
-]
-
-RAW = Path("data/raw")
-RAW.mkdir(parents=True, exist_ok=True)
+PERIOD_START = date.fromisoformat(START_DATE)
+PERIOD_END = date.fromisoformat(END_DATE)
 MAX_DAYS = 5  # current Area API limit; raise to 10 only if a test returns CSV
 BYTE_THRESHOLD = 10 * 1024 * 1024  # ~10 MB from the TODO
+
+
+def sources_for_period(start: date) -> list[str]:
+    """Same NRT/SP choice as B2: recent data uses _NRT, older data uses _SP."""
+    start_dt = datetime(start.year, start.month, start.day)
+    return [api_source(base, start_dt) for base in BASE_SOURCES]
 
 
 def date_windows(start: date, end: date, max_days: int):
@@ -41,7 +34,7 @@ def download(source: str, start: date, day_count: int) -> Path:
     area = f"{west},{south},{east},{north}"
     url = (
         "https://firms.modaps.eosdis.nasa.gov/api/area/csv/"
-        f"{MAP_KEY}/{source}/{area}/{day_count}/{start.isoformat()}"
+        f"{FIRMS_MAP_KEY}/{source}/{area}/{day_count}/{start.isoformat()}"
     )
     destination = RAW / f"{source}_{start.isoformat()}_{day_count}d.csv"
     print(f"Requesting: {url}")
@@ -69,14 +62,14 @@ def row_to_feature(row: pd.Series, source: str) -> dict:
         },
         "properties": {
             "sensor": sensor,
-            "satelite": str(row["satellite"]),
-            "fecha": str(row["acq_date"]),
+            "satellite": str(row["satellite"]),
+            "date": str(row["acq_date"]),
             # Aviso para W1-B3 (Front): El campo FRP puede venir como nulo (None/null), controlarlo al pintar el mapa.
             "frp": round(float(row["frp"]), 1) if pd.notna(row["frp"]) else None,
-            "confianza": str(row["confidence"]),
+            "confidence": str(row["confidence"]),
             "color": "#d7301f",
-            "radio": 6.0,
-            "borde": "#222222",
+            "radius": 6.0,
+            "stroke": "#222222",
         },
     }
 
@@ -92,11 +85,18 @@ def write_geojson(df: pd.DataFrame, source_per_row: list[str], destination: Path
 
 
 def main() -> None:
+    if not FIRMS_MAP_KEY:
+        print("Error: FIRMS_MAP_KEY is not set in .env or the environment.", file=sys.stderr)
+        raise SystemExit(1)
+
+    RAW.mkdir(parents=True, exist_ok=True)
+    sources = sources_for_period(PERIOD_START)
+
     chunks = []
     counts = {}
-    for source in SOURCES:
+    for source in sources:
         frames = []
-        for start, day_count in date_windows(START_DATE, END_DATE, MAX_DAYS):
+        for start, day_count in date_windows(PERIOD_START, PERIOD_END, MAX_DAYS):
             path = download(source, start, day_count)
             frames.append(pd.read_csv(path))
         df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()

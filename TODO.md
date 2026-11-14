@@ -92,7 +92,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the API answers and the area and dates are set
   - Depends on: —
 
-- [ ] **W0-B3** · FIRMS volume measurement · **B3**
+- [x] **W0-B3** · FIRMS volume measurement · **B3**
   - Quick first download (VIIRS + MODIS, demo area and period), count the hotspots and measure the size of a raw GeoJSON
   - Write the result in `docs/volume.md` and decide with B1: **if the GeoJSON exceeds ~10 MB**, export one file per day; otherwise a single file
   - Adjust the number of sample hotspots in W0-B1 if the real volume is very different
