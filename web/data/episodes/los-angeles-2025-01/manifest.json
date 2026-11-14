@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:21:11Z",
+  "updated_at": "2026-11-14T22:26:52Z",
   "layers": [
     {
       "id": "hotspots",
@@ -65,7 +65,7 @@
       "file": "episodes/los-angeles-2025-01/spread.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "fire_id",
         "horizon_hours",
@@ -83,7 +83,7 @@
       "file": "episodes/los-angeles-2025-01/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": false,
+      "active": true,
       "popup": [
         "timestamp_utc",
         "speed",

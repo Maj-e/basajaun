@@ -48,7 +48,7 @@ LAYERS: list[dict] = [
         "file": "processed/regions.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["country", "region"],
     },
     {
@@ -69,7 +69,7 @@ LAYERS: list[dict] = [
         "file": "processed/spread.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "slope_deg",
                   "spread_km", "area_km2"],
     },
@@ -80,7 +80,7 @@ LAYERS: list[dict] = [
         "type": "image",
         "corners": BBOX_CORNERS,
         "temporal": False,
-        "active": False,
+        "active": True,
         "legend": [
             {"color": "#fee5d9", "text": "< 10 people/km²"},
             {"color": "#a50f15", "text": "> 1000 people/km²"},
@@ -92,7 +92,7 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
-        "active": False,
+        "active": True,
         "popup": ["timestamp_utc", "speed", "direction"],
         "legend": [
             {"color": "#91cf60", "text": "< 15 km/h"},
@@ -127,7 +127,7 @@ LAYERS: list[dict] = [
         "file": "processed/water.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "kind"],
         "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs, rivers"}],
     },
@@ -137,7 +137,7 @@ LAYERS: list[dict] = [
         "file": "processed/roads.geojson",
         "type": "line",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "highway"],
         # Colors match osm.ROAD_STYLE
         "legend": [
@@ -154,7 +154,7 @@ LAYERS: list[dict] = [
         "file": "processed/fire_stations.geojson",
         "type": "circle",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name"],
         "legend": [{"color": "#2b8cbe", "text": "Fire station"}],
     },
@@ -164,7 +164,7 @@ LAYERS: list[dict] = [
         "file": "processed/water_points.geojson",
         "type": "circle",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "kind"],
         # Colors match osm.WATER_POINT_COLORS
         "legend": [
@@ -182,7 +182,7 @@ LAYERS: list[dict] = [
         "file": "processed/groundwater.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "vulnerability", "chemical_status", "at_risk_chemical", "geology"],
         # Colors match groundwater.STYLE
         "legend": [

@@ -26,7 +26,7 @@ Data contract (file formats, layer manifest, MODIS / VIIRS field mapping): [`doc
 | **0 · Base** | **W0-B1** Frozen contract + sample data | **W0-B2** FIRMS key + area + `config.py` | **W0-B3** FIRMS volume measurement | **W0-B4** Repo, environment, Makefile, CI | **W0-F1** Web skeleton + deployment |
 | **1 · MVP** | **W1-B1** MODIS / VIIRS normalization + tests | **W1-B2** Full FIRMS download | **W1-B3** Hotspot export + daily summary | **W1-B4** Contract validator + manifest | **W1-F0** Playback screen mockup<br>**W1-F1** Layer loader + hotspot layer<br>**W1-F2** Filters + "no data" status |
 | **2 · Calendar + playback** | **W2-B1** MODIS / VIIRS deduplication | **W2-B2** Fires (grouping) | **W2-B3** Time series (counter, chart) | **W2-B4** End-to-end check on the URL | **W2-F1** Calendar<br>**W2-F2** Timeline + animation<br>**W2-F3** Figures follow the visible area |
-| **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts | **W3-B2** Wind + weather<br>**W3-B5** Dedup + fires in `make data` | **W3-B3** Population (WorldPop)<br>**W3-B6** Regions per hotspot | **W3-B4** OSM: water, roads, fire stations + accessibility | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel<br>**W3-F3** Isolate a fire<br>**W3-F4** Region selector |
+| **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts<br>**W3-B8** Typed alerts: wind, smoke, water contamination | **W3-B2** Wind + weather<br>**W3-B5** Dedup + fires in `make data` | **W3-B3** Population (WorldPop)<br>**W3-B6** Regions per hotspot | **W3-B4** OSM: water, roads, fire stations + accessibility | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel<br>**W3-F3** Isolate a fire<br>**W3-F4** Region selector<br>**W3-F5** Alert types in the panel |
 | **4 · Live + episodes** | **W4-B1** Alerts on recent data | — | — | **W4-B4** Automatic refresh with validation<br>**W4-B5** Pipeline per episode | **W4-F1** "Live" button<br>**W4-F2** Episode selector + world basemap |
 | **5 · Later** | **W5-B1** Notifications | **W5-B2** Spread projection | **W5-B3** Slope and land cover | **W5-B4** FastAPI API + hosting | **W5-F1** Mobile, i18n, animation export |
 
@@ -267,7 +267,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** both layers pass the validator, fires carry the new fields, the front-end doc lists them
   - Depends on: W3-B4
 
-- [ ] **W3-F1** · Layer panel + temporal layers + relief · **F**
+- [ ] **W3-F1** · Layer panel + temporal layers + relief · **F** — *panel and wind arrows (`arrows`, flowing) done; relief still to do*
   - Checkbox panel generated from the manifest (one checkbox per `active` layer)
   - New `arrows` type in the loader: `symbol` layer with `icon-rotate: ["get","rotation"]`, `icon-size: ["get","size"]`
   - Relief: `raster-dem` source (AWS Terrarium tiles) + `hillshade` layer
@@ -295,6 +295,20 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - A "Region" list in the header (built from the data): picking one zooms on it and scopes the figures to its hotspots, like W2-F3
   - **Done when:** picking a region updates the map and every figure
   - Depends on: W3-B6, W2-F3
+
+- [ ] **W3-B8** · Typed alerts: wind, smoke, water contamination · **B1**
+  - Add `type` (`population` / `wind` / `smoke` / `contamination`) and a short `message` to every alert in `alerts.json` (contract update)
+  - **Wind**: wind ≥ 30–45 km/h on an active fire → "strong wind feeding the fire" (weather + fires, every episode)
+  - **Smoke**: populated area **downwind** of a fire (±30° sector along the wind) → "smoke toward ≈N people" (wind + population)
+  - **Water contamination**: fire or 6 h spread over a **vulnerable aquifer** → "ash leachate risk" (`groundwater` + fires / spread; Spain / Europe only)
+  - Simple, documented thresholds in `config.py`
+  - **Done when:** the validator accepts the typed alerts and each episode has the types its data allows
+  - Depends on: W3-B1, W3-B2, W3-B7, W5-B2
+
+- [ ] **W3-F5** · Alert types in the panel · **F**
+  - One icon + label per type in the alert list, filter chips (Population · Wind · Smoke · Water), circle on the map colored by type
+  - **Done when:** each type shows and filters on the published URL
+  - Depends on: W3-B8, W3-F2
 
 - [ ] **W3-F2** · Alert panel · **F**
   - List from `alerts.json`: color by risk, population within 5 km, time; click → `map.flyTo({ center, zoom: 11 })`
