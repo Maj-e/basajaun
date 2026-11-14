@@ -16,8 +16,10 @@ function startArrowFlow() {
   if (flowStarted) return;
   flowStarted = true;
   const cache = new Map(); // layer id → { hour, features of that hour }
+  let lastFlow = 0;
   const tick = (now) => {
-    if (currentHour !== null) {
+    if (currentHour !== null && now - lastFlow >= 40) {
+      lastFlow = now;
       const phase = reduceMotion ? 0.5 : (now / 1400) % 1;
       for (const entry of layers.values()) {
         const { layer, data } = entry;
@@ -199,25 +201,62 @@ function addEntry(entry) {
   if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); return false; }
   map.addSource(layer.id, layer.type === "image"
     ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
-    : { type: "geojson", data });
+    // Current-hour layers (weather / rain) only hold the features of the hour shown
+    : { type: "geojson", data: isNowOnly(entry) ? hourSubset(entry, currentHour) : data });
   entry.mapLayerIds = build(layer);
+  placeInOrder(entry);
   if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
   return true;
+}
+
+// Weather-like layers: one value per point and per hour, shown for the current hour only (no trail)
+const isNowOnly = (entry) => entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id) && entry.layer.type !== "arrows";
+function hourSubset(entry, hour) {
+  const h = hour ?? -Infinity;
+  return { type: "FeatureCollection", features: (entry.data?.features ?? []).filter((f) => f.properties.t <= h && f.properties.t > h - 1) };
+}
+
+// Put a layer's map layers at their place in CONFIG.layerOrder (below the first loaded layer ranked higher)
+function placeInOrder(entry) {
+  const order = CONFIG.layerOrder;
+  const rank = (id) => { const i = order.indexOf(id); return i === -1 ? order.indexOf("hotspots") - 0.5 : i; };
+  const mine = rank(entry.layer.id);
+  const above = [...layers.values()]
+    .filter((e) => e !== entry && e.mapLayerIds.length && rank(e.layer.id) > mine)
+    .sort((a, b) => rank(a.layer.id) - rank(b.layer.id))[0];
+  if (!above) return;
+  const beforeId = map.getStyle().layers.find((l) => above.mapLayerIds.includes(l.id))?.id;
+  if (beforeId) entry.mapLayerIds.forEach((id) => map.moveLayer(id, beforeId));
 }
 
 // Tick a box: download and build the layer the first time, then show or hide it
 async function toggleLayer(id, visible) {
   const entry = layers.get(id);
   if (!entry || !map) return;
+  const label = document.querySelector(`[data-layer="${id}"]`)?.parentElement;
   if (visible && entry.lazy) {
-    const data = await fetchLayer(entry.layer);
-    if (data === undefined) return;
+    label?.classList.add("loading");
+    // Usually already downloaded in the background (prefetchLayers), so only the drawing is left
+    const data = await (entry.prefetch ?? fetchLayer(entry.layer));
+    if (data === undefined) { label?.classList.remove("loading"); return; }
     entry.data = data;
     entry.lazy = false;
-    if (!addEntry(entry)) return;
+    if (!addEntry(entry)) { label?.classList.remove("loading"); return; }
     if (currentHour !== null) setHour(currentHour);
+    map.once("idle", () => label?.classList.remove("loading"));
   }
   if (!entry.lazy) setLayerVisible(id, visible);
+}
+
+// Once the page is shown and idle, download the hidden layers quietly so ticking a box is near-instant
+export function prefetchLayers() {
+  const start = () => {
+    for (const entry of layers.values()) {
+      if (entry.lazy && !entry.prefetch && entry.layer.type !== "image") entry.prefetch = fetchLayer(entry.layer);
+    }
+  };
+  if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 3000 });
+  else setTimeout(start, 1500);
 }
 
 export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
@@ -240,11 +279,14 @@ export function setHour(hour) {
     const { mapLayerIds } = entry;
     if (!followsTime(entry)) continue;
     if (entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id)) {
-      // Weather and wind: the value of the current hour, no trail
-      for (const id of mapLayerIds) {
-        const type = map.getLayer(id)?.type;
-        if (type === "symbol") continue; // arrows: moved by the flow loop
-        if (type === "circle") { map.setPaintProperty(id, "circle-opacity", nowOnlyExpr); map.setPaintProperty(id, "circle-stroke-opacity", nowOnlyExpr); }
+      // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
+      // Wind arrows are moved by the flow loop.
+      if (isNowOnly(entry) && mapLayerIds.length) {
+        const h = Math.floor(hour);
+        if (entry.shownHour !== h) {
+          entry.shownHour = h;
+          map.getSource(entry.layer.id)?.setData(hourSubset(entry, hour));
+        }
       }
       continue;
     }

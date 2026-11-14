@@ -22,6 +22,9 @@ export const CONFIG = {
   // The backend "weather" layer is drawn as rain (blue, sized by mm/h, only where it rains). Exception to
   // "the style comes from the data": weather.geojson is shared with the wind and its colors are wind speed.
   rainLayer: { id: "weather", name: "Rain" },
+  // Stacking order, bottom to top (unknown layers go just under the hotspots)
+  layerOrder: ["population", "groundwater", "regions", "water", "weather", "spread", "roads", "fires",
+               "fire_stations", "water_points", "hotspots", "wind"],
   // Temporal layers that keep a trail; every other temporal layer (weather, wind) shows the current hour only
   trailLayers: ["hotspots"],
 };
