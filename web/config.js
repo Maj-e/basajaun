@@ -13,6 +13,10 @@ export const CONFIG = {
   // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
   // (design council: one place to look during playback)
   defaultLayers: ["hotspots", "fires"],
+  // Point layers that also get a heatmap when zoomed out (readability of dense episodes)
+  heatmapLayers: ["hotspots"],
+  // Episodes offered by the Demo button, in pitch order (missing ones are skipped)
+  demoEpisodes: ["sierra-bermeja-2021-09", "spain-2025-08", "chile-2026-02"],
   // Fires stay visible this many hours after their detection, fading out
   trailHours: 24,
 };

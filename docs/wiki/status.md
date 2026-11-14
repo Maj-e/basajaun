@@ -56,4 +56,7 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 
 | 2026-11-14 | Demo refocused on Spain: default episode **Sierra Bermeja (Málaga), Sep 2021**; front reads `episodes.json`, episode selector, world land outline | real episode with every layer computed, alerts included |
 
+| 2026-11-14 | Demo episodes: Málaga (story + alerts), Spain · Aug 2025 (national scale, 5–7 days, medium/high confidence, no OSM; Natural Earth major water), Chile (other continent); Madrid dropped | volume and readability at national scale |
+| 2026-11-14 | Persistent Map panel (layers, satellite, alerts on map); alert circles only when ticked, list always open; heatmap when zoomed out; Demo button | the screen was saturated with population labels and overlapping circles |
+
 Add a row whenever the team makes a decision that someone could later ask "why?" about.
