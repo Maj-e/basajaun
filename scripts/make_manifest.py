@@ -47,6 +47,15 @@ LAYERS: list[dict] = [
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2"],
     },
     {
+        "id": "spread",
+        "name": "6h spread estimate",
+        "file": "processed/spread.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "spread_km", "area_km2"],
+    },
+    {
         "id": "population",
         "name": "Population density",
         "file": "processed/population.png",

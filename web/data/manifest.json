@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T18:37:54Z",
+  "updated_at": "2026-11-14T19:10:22Z",
   "layers": [
     {
       "id": "hotspots",
@@ -29,7 +29,7 @@
           "text": "Low confidence"
         }
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T19:10:21Z"
     },
     {
       "id": "fires",
@@ -46,7 +46,24 @@
         "frp_max",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T19:10:21Z"
+    },
+    {
+      "id": "spread",
+      "name": "6h spread estimate",
+      "file": "processed/spread.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "horizon_hours",
+        "wind_speed_kmh",
+        "wind_to_deg",
+        "spread_km",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T19:10:22Z"
     },
     {
       "id": "wind",
@@ -78,7 +95,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T19:10:22Z"
     },
     {
       "id": "weather",
@@ -94,7 +111,7 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T19:10:22Z"
     }
   ]
 }
