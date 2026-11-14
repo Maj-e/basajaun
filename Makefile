@@ -8,7 +8,7 @@ PORT ?= 8000
 # are skipped with a notice, so `make data` works from Wave 0 on.
 PIPELINE := \
 	download_firms \
-	export_focos \
+	export_hotspots \
 	dedup \
 	fires \
 	series \

@@ -1,0 +1,34 @@
+{
+  "updated_at": "2026-11-14T17:18:49Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Thermal Hotspots",
+      "file": "sample/hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "sensor",
+        "satellite",
+        "timestamp_utc",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "text": "High confidence"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium confidence"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low confidence"
+        }
+      ]
+    }
+  ]
+}

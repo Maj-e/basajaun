@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ulinautas Playback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Martian+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+/* Layout: a night thermal pass over central Chile; the map is the whole screen, the timeline is a strip-chart recorder along the bottom edge. */
+:root {
+  color-scheme: dark;
+  /* Night pass: blue-biased neutrals, so the amber of fire is the only warm thing on screen */
+  --ocean: #070c16;
+  --land: #131c2b;
+  --land-edge: #26344b;
+  --grid: #1a2538;
+  --ink: #e8edf5;
+  --ink-2: #a7b3c6;
+  --ink-3: #7484a0;
+  --band: rgba(9, 14, 25, 0.86);
+  /* Fire intensity (FRP), one hue, dark to light = weak to strong (validated, dataviz ordinal check) */
+  --frp-1: #9a3d12; /* < 10 MW */
+  --frp-2: #c95b17; /* 10–30 */
+  --frp-3: #ec8128; /* 30–100 */
+  --frp-4: #f9a957; /* 100–300 */
+  --frp-5: #ffd9a8; /* ≥ 300 */
+  --bar-idle: #33251f;
+  --focus: #ffd9a8;
+  --font-ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-data: "Martian Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter-l: max(20px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--ocean);
+  color: var(--ink);
+  font: 15px/1.4 var(--font-ui);
+  overflow: hidden;
+}
+#map { position: fixed; inset: 0; }
+.maplibregl-ctrl-attrib { background: rgba(7, 12, 22, .7) !important; color: var(--ink-3); font: 11px var(--font-ui); }
+.maplibregl-ctrl-attrib a { color: var(--ink-2); }
+
+/* ---------- Header: what, where, when ---------- */
+.head {
+  position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+  padding: 18px var(--gutter-r) 40px var(--gutter-l);
+  background: linear-gradient(to bottom, rgba(7, 12, 22, .92), rgba(7, 12, 22, 0));
+  pointer-events: none;
+}
+.title { min-width: 0; }
+.wordmark {
+  margin: 0; font: 700 26px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.wordmark svg { flex: none; }
+.caption { margin: 8px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.caption strong { color: var(--ink); font-weight: 600; }
+
+.readouts { display: flex; gap: 28px; text-align: right; }
+.readout dt { color: var(--ink-3); font: 500 12px/1.3 var(--font-ui); letter-spacing: .06em; text-transform: uppercase; }
+.readout dt span { text-transform: none; letter-spacing: 0; }
+.readout dd { margin: 4px 0 0; font: 500 34px/1 var(--font-data); font-variant-numeric: tabular-nums; }
+.readout dd small { font: 500 15px var(--font-ui); color: var(--ink-2); margin-left: 4px; }
+.readout .sub { margin-top: 5px; color: var(--ink-3); font: 12px var(--font-ui); }
+
+/* ---------- Story callouts ---------- */
+.callout {
+  font: 14px/1.35 var(--font-ui); color: var(--ink);
+  background: var(--band); border: 1px solid #3a2a1c;
+  padding: 10px 12px; border-radius: 6px; max-width: 250px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+.callout b { display: block; font: 600 12px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--frp-4); margin-bottom: 2px; }
+.callout .big { font: 500 22px/1.1 var(--font-data); color: var(--frp-5); }
+.spark-ring {
+  width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--frp-5);
+  animation: ring 1.6s cubic-bezier(.16, 1, .3, 1) infinite;
+}
+@keyframes ring { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+.peak-banner {
+  position: fixed; left: 50%; top: 104px; transform: translateX(-50%);
+  text-align: center; pointer-events: none;
+}
+.peak-banner .callout { max-width: none; padding: 10px 18px; }
+
+/* ---------- City labels ---------- */
+.city { font: 500 12px var(--font-ui); color: var(--ink-3); letter-spacing: .04em; pointer-events: none; white-space: nowrap; }
+.city::before { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--ink-3); margin-right: 6px; vertical-align: middle; }
+.grid-label { font: 11px var(--font-data); color: #3b4b66; pointer-events: none; }
+
+/* ---------- Legend, on the map ---------- */
+.legend {
+  position: fixed; right: var(--gutter-r); bottom: 196px;
+  background: var(--band); border: 1px solid var(--grid); border-radius: 6px; padding: 10px 12px;
+  font-size: 12px; color: var(--ink-2);
+}
+.legend h2 { margin: 0 0 6px; font: 600 12px var(--font-ui); color: var(--ink); }
+.ramp { display: grid; grid-template-columns: repeat(5, 34px); gap: 2px; }
+.ramp i { height: 10px; border-radius: 2px; }
+.ramp-labels { display: grid; grid-template-columns: repeat(5, 34px); gap: 2px; margin-top: 3px; font: 10px var(--font-data); color: var(--ink-3); }
+.sensors { display: flex; gap: 14px; margin-top: 8px; }
+.sensors span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--frp-3); }
+.ring { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--frp-3); }
+
+/* ---------- Collapsed side tools (open on pause) ---------- */
+.tools {
+  position: fixed; left: var(--gutter-l); top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tools button {
+  font: 600 12px var(--font-ui); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-2); background: var(--band); border: 1px solid var(--grid); border-radius: 6px;
+  padding: 8px 10px; cursor: pointer; text-align: left;
+}
+.tools button:hover { color: var(--ink); border-color: var(--land-edge); }
+
+/* ---------- Timeline: the strip-chart recorder ---------- */
+.timeline {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  padding: 14px var(--gutter-r) calc(14px + env(safe-area-inset-bottom, 0px)) var(--gutter-l);
+  background: var(--band); border-top: 1px solid var(--grid);
+  display: grid; grid-template-columns: auto 1fr; gap: 10px 24px; align-items: end;
+}
+.clock { min-width: 220px; }
+.clock .date { font: 700 46px/0.95 var(--font-display); letter-spacing: .02em; text-transform: uppercase; }
+.clock .time { font: 500 15px var(--font-data); color: var(--ink-2); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.controls { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 34px; min-width: 34px; padding: 0 10px; border-radius: 6px;
+  font: 600 13px var(--font-ui); color: var(--ink); background: #172236; border: 1px solid var(--land-edge); cursor: pointer;
+}
+.btn:hover { background: #1d2b44; }
+.btn.play { background: var(--frp-3); border-color: var(--frp-3); color: #1a0c03; min-width: 44px; }
+.btn.play:hover { background: var(--frp-4); }
+.btn[aria-pressed="true"] { border-color: var(--frp-4); color: var(--frp-5); }
+.speed { display: inline-flex; gap: 2px; }
+.speed .btn { min-width: 38px; padding: 0 6px; font: 500 12px var(--font-data); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.strip { position: relative; min-width: 0; }
+.strip svg { display: block; width: 100%; height: 96px; overflow: visible; cursor: pointer; touch-action: none; }
+.strip .days { display: grid; grid-template-columns: repeat(14, 1fr); margin-top: 4px; font: 11px var(--font-data); color: var(--ink-3); }
+.strip .days span { text-align: center; }
+.keys { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--ink-3); font-size: 12px; }
+.keys kbd { font: 500 11px var(--font-data); color: var(--ink-2); border: 1px solid var(--land-edge); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; margin-right: 4px; background: #111a29; }
+.tip {
+  position: absolute; pointer-events: none; transform: translate(-50%, -100%);
+  background: #0f1828; border: 1px solid var(--land-edge); border-radius: 4px; padding: 4px 8px;
+  font: 12px var(--font-ui); color: var(--ink); white-space: nowrap;
+}
+
+/* ---------- Mockup notes (design review only, not part of the product) ---------- */
+.notes-toggle {
+  position: fixed; left: var(--gutter-l); bottom: 214px;
+  font: 600 11px var(--font-ui); letter-spacing: .06em; text-transform: uppercase;
+  color: #9fb0ff; background: rgba(30, 40, 90, .55); border: 1px dashed #5a6bd0; border-radius: 6px; padding: 6px 9px; cursor: pointer;
+}
+.notes {
+  position: fixed; right: var(--gutter-r); top: 120px; width: min(360px, calc(100vw - 40px));
+  max-height: calc(100vh - 440px); overflow: auto;
+  background: rgba(14, 20, 48, .94); border: 1px dashed #5a6bd0; border-radius: 8px; padding: 14px 16px;
+  font-size: 13px; color: #cdd5ff;
+}
+.notes h2 { margin: 0 0 8px; font: 600 13px var(--font-ui); color: #fff; }
+.notes ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; }
+.notes code { font: 11px var(--font-data); color: #fff; }
+
+@media (max-width: 760px) {
+  .head { flex-direction: column; gap: 12px; padding-top: 14px; padding-bottom: 28px; }
+  .wordmark { font-size: 22px; }
+  .caption { font-size: 13px; }
+  .readouts { text-align: left; gap: 28px; }
+  .readout dd { font-size: 26px; }
+  .readout .sub { font-size: 11px; }
+  .legend { right: auto; left: var(--gutter-l); bottom: 206px; padding: 8px 10px; }
+  .legend h2 { font-size: 11px; }
+  .legend .sensors { display: none; }
+  .tools, .notes-toggle, .speed, .keys { display: none; }
+  .timeline { grid-template-columns: 1fr; gap: 8px; padding-top: 10px; }
+  .clock { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+  .clock .date { font-size: 26px; white-space: nowrap; }
+  .clock .time { font-size: 12px; margin-top: 2px; }
+  .controls { margin-top: 0; gap: 6px; }
+  .strip svg { height: 72px; }
+  .strip .days { font-size: 10px; }
+  .peak-banner { top: 214px; width: calc(100vw - 40px); }
+  .peak-banner .callout { padding: 8px 12px; font-size: 13px; }
+  .notes { top: auto; bottom: 206px; max-height: 40vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spark-ring { animation: none; }
+}
+</style>
+</head>
+<body>
+<!--
+THESIS: The page is one story told by a strip-chart recorder: an amber trace climbs from a calm week to one ignition and the peak. It refuses the dashboard of panels around a map.
+OWN-WORLD: A night thermal satellite pass. Blue-black land and sea, faint lat/long graticule, fire drawn only in one amber FRP ramp (VIIRS dots, MODIS rings sized by the 1 km pixel). Barlow / Barlow Condensed (field-signage DIN lineage), Martian Mono for measured values only.
+STORY: Viewer reads what/where/when, watches 9–14 Feb play, sees the spark (1,111 MW, 31x) and the peak day, understands MODIS+VIIRS are merged.
+FIRST VIEWPORT: Full-bleed map of central Chile; caption top-left; two readouts top-right; legend on the map; bottom strip: big UTC date, play controls, 14 daily bars with spark and peak marks, playhead.
+FORM: own grounded direction "thermal pass + strip recorder", #1 of own list; seed key: none (concept-seed script returned no output in this session).
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
+<div id="map" role="img" aria-label="Map of central Chile showing satellite fire detections"></div>
+
+<header class="head">
+  <div class="title">
+    <h1 class="wordmark">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#ec8128" stroke-width="1.5"/><circle cx="11" cy="11" r="4.2" fill="#ffd9a8"/></svg>
+      Ulinautas
+    </h1>
+    <p class="caption"><strong>Active fires detected by NASA satellites</strong><br>MODIS + VIIRS merged · Central Chile · 1–14 Feb 2026</p>
+  </div>
+  <dl class="readouts">
+    <div class="readout">
+      <dt>Active fires</dt>
+      <dd id="r-active">0</dd>
+      <div class="sub">last 24 h · <span id="r-total">0 since 1 Feb</span></div>
+    </div>
+    <div class="readout">
+      <dt>Strongest fire</dt>
+      <dd id="r-frp">0<small>MW</small></dd>
+      <div class="sub">FRP (fire intensity), last 24 h</div>
+    </div>
+  </dl>
+</header>
+
+<div class="peak-banner" id="peak-banner" hidden>
+  <div class="callout"><b>Peak day</b><span class="big" id="peak-count"></span> <span id="peak-text"></span></div>
+</div>
+
+<nav class="tools" aria-label="Tools (open when playback is paused)">
+  <button type="button" data-tool="Filters">Filters</button>
+  <button type="button" data-tool="Calendar">Calendar</button>
+  <button type="button" data-tool="Layers">Layers</button>
+</nav>
+
+<aside class="legend" aria-label="Legend">
+  <h2>Fire intensity — FRP, megawatts</h2>
+  <div class="ramp"><i style="background:var(--frp-1)"></i><i style="background:var(--frp-2)"></i><i style="background:var(--frp-3)"></i><i style="background:var(--frp-4)"></i><i style="background:var(--frp-5)"></i></div>
+  <div class="ramp-labels"><span>&lt;10</span><span>10</span><span>30</span><span>100</span><span>300+</span></div>
+  <div class="sensors"><span><i class="dot"></i>VIIRS · 375 m pixel</span><span><i class="ring"></i>MODIS · 1 km pixel</span></div>
+</aside>
+
+<button type="button" class="notes-toggle" id="notes-toggle" aria-expanded="false" aria-controls="notes">Mockup notes (N)</button>
+<aside class="notes" id="notes" hidden aria-label="Mockup notes">
+  <h2>What this mockup decides — and what is off</h2>
+  <ul>
+    <li><b>Real data.</b> 825 vegetation fires from NASA FIRMS (MODIS + VIIRS), FIRMS <code>type 2</code> static sources excluded. All figures are computed in the page; the backend will precompute them (<code>daily_summary</code>, <code>hourly_series</code>, story markers).</li>
+    <li><b>Spark and peak are computed</b> (strongest FRP, day with most fires), never hard-coded: they move with the data.</li>
+    <li><b>Alerts are off.</b> When population exposure exists (W3-B1), a halo + label appears on the map at the fire, and a counter in this corner keeps the history. No placeholder numbers until then.</li>
+    <li><b>No "Live" label</b> until live data is wired (Wave 4).</li>
+    <li><b>Wind</b> will be a hint (arrows), never a forecast (W3-B2).</li>
+    <li><b>Filters, calendar, layers</b> stay collapsed on the left during playback; they open when paused.</li>
+    <li><b>Presenter mode:</b> add <code>?demo=1</code> to start paused on 9 Feb.</li>
+    <li>Basemap is a built-in land outline (Natural Earth) so the page also works offline.</li>
+  </ul>
+</aside>
+
+<section class="timeline" aria-label="Playback">
+  <div class="clock">
+    <div>
+      <div class="date" id="c-date">9 Feb 2026</div>
+      <div class="time" id="c-time">00:00 UTC</div>
+    </div>
+    <div class="controls">
+      <button type="button" class="btn play" id="b-play" aria-label="Play">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" id="i-play"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+      </button>
+      <button type="button" class="btn" id="b-spark" title="Jump to the spark (S)">Spark</button>
+      <button type="button" class="btn" id="b-peak" title="Jump to the peak (P)">Peak</button>
+      <div class="speed" role="group" aria-label="Playback speed">
+        <button type="button" class="btn" data-speed="3" aria-pressed="false">×1</button>
+        <button type="button" class="btn" data-speed="8" aria-pressed="true">×2</button>
+        <button type="button" class="btn" data-speed="20" aria-pressed="false">×4</button>
+      </div>
+    </div>
+  </div>
+  <div class="strip" id="strip">
+    <svg id="chart" viewBox="0 0 1400 96" preserveAspectRatio="none" role="img" aria-label="Vegetation fires per day, 1 to 14 February 2026"></svg>
+    <div class="days" id="days"></div>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+  <div class="keys" aria-hidden="true">
+    <span><kbd>Space</kbd>play / pause</span><span><kbd>S</kbd>spark</span><span><kbd>P</kbd>peak</span>
+    <span><kbd>←</kbd><kbd>→</kbd>one hour</span><span><kbd>R</kbd>restart</span><span><kbd>N</kbd>mockup notes</span>
+  </div>
+</section>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(async function () {
+  const $ = (id) => document.getElementById(id);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const params = new URLSearchParams(location.search);
+  const presenter = params.get("demo") === "1";
+
+  // ---------- Data ----------
+  const [hot, land] = await Promise.all([
+    fetch("hotspots.json").then((r) => r.json()),
+    fetch("land.geojson").then((r) => r.json()),
+  ]);
+  const rows = hot.rows; // [lon, lat, t_hours, frp, sensor, confidence, satellite]
+  const H = 3600 * 1000;
+  const dayKey = (t) => new Date(t * H).toISOString().slice(0, 10);
+  const startT = Date.UTC(2026, 1, 1) / H, endT = Date.UTC(2026, 1, 15) / H;
+  const days = [...Array(14)].map((_, i) => dayKey(startT + i * 24));
+  const perDay = Object.fromEntries(days.map((d) => [d, 0]));
+  rows.forEach((r) => { perDay[dayKey(r[2])] += 1; });
+
+  // Story markers, computed from the data
+  const spark = rows.reduce((a, b) => (b[3] > a[3] ? b : a));
+  const sparkDayStart = Math.floor(spark[2] / 24) * 24;
+  const prevMax = Math.max(...rows.filter((r) => r[2] < sparkDayStart).map((r) => r[3]));
+  const peakDay = days.reduce((a, b) => (perDay[b] > perDay[a] ? b : a));
+  const peakIdx = days.indexOf(peakDay);
+  const peakEnd = startT + (peakIdx + 1) * 24 - 0.01;
+  const playStart = startT + 8 * 24; // 9 Feb 00:00 UTC
+  const playEnd = endT;
+
+  const frpStep = ["step", ["get", "frp"], "#9a3d12", 10, "#c95b17", 30, "#ec8128", 100, "#f9a957", 300, "#ffd9a8"];
+  const geo = {
+    type: "FeatureCollection",
+    features: rows.map((r, i) => ({
+      type: "Feature", id: i,
+      geometry: { type: "Point", coordinates: [r[0], r[1]] },
+      properties: { t: r[2], frp: r[3], sensor: r[4], confidence: r[5], satellite: r[6] },
+    })),
+  };
+
+  // Graticule: one line per degree, the instrument's own grid
+  const grat = { type: "FeatureCollection", features: [] };
+  for (let lon = -76; lon <= -66; lon++) grat.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[lon, -41], [lon, -30]] } });
+  for (let lat = -41; lat <= -30; lat++) grat.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[-76, lat], [-66, lat]] } });
+
+  // ---------- Map ----------
+  const map = new maplibregl.Map({
+    container: "map",
+    style: {
+      version: 8,
+      sources: {
+        land: { type: "geojson", data: land, attribution: "Land: Natural Earth · Fires: NASA FIRMS" },
+        grat: { type: "geojson", data: grat },
+        fires: { type: "geojson", data: geo },
+      },
+      layers: [
+        { id: "ocean", type: "background", paint: { "background-color": "#070c16" } },
+        { id: "grat", type: "line", source: "grat", paint: { "line-color": "#1a2538", "line-width": 1 } },
+        { id: "land", type: "fill", source: "land", paint: { "fill-color": "#131c2b" } },
+        { id: "land-edge", type: "line", source: "land", paint: { "line-color": "#26344b", "line-width": 1.2 } },
+        { id: "glow", type: "circle", source: "fires", paint: {
+          "circle-color": frpStep, "circle-blur": 1,
+          "circle-radius": ["interpolate", ["linear"], ["get", "frp"], 0, 10, 100, 22, 1200, 52], "circle-opacity": 0 } },
+        { id: "viirs", type: "circle", source: "fires", filter: ["==", ["get", "sensor"], "VIIRS"], paint: {
+          "circle-color": frpStep,
+          "circle-radius": ["interpolate", ["linear"], ["get", "frp"], 0, 3.5, 30, 5, 300, 8.5, 1200, 12],
+          "circle-stroke-color": "#070c16", "circle-stroke-width": 1, "circle-opacity": 0, "circle-stroke-opacity": 0 } },
+        { id: "modis", type: "circle", source: "fires", filter: ["==", ["get", "sensor"], "MODIS"], paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": ["interpolate", ["linear"], ["get", "frp"], 0, 6, 30, 7.5, 300, 11, 1200, 15],
+          "circle-stroke-color": frpStep, "circle-stroke-width": 2, "circle-stroke-opacity": 0 } },
+      ],
+    },
+    bounds: [[-73.6, -38.4], [-69.4, -32.7]],
+    fitBoundsOptions: { padding: { top: 130, bottom: 200, left: 60, right: 60 } },
+    attributionControl: { compact: true },
+    dragRotate: false,
+  });
+  await new Promise((r) => map.once("load", r));
+
+  [["Santiago", -70.67, -33.45], ["Rancagua", -70.74, -34.17], ["Curicó", -71.24, -34.98], ["Talca", -71.66, -35.43],
+   ["Chillán", -72.10, -36.61], ["Concepción", -73.05, -36.83], ["Los Ángeles", -72.35, -37.47]].forEach(([name, lon, lat]) => {
+    const el = document.createElement("div"); el.className = "city"; el.textContent = name;
+    new maplibregl.Marker({ element: el, anchor: "left" }).setLngLat([lon, lat]).addTo(map);
+  });
+  [-34, -35, -36, -37, -38].forEach((lat) => {
+    const el = document.createElement("div"); el.className = "grid-label"; el.textContent = `${-lat}°S`;
+    new maplibregl.Marker({ element: el, anchor: "bottom-left", offset: [4, -2] }).setLngLat([-73.55, lat]).addTo(map);
+  });
+
+  // ---------- Popup on a fire ----------
+  const fmtTime = (t) => { const d = new Date(t * H); return `${d.getUTCDate()} Feb · ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`; };
+  ["viirs", "modis"].forEach((layer) => {
+    map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
+    map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
+    map.on("click", layer, (e) => {
+      const p = e.features[0].properties;
+      new maplibregl.Popup({ offset: 10 }).setLngLat(e.lngLat).setHTML(
+        `<div class="callout" style="box-shadow:none;border:0;padding:0;background:none"><b>${p.sensor} · ${p.satellite}</b>` +
+        `<span class="big">${Math.round(p.frp).toLocaleString("en")} MW</span> FRP (fire intensity)<br>` +
+        `${fmtTime(p.t)} · confidence ${p.confidence}</div>`).addTo(map);
+    });
+  });
+
+  // ---------- Spark callout (anchored on the map) ----------
+  const sparkEl = document.createElement("div");
+  sparkEl.innerHTML = `<div class="spark-ring"></div>`;
+  const sparkMarker = new maplibregl.Marker({ element: sparkEl }).setLngLat([spark[0], spark[1]]);
+  const sparkNote = document.createElement("div");
+  sparkNote.className = "callout";
+  sparkNote.innerHTML = `<b>The spark · ${fmtTime(spark[2])}</b><span class="big">${Math.round(spark[3]).toLocaleString("en")} MW</span> fire intensity — ${Math.round(spark[3] / prevMax)}× the strongest fire of the previous ${Math.round((sparkDayStart - startT) / 24)} days`;
+  const sparkNoteMarker = new maplibregl.Marker({ element: sparkNote, anchor: "left", offset: [42, 0] }).setLngLat([spark[0], spark[1]]);
+
+  // ---------- Strip chart ----------
+  const svg = $("chart"), W = 1400, Hc = 96, top = 22;
+  const maxDay = Math.max(...Object.values(perDay));
+  const x = (t) => ((t - startT) / (endT - startT)) * W;
+  const ns = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs) => { const n = document.createElementNS(ns, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  const bars = el("g", {}), lit = el("g", { "clip-path": "url(#played)" });
+  const defs = el("defs", {}); const clip = el("clipPath", { id: "played" }); const clipRect = el("rect", { x: 0, y: 0, width: 0, height: Hc });
+  clip.appendChild(clipRect); defs.appendChild(clip); svg.appendChild(defs);
+  svg.appendChild(el("line", { x1: 0, x2: W, y1: Hc - 0.5, y2: Hc - 0.5, stroke: "#26344b", "stroke-width": 1, "vector-effect": "non-scaling-stroke" }));
+  days.forEach((d, i) => {
+    const h = Math.max(2, (perDay[d] / maxDay) * (Hc - top));
+    const attrs = { x: i * (W / 14) + 3, y: Hc - h, width: W / 14 - 6, height: h, rx: 3 };
+    bars.appendChild(el("rect", { ...attrs, fill: "#33251f" }));
+    lit.appendChild(el("rect", { ...attrs, fill: i === peakIdx ? "#f9a957" : "#c95b17" }));
+  });
+  svg.append(bars, lit);
+  // Story marks on the strip
+  const mark = (t, label, color, side) => {
+    const g = el("g", {});
+    g.appendChild(el("line", { x1: x(t), x2: x(t), y1: 2, y2: Hc, stroke: color, "stroke-width": 1, "stroke-dasharray": "3 3", "vector-effect": "non-scaling-stroke" }));
+    svg.appendChild(g);
+    const lab = document.createElement("div");
+    lab.textContent = label;
+    Object.assign(lab.style, { position: "absolute", top: "-16px", left: `${(x(t) / W) * 100}%`, transform: side === "left" ? "translateX(calc(-100% - 6px))" : "translateX(6px)", font: "600 11px var(--font-ui)", letterSpacing: ".06em", textTransform: "uppercase", color, whiteSpace: "nowrap" });
+    $("strip").appendChild(lab);
+  };
+  mark(spark[2], "Spark", "#ffd9a8", "left");
+  mark(startT + peakIdx * 24 + 12, `Peak · ${perDay[peakDay]}`, "#f9a957", "right");
+  const head = el("line", { x1: 0, x2: 0, y1: 0, y2: Hc, stroke: "#e8edf5", "stroke-width": 2, "vector-effect": "non-scaling-stroke" });
+  svg.appendChild(head);
+  $("days").innerHTML = days.map((d, i) => `<span>${Number(d.slice(8))}${i === 0 ? " Feb" : ""}</span>`).join("");
+
+  // Hover tooltip + scrub on the strip
+  const tip = $("tip");
+  const tFromEvent = (e) => { const r = svg.getBoundingClientRect(); return startT + ((e.clientX - r.left) / r.width) * (endT - startT); };
+  svg.addEventListener("pointermove", (e) => {
+    const t = tFromEvent(e), d = dayKey(Math.min(Math.max(t, startT), endT - 0.01));
+    tip.hidden = false; tip.textContent = `${Number(d.slice(8))} Feb · ${perDay[d]} fires`;
+    tip.style.left = `${e.clientX - svg.getBoundingClientRect().left}px`; tip.style.top = "0px";
+    if (e.buttons === 1) seek(t);
+  });
+  svg.addEventListener("pointerleave", () => (tip.hidden = true));
+  svg.addEventListener("pointerdown", (e) => { pause(); seek(tFromEvent(e)); });
+
+  // ---------- Playback engine ----------
+  let hour = presenter ? playStart : playStart, playing = !presenter && !reduceMotion, speed = 8; // hours per second
+  let holdUntil = 0, seenSpark = false, seenPeak = false, last = performance.now();
+  const TRAIL = 24;
+
+  function render() {
+    // Fires appear at their time and fade over 24 h
+    const age = ["-", hour, ["get", "t"]];
+    const vis = ["all", ["<=", ["get", "t"], hour], [">", ["get", "t"], hour - TRAIL]];
+    const fade = ["case", vis, ["interpolate", ["linear"], age, 0, 1, TRAIL, 0.35], 0];
+    map.setPaintProperty("viirs", "circle-opacity", fade);
+    map.setPaintProperty("viirs", "circle-stroke-opacity", fade);
+    map.setPaintProperty("modis", "circle-stroke-opacity", fade);
+    map.setPaintProperty("glow", "circle-opacity", ["case", vis, ["interpolate", ["linear"], age, 0, 0.8, 6, 0.3, TRAIL, 0.05], 0]);
+
+    const active = rows.filter((r) => r[2] <= hour && r[2] > hour - TRAIL);
+    const total = rows.filter((r) => r[2] <= hour).length;
+    $("r-active").textContent = active.length.toLocaleString("en");
+    $("r-total").textContent = `${total.toLocaleString("en")} since 1 Feb`;
+    const strongest = active.reduce((m, r) => Math.max(m, r[3]), 0);
+    $("r-frp").innerHTML = `${Math.round(strongest).toLocaleString("en")}<small>MW</small>`;
+
+    const d = new Date(hour * H);
+    $("c-date").textContent = `${d.getUTCDate()} Feb 2026`;
+    $("c-time").textContent = `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
+    head.setAttribute("x1", x(hour)); head.setAttribute("x2", x(hour));
+    clipRect.setAttribute("width", Math.max(0, x(hour)));
+
+    const showSpark = hour >= spark[2] && hour < spark[2] + 18;
+    if (showSpark) { sparkMarker.addTo(map); sparkNoteMarker.addTo(map); } else { sparkMarker.remove(); sparkNoteMarker.remove(); }
+    const inPeak = hour >= startT + peakIdx * 24 && hour < startT + (peakIdx + 1) * 24 + 8;
+    $("peak-banner").hidden = !inPeak;
+  }
+  $("peak-count").textContent = `${perDay[peakDay]} fires`;
+  const prevDay = days[peakIdx - 1];
+  $("peak-text").textContent = `on ${Number(peakDay.slice(8))} Feb, up from ${perDay[prevDay]} the day before`;
+
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    if (playing && now >= holdUntil) {
+      const next = hour + dt * speed;
+      // Auto-pause on the story beats, like the presenter would
+      if (!seenSpark && hour < spark[2] && next >= spark[2]) { hour = spark[2]; seenSpark = true; holdUntil = now + 3500; }
+      else if (!seenPeak && hour < peakEnd && next >= peakEnd) { hour = peakEnd; seenPeak = true; holdUntil = now + 3500; }
+      else hour = next;
+      if (hour >= playEnd) { hour = playStart; seenSpark = seenPeak = false; holdUntil = now + 1500; }
+    }
+    render();
+    requestAnimationFrame(frame);
+  }
+  function setPlaying(p) {
+    playing = p;
+    $("b-play").setAttribute("aria-label", p ? "Pause" : "Play");
+    $("i-play").innerHTML = p ? '<path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor"/>' : '<path d="M4 2.5v11l9-5.5z" fill="currentColor"/>';
+  }
+  const pause = () => setPlaying(false);
+  function seek(t) {
+    hour = Math.min(Math.max(t, startT), endT - 0.01);
+    seenSpark = hour >= spark[2]; seenPeak = hour >= peakEnd; holdUntil = 0;
+  }
+  function jumpSpark() {
+    pause(); seek(spark[2]);
+    if (!reduceMotion) map.easeTo({ center: [spark[0], spark[1]], zoom: map.getZoom() + 0.6, duration: 1200, easing: (k) => 1 - Math.pow(2, -10 * k) });
+  }
+  function jumpPeak() { pause(); seek(peakEnd); }
+
+  $("b-play").onclick = () => setPlaying(!playing);
+  $("b-spark").onclick = jumpSpark;
+  $("b-peak").onclick = jumpPeak;
+  document.querySelectorAll("[data-speed]").forEach((b) => (b.onclick = () => {
+    speed = Number(b.dataset.speed);
+    document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+  }));
+  const toggleNotes = () => { const n = $("notes"); n.hidden = !n.hidden; $("notes-toggle").setAttribute("aria-expanded", String(!n.hidden)); };
+  $("notes-toggle").onclick = toggleNotes;
+  document.querySelectorAll("[data-tool]").forEach((b) => (b.onclick = () => { pause(); toggleNotes(); }));
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.closest("input, textarea")) return;
+    const k = e.key.toLowerCase();
+    if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+    else if (k === "s") jumpSpark();
+    else if (k === "p") jumpPeak();
+    else if (k === "r") { seek(playStart); setPlaying(true); }
+    else if (k === "n") toggleNotes();
+    else if (e.key === "ArrowRight") { pause(); seek(hour + 1); }
+    else if (e.key === "ArrowLeft") { pause(); seek(hour - 1); }
+  });
+
+  if (reduceMotion) seek(peakEnd);
+  setPlaying(playing);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

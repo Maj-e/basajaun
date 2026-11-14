@@ -1,12 +1,11 @@
-// Estado compartido por todos los módulos (filtros, calendario, línea de tiempo, capas).
-// Se lee con `state`, se cambia con `setState`, se reacciona con `subscribe`.
+// State shared by every module (timeline, layers, readouts, story).
+// Read it through `state`, change it with `setState`, react to changes with `subscribe`.
 export const state = {
-  fecha: null,                          // "AAAA-MM-DD" seleccionada
-  rango: null,                          // ["AAAA-MM-DD", "AAAA-MM-DD"] o null
-  sensores: ["MODIS", "VIIRS"],
-  confianzas: ["baja", "media", "alta"],
-  hora: null,                           // hora de la reproducción (t, horas desde 1970)
-  capas: {},                            // id de capa → visible (true / false)
+  hour: null,          // playback time (t, hours since 1970)
+  playing: false,
+  speed: 8,            // playback hours per second
+  satellite: false,    // NASA daily imagery under the fires
+  layers: {},          // layer id → visible (true / false)
 };
 
 const listeners = [];
@@ -15,7 +14,7 @@ export function subscribe(fn) {
   listeners.push(fn);
 }
 
-export function setState(cambios) {
-  Object.assign(state, cambios);
-  listeners.forEach((fn) => fn(state));
+export function setState(changes) {
+  Object.assign(state, changes);
+  listeners.forEach((fn) => fn(state, changes));
 }

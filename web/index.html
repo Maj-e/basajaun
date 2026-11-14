@@ -1,32 +1,88 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ulinautas — Focos de incendio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ulinautas — Fire hotspots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Martian+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="cabecera">
-    <h1>Ulinautas <span>Focos de incendio MODIS + VIIRS</span></h1>
-    <p id="estado" class="estado">Cargando…</p>
+  <!-- Design reference: docs/mockup/index.html (validated) and docs/demo-script.md -->
+  <div id="map" role="img" aria-label="Map of the demo area showing satellite fire detections"></div>
+  <p id="map-error" class="map-error" hidden></p>
+
+  <header class="head">
+    <div class="title">
+      <h1 class="wordmark">
+        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9.5" fill="none" stroke="#ec8128" stroke-width="1.5"/><circle cx="11" cy="11" r="4.2" fill="#ffd9a8"/></svg>
+        Ulinautas
+      </h1>
+      <p class="caption"><strong>Active fires detected by NASA satellites</strong><br><span id="caption-scope">MODIS + VIIRS merged</span></p>
+    </div>
+    <dl class="readouts">
+      <div class="readout">
+        <dt>Active fires</dt>
+        <dd id="r-active">–</dd>
+        <div class="sub">last 24 h · <span id="r-total">–</span></div>
+      </div>
+      <div class="readout">
+        <dt>Strongest fire</dt>
+        <dd id="r-frp">–</dd>
+        <div class="sub">FRP (fire intensity), last 24 h</div>
+      </div>
+    </dl>
   </header>
 
-  <!-- Cada zona tiene un id estable: los módulos de las waves siguientes se montan aquí sin tocar el HTML -->
-  <aside class="panel panel-izq">
-    <section id="panel-filtros"><h2>Filtros</h2><p class="vacio">Próximamente</p></section>
-    <section id="panel-calendario"><h2>Calendario</h2><p class="vacio">Próximamente</p></section>
-    <section id="panel-capas"><h2>Capas</h2><p class="vacio">Próximamente</p></section>
-  </aside>
+  <p id="status" class="status">Loading…</p>
 
-  <main id="mapa" class="mapa" aria-label="Mapa de focos de incendio"></main>
+  <div class="peak-banner" id="peak-banner" hidden>
+    <div class="callout"><b>Peak day</b><span class="big" id="peak-count"></span> <span id="peak-text"></span></div>
+  </div>
 
-  <aside class="panel panel-der">
-    <section id="panel-alertas"><h2>Alertas</h2><p class="vacio">Próximamente</p></section>
-  </aside>
+  <nav class="tools" aria-label="Map tools">
+    <button type="button" id="layers-toggle" aria-expanded="false" aria-controls="panel-layers">Layers</button>
+  </nav>
+  <section id="panel-layers" class="layers-panel" hidden aria-label="Layers">
+    <h2>Layers</h2>
+    <label><input type="checkbox" id="satellite-toggle"> Satellite image of the day <small>NASA VIIRS true color · needs internet</small></label>
+    <div id="layer-list"></div>
+  </section>
 
-  <footer id="timeline" class="timeline"><p class="vacio">Línea de tiempo — próximamente</p></footer>
+  <aside class="legend" id="legend" aria-label="Legend" hidden></aside>
+
+  <section id="timeline" class="timeline" aria-label="Playback">
+    <div class="clock">
+      <div>
+        <div class="date" id="c-date">–</div>
+        <div class="time" id="c-time">–</div>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn play" id="b-play" aria-label="Play">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" id="i-play"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="btn" id="b-spark" title="Jump to the spark (S)">Spark</button>
+        <button type="button" class="btn" id="b-peak" title="Jump to the peak (P)">Peak</button>
+        <div class="speed" role="group" aria-label="Playback speed">
+          <button type="button" class="btn" data-speed="3" aria-pressed="false">×1</button>
+          <button type="button" class="btn" data-speed="8" aria-pressed="true">×2</button>
+          <button type="button" class="btn" data-speed="20" aria-pressed="false">×4</button>
+        </div>
+      </div>
+    </div>
+    <div class="strip" id="strip">
+      <svg id="chart" viewBox="0 0 1400 96" preserveAspectRatio="none" role="img" aria-label="Fires per day"></svg>
+      <div class="days" id="days"></div>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+    <div class="keys" aria-hidden="true">
+      <span><kbd>Space</kbd>play / pause</span><span><kbd>S</kbd>spark</span><span><kbd>P</kbd>peak</span>
+      <span><kbd>←</kbd><kbd>→</kbd>one hour</span><span><kbd>R</kbd>restart</span>
+    </div>
+  </section>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
   <script type="module" src="app.js"></script>

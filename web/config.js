@@ -1,9 +1,28 @@
-// Configuración del front. La zona de demo la define B2 (W0-B2): cambiar BBOX aquí cuando esté elegida.
+// Front-end configuration. The demo area is chosen by B2 (scripts/config.py): keep `bbox` in sync.
 export const CONFIG = {
-  // oeste, sur, este, norte — provisional
+  // west, south, east, north (scripts/config.py BBOX)
   bbox: [-72.0, -38.0, -70.0, -33.0],
-  // Carpeta de datos, siempre relativa: data/sample/ hasta que el backend publique data/processed/
-  dataBase: "data/sample/",
-  // Fondo de carta vectorial gratuito, sin clave
-  basemap: "https://tiles.openfreemap.org/styles/positron",
+  // Initial view: a little wider than the bbox so the coast and the Andes frame the fires
+  view: [[-73.6, -38.4], [-69.4, -32.7]],
+  // Data root: `file` paths in the manifest are relative to this folder
+  dataRoot: "data/",
+  // Layer manifest: data/sample/ until the pipeline publishes data/manifest.json (W1-B4)
+  manifest: "data/sample/manifest.json",
+  // Fires per day for the timeline strip
+  dailySummary: "data/sample/daily_summary.json",
+  // Offline land outline (Natural Earth): the default basemap and the offline fallback
+  land: "data/static/land.geojson",
+  // NASA GIBS daily true-color imagery, synced with the playback day
+  satellite: {
+    tiles: "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+    maxzoom: 9,
+    attribution: "Imagery: NASA GIBS / VIIRS",
+  },
+  // Reference towns shown on the map
+  places: [["Santiago", -70.67, -33.45], ["Rancagua", -70.74, -34.17], ["Curicó", -71.24, -34.98], ["Talca", -71.66, -35.43],
+           ["Chillán", -72.10, -36.61], ["Concepción", -73.05, -36.83], ["Los Ángeles", -72.35, -37.47]],
+  // Shown in the caption
+  areaName: "Central Chile",
+  // Fires stay visible this many hours after their detection, fading out
+  trailHours: 24,
 };
