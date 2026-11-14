@@ -32,12 +32,21 @@ LAYERS: list[dict] = [
         "type": "circle",
         "temporal": True,
         "active": True,
-        "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp"],
+        "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp", "country", "region"],
         "legend": [
             {"color": "#d7301f", "text": "High confidence"},
             {"color": "#fc8d59", "text": "Medium confidence"},
             {"color": "#fdcc8a", "text": "Low confidence"},
         ],
+    },
+    {
+        "id": "regions",
+        "name": "Regions",
+        "file": "processed/regions.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["country", "region"],
     },
     {
         "id": "fires",
