@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:54:50Z",
+  "updated_at": "2026-11-14T23:14:58Z",
   "layers": [
     {
       "id": "hotspots",
@@ -68,7 +68,12 @@
         "dist_water_point_km",
         "gw_body",
         "gw_vulnerability",
-        "gw_chemical_status"
+        "gw_chemical_status",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
       ],
       "updated_at": "2026-11-14T20:19:24Z"
     },
