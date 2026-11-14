@@ -18,6 +18,7 @@
   <link rel="modulepreload" href="timeline.js">
   <link rel="modulepreload" href="story.js">
   <link rel="modulepreload" href="readouts.js">
+  <link rel="modulepreload" href="alerts.js">
   <script type="module" src="app.js"></script>
   <!-- Data the first screen needs, fetched while MapLibre downloads (same paths as config.js) -->
   <link rel="preload" href="data/manifest.json" as="fetch" crossorigin>
@@ -54,6 +55,11 @@
 
   <p id="status" class="status">Loading…</p>
 
+  <aside class="alerts" id="alerts" aria-label="Population alerts" hidden>
+    <button type="button" id="alerts-toggle" aria-expanded="false" aria-controls="alerts-list">Alerts <span id="alerts-count">0</span></button>
+    <ol id="alerts-list" hidden></ol>
+  </aside>
+
   <div class="peak-banner" id="peak-banner" hidden>
     <div class="callout"><b>Peak day</b><span class="big" id="peak-count"></span> <span id="peak-text"></span></div>
   </div>
@@ -68,6 +74,7 @@
   </section>
 
   <aside class="legend" id="legend" aria-label="Legend" hidden></aside>
+  <p class="sat-badge" id="sat-badge" hidden></p>
 
   <section id="timeline" class="timeline" aria-label="Playback">
     <div class="clock">

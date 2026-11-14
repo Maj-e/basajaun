@@ -1,0 +1,8 @@
+{
+  "updated_at": "2026-02-14T08:00:00Z",
+  "series": [
+    { "t": 493927, "count": 2, "total_frp": 31.0 },
+    { "t": 493928, "count": 0, "total_frp": 0.0 },
+    { "t": 493929, "count": 1, "total_frp": 18.4 }
+  ]
+}

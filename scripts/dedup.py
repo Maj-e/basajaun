@@ -121,9 +121,8 @@ def deduplicate_hotspots(geojson_data: dict) -> tuple[dict, int]:
 def main() -> None:
     hotspots_path = PROCESSED / "hotspots.geojson"
     if not hotspots_path.exists():
-        raise FileNotFoundError(
-            f"Input file not found: {hotspots_path}. Run export_hotspots.py (W1-B3) first."
-        )
+        print(f"[SKIP] {hotspots_path} not found yet (waiting for W1-B3): nothing to deduplicate.")
+        return
 
     raw_data = json.loads(hotspots_path.read_text(encoding="utf-8"))
     initial_count = len(raw_data.get("features", []))

@@ -1,0 +1,120 @@
+{
+  "updated_at": "2026-11-14T20:19:27Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "episodes/los-angeles-2025-01/hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "sensor",
+        "satellite",
+        "timestamp_utc",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "text": "High confidence"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium confidence"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low confidence"
+        }
+      ],
+      "updated_at": "2026-11-14T20:19:24Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "episodes/los-angeles-2025-01/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2",
+        "dist_road_km",
+        "dist_water_km",
+        "dist_fire_station_km"
+      ],
+      "updated_at": "2026-11-14T20:19:24Z"
+    },
+    {
+      "id": "spread",
+      "name": "6h spread estimate",
+      "file": "episodes/los-angeles-2025-01/spread.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "horizon_hours",
+        "wind_speed_kmh",
+        "wind_to_deg",
+        "spread_km",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T20:19:26Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "episodes/los-angeles-2025-01/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T20:19:26Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "episodes/los-angeles-2025-01/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T20:19:26Z"
+    }
+  ]
+}

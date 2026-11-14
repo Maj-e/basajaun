@@ -10,7 +10,7 @@ def test_only_existing_files_are_listed(tmp_path):
     (tmp_path / "processed/weather.geojson").write_text(
         json.dumps({"type": "FeatureCollection", "updated_at": "2026-02-14T08:00:00Z", "features": []})
     )
-    manifest = make_manifest.build_manifest(tmp_path)
+    manifest = make_manifest.build_manifest(tmp_path, subdir="processed")
 
     ids = [layer["id"] for layer in manifest["layers"]]
     assert ids == ["wind", "weather"]  # both read weather.geojson; nothing else exists
@@ -18,13 +18,13 @@ def test_only_existing_files_are_listed(tmp_path):
 
 
 def test_empty_data_dir_gives_empty_manifest(tmp_path):
-    assert make_manifest.build_manifest(tmp_path)["layers"] == []
+    assert make_manifest.build_manifest(tmp_path, subdir="processed")["layers"] == []
 
 
 def test_updated_falls_back_to_mtime(tmp_path):
     (tmp_path / "processed").mkdir()
     (tmp_path / "processed/population.png").write_bytes(b"png")
-    [layer] = make_manifest.build_manifest(tmp_path)["layers"]
+    [layer] = make_manifest.build_manifest(tmp_path, subdir="processed")["layers"]
     assert layer["id"] == "population"
     assert layer["updated_at"].endswith("Z")
 
@@ -36,7 +36,7 @@ def test_every_registered_layer_passes_the_schema(tmp_path):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps({"type": "FeatureCollection", "updated_at": "2026-02-14T08:00:00Z",
                                     "features": []}))
-    manifest = make_manifest.build_manifest(tmp_path)
+    manifest = make_manifest.build_manifest(tmp_path, subdir="processed")
     assert len(manifest["layers"]) == len(make_manifest.LAYERS)
 
     out = tmp_path / "manifest.json"

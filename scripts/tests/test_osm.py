@@ -1,0 +1,150 @@
+"""Tests for the OSM layers + fire accessibility (W3-B4). No network: hand-built Overpass answers."""
+import json
+
+import geopandas as gpd
+import pytest
+from shapely.geometry import Polygon, box
+
+import make_manifest
+import osm
+import validate
+
+# Around (-71.0, -35.0); 0.01° ≈ 0.9 km in longitude, 1.1 km in latitude there
+LON, LAT = -71.0, -35.0
+
+
+def pts(*xy):
+    return [(LON + x, LAT + y) for x, y in xy]
+
+
+def square(x0, y0, size):
+    return pts((x0, y0), (x0 + size, y0), (x0 + size, y0 + size), (x0, y0 + size), (x0, y0))
+
+
+ELEMENTS = [
+    {"type": "node", "lon": LON + 0.10, "lat": LAT, "tags": {"amenity": "fire_station", "name": "Bomberos A"}},
+    {"type": "way", "geometry": square(0.20, 0.20, 0.001), "tags": {"amenity": "fire_station"}},
+    {"type": "way", "geometry": pts((-0.05, 0.02), (0.05, 0.02)), "tags": {"highway": "primary", "name": "Ruta 5"}},
+    {"type": "way", "geometry": pts((0.05, 0.02), (0.08, 0.02)), "tags": {"highway": "primary", "name": "Ruta 5"}},
+    {"type": "way", "geometry": pts((0.30, 0.30), (0.301, 0.30)), "tags": {"highway": "track"}},  # ~90 m
+    {"type": "way", "geometry": pts((-0.30, -0.30), (-0.20, -0.30)), "tags": {"highway": "track"}},  # ~9 km
+    {"type": "way", "geometry": pts((0.0, -0.10), (0.0, 0.10)), "tags": {"waterway": "river", "name": "Río X"}},
+    {"type": "way", "geometry": square(0.40, 0.40, 0.05), "tags": {"natural": "water", "name": "Laguna"}},
+    {"type": "way", "geometry": square(0.45, -0.45, 0.0005), "tags": {"natural": "water"}},  # tiny pond
+    {"type": "way", "geometry": pts((0.5, 0.5), (0.6, 0.5)), "tags": {"highway": "residential"}},  # not a road type
+    {"type": "relation", "tags": {"landuse": "reservoir", "name": "Embalse"}, "members": [
+        {"type": "way", "role": "outer", "geometry": pts((-0.40, 0.40), (-0.30, 0.40), (-0.30, 0.50))},
+        {"type": "way", "role": "outer", "geometry": pts((-0.30, 0.50), (-0.40, 0.50), (-0.40, 0.40))},
+        {"type": "way", "role": "inner", "geometry": square(-0.37, 0.43, 0.02)},
+    ]},
+]
+
+
+@pytest.fixture(scope="module")
+def layers():
+    return osm.parse(ELEMENTS)
+
+
+def test_overpass_query_pads_the_bbox():
+    query = osm.overpass_query(bbox=(-72.0, -38.0, -70.0, -33.0), pad=0.2)
+    assert "(-38.2,-72.2,-32.8,-69.8)" in query
+    for tag in ('"amenity"="fire_station"', '"waterway"="river"', '"landuse"="reservoir"', "primary|secondary"):
+        assert tag in query
+
+
+def test_compact_hook_turns_points_into_tuples(tmp_path):
+    raw = tmp_path / "osm.json"
+    raw.write_text(json.dumps({"elements": [{"type": "way", "geometry": [{"lat": -35.0, "lon": -71.0}]}]}))
+    assert osm.load_elements(raw)[0]["geometry"] == [(-71.0, -35.0)]
+
+
+def test_parse_sorts_elements(layers):
+    assert sorted(layers["stations"]["name"].fillna("-")) == ["-", "Bomberos A"]
+    assert all(g.geom_type == "Point" for g in layers["stations"].geometry)  # way station -> centroid
+    assert set(layers["roads"]["highway"]) == {"primary", "track"}  # residential ignored
+    kinds = layers["water"].set_index("name", drop=False)["kind"]
+    assert kinds["Río X"] == "river" and kinds["Laguna"] == "lake" and kinds["Embalse"] == "reservoir"
+
+
+def test_relation_inner_ring_is_a_hole(layers):
+    reservoir = layers["water"].set_index("name").loc["Embalse", "geometry"]
+    assert isinstance(reservoir, Polygon) and len(reservoir.interiors) == 1
+
+
+def test_distances(layers):
+    # Small fire right on the river, ~1.8 km south of Ruta 5, ~9 km from Bomberos A
+    fire = gpd.GeoDataFrame(geometry=[box(LON - 0.001, LAT - 0.001, LON + 0.001, LAT + 0.001)], crs="EPSG:4326")
+    row = osm.add_distances(fire, layers).iloc[0]
+    assert row["dist_water_km"] == 0.0
+    assert 1.8 < row["dist_road_km"] < 2.4
+    assert 8.5 < row["dist_fire_station_km"] < 9.5
+
+
+def test_distances_when_a_layer_is_empty(layers):
+    fire = gpd.GeoDataFrame(geometry=[box(LON, LAT, LON + 0.001, LAT + 0.001)], crs="EPSG:4326")
+    empty = {**layers, "stations": layers["stations"].iloc[0:0]}
+    assert osm.add_distances(fire, empty).iloc[0]["dist_fire_station_km"] is None
+
+
+def test_roads_layer_style_merge_and_minor_filter(layers):
+    roads = osm.roads_layer(layers["roads"], box(LON - 1, LAT - 1, LON + 1, LAT + 1))
+    primary = roads[roads.highway == "primary"]
+    assert len(primary) == 1 and primary.iloc[0]["name"] == "Ruta 5"  # two ways joined
+    assert primary.iloc[0]["geometry"].geom_type == "LineString"
+    color, width, _ = osm.ROAD_STYLE["primary"]
+    assert (primary.iloc[0]["color"], primary.iloc[0]["width"]) == (color, width)
+    track_km = roads[roads.highway == "track"].to_crs(roads.estimate_utm_crs()).length.sum() / 1000
+    assert 8 < track_km < 10  # the long track stays, the 90 m one is dropped
+
+
+def test_water_layer_drops_tiny_ponds(layers):
+    water = osm.water_layer(layers["water"], box(LON - 1, LAT - 1, LON + 1, LAT + 1))
+    assert len(water) == 3  # river, lake, reservoir — not the 50 m pond
+    assert set(water["color"]) == {osm.WATER_COLOR}
+
+
+def test_layers_are_clipped_to_the_area(layers):
+    area = box(LON - 0.1, LAT - 0.1, LON + 0.15, LAT + 0.1)
+    assert list(osm.stations_layer(layers["stations"], area)["name"]) == ["Bomberos A"]
+
+
+def test_outputs_pass_the_contract(layers, tmp_path):
+    area = box(LON - 1, LAT - 1, LON + 1, LAT + 1)
+    registry = validate.load_registry()
+    for name, gdf in [("water", osm.water_layer(layers["water"], area)),
+                      ("roads", osm.roads_layer(layers["roads"], area)),
+                      ("fire_stations", osm.stations_layer(layers["stations"], area))]:
+        path = tmp_path / "processed" / f"{name}.geojson"
+        osm.write(osm.to_feature_collection(gdf, "2026-02-14T08:00:00Z"), path)
+        assert validate.validate_file(path, registry, tmp_path) == [], name
+
+
+def test_update_fires_adds_distances(layers, tmp_path):
+    fires_path = tmp_path / "fires.geojson"
+    fire = {"type": "Feature", "properties": {"fire_id": 1},
+            "geometry": {"type": "Polygon", "coordinates": [square(-0.001, -0.001, 0.002)]}}
+    fires_path.write_text(json.dumps({"type": "FeatureCollection", "updated_at": "x", "features": [fire]}))
+    osm.update_fires(fires_path, layers, "2026-02-14T08:00:00Z")
+    props = json.loads(fires_path.read_text())["features"][0]["properties"]
+    assert props["fire_id"] == 1 and props["dist_water_km"] == 0.0
+    assert {"dist_road_km", "dist_water_km", "dist_fire_station_km"} <= props.keys()
+
+
+def test_update_fires_skips_when_missing(layers, tmp_path, capsys):
+    osm.update_fires(tmp_path / "fires.geojson", layers, "2026-02-14T08:00:00Z")
+    assert "[SKIP]" in capsys.readouterr().out
+
+
+def test_manifest_legend_matches_road_style():
+    [roads] = [layer for layer in make_manifest.LAYERS if layer["id"] == "roads"]
+    legend = {item["text"].lower(): item["color"] for item in roads["legend"]}
+    assert legend == {highway: style[0] for highway, style in osm.ROAD_STYLE.items()}
+
+
+def test_main_skips_when_overpass_is_down(monkeypatch, capsys):
+    def down(refresh=False):
+        raise RuntimeError("every Overpass endpoint failed: 504")
+    monkeypatch.setattr(osm, "download", down)
+    monkeypatch.setattr("sys.argv", ["osm.py"])
+    osm.main()  # must not raise: make data keeps going
+    assert "[SKIP] OpenStreetMap unavailable" in capsys.readouterr().out

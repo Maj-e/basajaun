@@ -10,6 +10,8 @@ export const CONFIG = {
   manifest: "data/manifest.json",
   // Fires per day for the timeline strip
   dailySummary: "data/processed/daily_summary.json",
+  // Population alerts (scripts/exposure.py); missing file = no alerts shown
+  alerts: "data/processed/alerts.json",
   // Offline land outline (Natural Earth): the default basemap and the offline fallback
   land: "data/static/land.geojson",
   // NASA GIBS daily true-color imagery, synced with the playback day
