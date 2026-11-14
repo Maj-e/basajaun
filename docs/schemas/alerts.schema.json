@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "alerts.schema.json",
+  "title": "alerts.json — one record per fire with exposed population and risk",
+  "type": "object",
+  "required": ["updated_at", "alerts"],
+  "properties": {
+    "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "alerts": {
+      "type": "array",
+      "description": "Sorted from most to least severe",
+      "items": { "$ref": "#/$defs/alert" }
+    }
+  },
+  "$defs": {
+    "alert": {
+      "type": "object",
+      "required": [
+        "fire_id", "risk", "since", "pop_1km", "pop_5km", "pop_10km",
+        "wind_toward_population", "center", "color"
+      ],
+      "properties": {
+        "fire_id": { "type": "integer" },
+        "risk": { "enum": ["critical", "high", "medium", "low"] },
+        "since": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+        "pop_1km": { "type": "number", "minimum": 0 },
+        "pop_5km": { "type": "number", "minimum": 0 },
+        "pop_10km": { "type": "number", "minimum": 0 },
+        "wind_toward_population": { "type": "boolean" },
+        "center": { "$ref": "common.schema.json#/$defs/lonLat" },
+        "color": { "$ref": "common.schema.json#/$defs/hexColor" }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "geojson_layer.schema.json",
+  "title": "Any other GeoJSON layer (weather, fires, OSM…): FeatureCollection with `updated_at` and Features",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/featureCollection" }],
+  "properties": {
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "geometry", "properties"],
+        "properties": {
+          "type": { "const": "Feature" },
+          "geometry": { "$ref": "common.schema.json#/$defs/geometry" },
+          "properties": { "type": "object" }
+        }
+      }
+    }
+  }
+}

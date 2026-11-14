@@ -36,8 +36,9 @@ Frozen in task **W0-B1** (B1 + F). Every script and the front end follow it; any
 
 ### `web/data/processed/alerts.json`
 ```json
-[{ "fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" }]
+{ "updated_at": "2026-02-14T08:00:00Z", "alerts": [{ "fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" }] }
 ```
+An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe.
 
 ### Rules shared by every file
 - **Style computed by the backend:** each Feature carries its display properties (`color`, `radius`, `border`, `opacity`, `rotation`, `size`, `width` depending on the layer type). The front end never picks colors.
