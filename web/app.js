@@ -75,6 +75,15 @@ async function main() {
   // Open three days before the peak (demo script), or at the start
   const playFrom = story.peak ? Math.max(start, story.peak.end + 0.01 - 24 * 4) : start;
 
+  // Episode selector: switching reloads the page on that episode (keeps ?demo=1)
+  const pick = $("episode-select");
+  pick.innerHTML = CONFIG.episodes.map((e) => `<option value="${e.id}"${e.id === CONFIG.episode.id ? " selected" : ""}>${e.name}</option>`).join("");
+  pick.parentElement.hidden = CONFIG.episodes.length < 2;
+  pick.onchange = () => {
+    const q = new URLSearchParams(location.search);
+    q.set("episode", pick.value);
+    location.search = q.toString();
+  };
   $("caption-scope").textContent = `MODIS + VIIRS merged · ${CONFIG.areaName} · ${fmtDay(days[0])} – ${fmtDay(days.at(-1), { year: "numeric" })}`;
   const generated = manifest.updated_at ? ` · generated ${new Date(manifest.updated_at).toLocaleString("en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC` : "";
   $("status").textContent = (CONFIG.manifest.includes("sample") ? "Sample data" : "Data") + generated;
