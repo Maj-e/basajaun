@@ -1,0 +1,46 @@
+name: e2e
+
+# End-to-end check of the published site (W2-B4): runs after every successful deploy,
+# downloads manifest.json and every listed file from the live URL, validates them
+# against the contract and times the first page load.
+on:
+  workflow_run:
+    workflows: [deploy]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Site to check"
+        required: false
+        default: "https://maj-e.github.io/ulinautas/"
+      max_load:
+        description: "First page load budget (seconds)"
+        required: false
+        default: "10"
+
+permissions:
+  contents: read
+
+jobs:
+  check-site:
+    # Skip when the deploy itself failed: there is nothing new to check
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Same commit that was just deployed, so schemas match the published data
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check the published site
+        run: uv run scripts/check_site.py --url "$SITE_URL" --max-load "$MAX_LOAD"
+        env:
+          SITE_URL: ${{ inputs.url || 'https://maj-e.github.io/ulinautas/' }}
+          MAX_LOAD: ${{ inputs.max_load || '10' }}

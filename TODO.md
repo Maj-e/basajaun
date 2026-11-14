@@ -71,14 +71,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 ### Wave 0 — Base (P0)
 
-- [ ] **W0-B1** · Frozen contract + sample data · **B1** (with F)
+- [x] **W0-B1** · Frozen contract + sample data · **B1** (with F)
   - 20-min session B1 + F: go through [`docs/data_contract.md`](docs/data_contract.md) field by field (hotspots, daily summary, fires, alerts, **manifest**, style properties, `updated_at` field) and freeze it
   - Script that **generates** the sample data from the contract (not by hand): ~50 MODIS + VIIRS hotspots in the area, 3 days, 3 confidence levels, with `t`, `color`, `radius`; `daily_summary`, `alerts`, `manifest.json`
   - Files: `scripts/make_sample.py` → `web/data/sample/*` (replaces the provisional files written for W1-F1)
   - **Done when:** F loads the sample files without asking for any format change
   - Depends on: —
 
-- [ ] **W0-B2** · FIRMS key + area + `config.py` · **B2**
+- [x] **W0-B2** · FIRMS key + area + `config.py` · **B2**
   - Request the MAP_KEY at https://firms.modaps.eosdis.nasa.gov/api/map_key/ and test it:
     `curl "https://firms.modaps.eosdis.nasa.gov/api/area/csv/$FIRMS_MAP_KEY/VIIRS_SNPP_NRT/world/1"`
   - Pick an area and ~2 weeks with a real fire episode (good for playback)
@@ -117,7 +117,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 ### Wave 1 — MVP (P0)
 
-- [ ] **W1-B1** · MODIS / VIIRS normalization + tests · **B1**
+- [x] **W1-B1** · MODIS / VIIRS normalization + tests · **B1**
   - `normalize_modis(df)`: confidence 0–100 → `low` (< 30) / `medium` (30–79) / `high` (≥ 80); `brightness` → `brightness_k`; `resolution_m = 1000`
   - `normalize_viirs(df, satellite)`: `l`/`low` → low, `n`/`nominal` → medium, `h`/`high` → high; `bright_ti4` → `brightness_k`; `resolution_m = 375`
   - `parse_datetime(acq_date, acq_time)`: `str.zfill(4)` (`742` → `0742`) → UTC datetime
@@ -126,7 +126,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** `make test` passes (start from a test CSV, without waiting for W1-B2)
   - Depends on: W0-B1
 
-- [ ] **W1-B2** · Full FIRMS download · **B2**
+- [x] **W1-B2** · Full FIRMS download · **B2**
   - `https://firms.modaps.eosdis.nasa.gov/api/area/csv/{MAP_KEY}/{SOURCE}/{west},{south},{east},{north}/{DAYS}/{DATE}`
   - Sources `MODIS_NRT`, `VIIRS_SNPP_NRT`, `VIIRS_NOAA20_NRT`, `VIIRS_NOAA21_NRT` (`_SP` for older dates); 5-day chunks; don't download again if the file exists
   - Check the real codes of the `satellite` column and tell B1 if they differ from the contract
@@ -134,7 +134,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the 4 CSVs for the period are in `data/raw/`
   - Depends on: W0-B2
 
-- [ ] **W1-B3** · Hotspot export + daily summary · **B3**
+- [x] **W1-B3** · Hotspot export + daily summary · **B3**
   - Read `data/raw/*.csv` → W1-B1 functions → `pd.concat` → `id`, `date`, `t` (hours since 1970) → clip to `BBOX`
   - **Style computed here**: `color` by confidence (`high` `#d7301f`, `medium` `#fc8d59`, `low` `#fdcc8a`), `radius` by FRP (3 to 16 px), `border` by sensor
   - Coordinates to 4 decimals, FRP to 1; one or several files depending on the W0-B3 decision
@@ -144,7 +144,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** `make data` generates the files and the validator (W1-B4) accepts them
   - Depends on: W1-B1, W1-B2, W0-B3
 
-- [ ] **W1-B4** · Contract validator + manifest · **B4**
+- [x] **W1-B4** · Contract validator + manifest · **B4**
   - JSON schemas for every contract file (`docs/schemas/*.json`) + `scripts/validate.py` validating all of `web/data/` (`jsonschema`)
   - Add `uv run scripts/validate.py` to CI
   - `scripts/make_manifest.py`: generates `web/data/manifest.json` listing **only layers whose file exists** (name, file, type, temporal, legend, `active`, `updated_at`)
@@ -157,7 +157,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the team has reviewed the mockup; W1-F2, W2-F1, W2-F2 build from it
   - Depends on: —
 
-- [ ] **W1-F1** · Layer loader + hotspot layer · **F** — *code done on `feature/W1-F1-layer-loader`, with provisional sample data*
+- [x] **W1-F1** · Layer loader + hotspot layer · **F** — *merged (#5), showing the real FIRMS data on the published site*
   - `web/layers/loader.js`: reads `manifest.json` and, for each `active` layer, creates source + layer by `type` (`circle`, `fill`, `line`, `image`) using **the style properties from the file**:
     ```js
     "circle-color": ["get", "color"], "circle-radius": ["get", "radius"], "circle-stroke-color": ["get", "border"]
