@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T18:04:32Z",
+  "updated_at": "2026-11-14T18:52:00Z",
   "layers": [
     {
       "id": "hotspots",
@@ -30,6 +30,78 @@
         }
       ],
       "updated_at": "2026-11-14T17:57:52Z"
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "file": "processed/water.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name",
+        "kind"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Lakes, reservoirs, rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T18:48:23Z"
+    },
+    {
+      "id": "roads",
+      "name": "Roads",
+      "file": "processed/roads.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name",
+        "highway"
+      ],
+      "legend": [
+        {
+          "color": "#f2a541",
+          "text": "Primary"
+        },
+        {
+          "color": "#f6c667",
+          "text": "Secondary"
+        },
+        {
+          "color": "#f9dfa0",
+          "text": "Tertiary"
+        },
+        {
+          "color": "#b08968",
+          "text": "Track"
+        },
+        {
+          "color": "#9c8b7a",
+          "text": "Path"
+        }
+      ],
+      "updated_at": "2026-11-14T18:48:23Z"
+    },
+    {
+      "id": "fire_stations",
+      "name": "Fire stations",
+      "file": "processed/fire_stations.geojson",
+      "type": "circle",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#2b8cbe",
+          "text": "Fire station"
+        }
+      ],
+      "updated_at": "2026-11-14T18:48:23Z"
     }
   ]
 }
