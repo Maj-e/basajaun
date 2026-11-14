@@ -1,0 +1,86 @@
+import json
+import sys
+from pathlib import Path
+
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from fires import cluster_fires, fire_style
+from weather import wind_style
+
+
+def _make_hotspot(hid: str, lon: float, lat: float, t: float, ts: str, frp: float) -> dict:
+    return {
+        "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [lon, lat]},
+        "properties": {
+            "id": hid,
+            "lat": lat,
+            "lon": lon,
+            "sensor": "VIIRS",
+            "satellite": "N20",
+            "timestamp_utc": ts,
+            "date": ts[:10],
+            "t": t,
+            "confidence": "nominal",
+            "frp": frp,
+            "brightness_k": 340.0,
+            "day_night": "D",
+            "resolution_m": 375,
+            "detected_by": ["VIIRS"],
+            "fire_id": None,
+            "color": "#ff6600",
+            "radius": 6,
+            "border": "#ffffff",
+        },
+    }
+
+
+def test_cluster_fires_groups_nearby_and_separates_noise(tmp_path: Path) -> None:
+    hotspots = [
+        _make_hotspot("h1", -71.0000, -35.0000, 100.0, "2026-02-05T04:00:00Z", 25.0),
+        _make_hotspot("h2", -71.0015, -35.0010, 101.0, "2026-02-05T05:00:00Z", 120.0),
+        _make_hotspot("h3", -71.8000, -37.2000, 250.0, "2026-02-11T12:00:00Z", 10.0),
+    ]
+    in_file = tmp_path / "hotspots.geojson"
+    out_file = tmp_path / "fires.geojson"
+    in_file.write_text(json.dumps({"type": "FeatureCollection", "features": hotspots}), encoding="utf-8")
+
+    cluster_fires(in_file, out_file, update_hotspots=True)
+
+    fires_fc = json.loads(out_file.read_text(encoding="utf-8"))
+    assert "updated_at" in fires_fc
+    assert len(fires_fc["features"]) == 1
+    props = fires_fc["features"][0]["properties"]
+    assert props["fire_id"] == 1
+    assert props["n_hotspots"] == 2
+    assert props["frp_max"] == 120.0
+    assert props["start"] == "2026-02-05T04:00:00Z"
+    assert props["end"] == "2026-02-05T05:00:00Z"
+    assert props["area_km2"] > 0.7
+    assert props["color"] == "#a50f15"
+
+    updated_hotspots = json.loads(in_file.read_text(encoding="utf-8"))["features"]
+    assert updated_hotspots[0]["properties"]["fire_id"] == 1
+    assert updated_hotspots[1]["properties"]["fire_id"] == 1
+    assert updated_hotspots[2]["properties"]["fire_id"] is None
+
+
+def test_cluster_fires_handles_empty_input(tmp_path: Path) -> None:
+    in_file = tmp_path / "empty.geojson"
+    out_file = tmp_path / "fires_empty.geojson"
+    in_file.write_text(json.dumps({"type": "FeatureCollection", "features": []}), encoding="utf-8")
+
+    cluster_fires(in_file, out_file, update_hotspots=False)
+    fires_fc = json.loads(out_file.read_text(encoding="utf-8"))
+    assert "updated_at" in fires_fc
+    assert fires_fc["features"] == []
+
+
+def test_fire_and_wind_styles() -> None:
+    assert fire_style(150.0, 3) == ("#a50f15", 0.45)
+    assert fire_style(40.0, 2) == ("#de2d26", 0.38)
+    assert fire_style(10.0, 2) == ("#fb6a4a", 0.30)
+    assert wind_style(50.0) == ("#d7301f", 1.35)
+    assert wind_style(10.0) == ("#91cf60", 0.75)
