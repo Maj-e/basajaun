@@ -108,6 +108,8 @@ def check_episodes(doc: dict, data_dir: Path) -> list[str]:
             errors.append(f"episodes/{eid}: bbox must be west < east and south < north")
         if isinstance(e.get("start"), str) and isinstance(e.get("end"), str) and e["start"] > e["end"]:
             errors.append(f"episodes/{eid}: start is after end")
+        if e.get("live"):
+            continue  # live data only exists on the published site (update-data.yml), never in the repo
         for key in ("dir", "manifest"):
             if isinstance(e.get(key), str):
                 target = data_dir / e[key]

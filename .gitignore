@@ -17,3 +17,7 @@ __pycache__/
 .vscode/
 .idea/
 .DS_Store
+
+# Live data: generated and published by .github/workflows/update-data.yml, never committed
+web/data/processed/live/*
+!web/data/processed/live/.gitkeep

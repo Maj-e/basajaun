@@ -25,12 +25,13 @@ PIPELINE := \
 	make_manifest \
 	validate
 
-.PHONY: help install episode data sample manifest validate contract-test e2e test serve clean
+.PHONY: help install episode live data sample manifest validate contract-test e2e test serve clean
 
 help:
 	@echo "make install  - uv sync: create .venv and install uv.lock"
 	@echo "make data     - run every script in order for the default episode (EPISODE=<id> for another; see web/data/episodes.json)"
 	@echo "make episode  - show the selected episode (area, dates, folders)"
+	@echo "make live     - fresh download of the last 48 h -> web/data/processed/live/ (not committed)"
 	@echo "make sample   - generate sample data -> web/data/sample/"
 	@echo "make manifest - rebuild web/data/manifest.json from the files present"
 	@echo "make validate - check web/data/ against the contract (docs/schemas/)"
@@ -44,6 +45,11 @@ install:
 
 episode:
 	@$(RUN) scripts/config.py
+
+# Live episode: always download again (download_firms.py reuses CSVs that already exist)
+live:
+	rm -rf data/raw/episodes/live
+	$(MAKE) data EPISODE=live
 
 data:
 	@set -e; skip=" $$($(RUN) scripts/config.py skip) "; \

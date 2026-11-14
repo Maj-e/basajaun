@@ -56,6 +56,7 @@ class Report:
     max_load_s: float
     files: list[FileResult] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)  # site-level errors
+    notes: list[str] = field(default_factory=list)   # informative, never fail the check
 
     @property
     def first_load_seconds(self) -> float:
@@ -155,6 +156,12 @@ def check_site(base_url: str = DEFAULT_URL, max_load_s: float = DEFAULT_MAX_LOAD
             already = {f.path for f in report.files}
             for episode in episodes:
                 ep_manifest = f"data/{episode.get('manifest', '')}"
+                if episode.get("live") and ep_manifest not in already:
+                    probe, _, _ = fetch(session, urljoin(base_url, ep_manifest), buster)
+                    if probe is None or probe.status_code != 200:
+                        # Right after a deploy from main, update-data.yml hasn't published live/ yet
+                        report.notes.append(f"live episode '{episode.get('id')}' not published yet")
+                        continue
                 if ep_manifest not in already:
                     report.files.append(download(session, base_url, ep_manifest, root, buster, first_load=False))
                     already.add(ep_manifest)
@@ -206,6 +213,7 @@ def format_report(report: Report) -> str:
     lines += ["", f"First page load: {report.first_load_bytes / 1024:.1f} KB in {report.first_load_seconds:.2f}s "
                   f"(budget {report.max_load_s:.1f}s)"]
     lines += [f"FAIL {e}" for e in report.errors]
+    lines += [f"note {n}" for n in report.notes]
     lines.append("RESULT: " + ("PASS" if report.ok else "FAIL"))
     return "\n".join(lines)
 
@@ -220,6 +228,7 @@ def markdown_summary(report: Report) -> str:
     tail = (f"\n\n**First page load:** {report.first_load_bytes / 1024:.1f} KB in "
             f"{report.first_load_seconds:.2f}s (budget {report.max_load_s:.1f}s)\n")
     tail += "".join(f"\n- ❌ {e}" for e in report.errors)
+    tail += "".join(f"\n- ℹ️ {n}" for n in report.notes)
     return head + "\n".join(rows) + tail
 
 
