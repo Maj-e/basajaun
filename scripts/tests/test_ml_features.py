@@ -1,21 +1,37 @@
 """
 Tests unitarios para el módulo IA1 (scripts/ml_features.py).
 Valida dimensiones de la malla, ausencia de NaNs y etiquetas binarias.
+
+El directorio es sintético: un solo foco dentro del bbox. Las tres
+comprobaciones no necesitan las capas reales (roads.geojson pesa megabytes
+y el cálculo de distancias alarga la suite varios minutos).
 """
 
+import json
 from pathlib import Path
+
 import numpy as np
 import pytest
 
-from scripts.ml_features import build_episode_dataset
+from ml_features import build_episode_dataset
 
 
 @pytest.fixture
-def mock_episode_env():
-    """Configuración de entorno para pruebas con BBOX de prueba."""
-    processed_dir = Path("web/data/processed")
+def mock_episode_env(tmp_path: Path):
+    """BBOX de Chile y un hotspot, para que y tenga 0 y 1."""
     bbox = (-72.0, -38.0, -70.0, -33.0)
-    return processed_dir, bbox
+    hotspots = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [-71.0, -35.5]},
+                "properties": {"timestamp_utc": "2026-02-02T12:00:00Z"},
+            }
+        ],
+    }
+    (tmp_path / "hotspots.geojson").write_text(json.dumps(hotspots), encoding="utf-8")
+    return tmp_path, bbox
 
 
 def test_build_episode_dataset_dimensions(mock_episode_env):
