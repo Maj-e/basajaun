@@ -1,63 +1,60 @@
+"""Hourly time series of hotspots (W2-B3): active hotspots and total FRP per hour.
+
+Output: web/data/processed/hourly_series.json
+    {"updated_at": "...", "series": [{"t": 491950, "count": 12, "total_frp": 340.5}, ...]}
+`t` is the whole hour (hours since 1970); every hour of the period is present, zero-filled.
+"""
 import json
+from datetime import datetime, timezone
 from pathlib import Path
+
+import numpy as np
 import pandas as pd
 
-def generate_hourly_series():
-    PROCESSED_DIR = Path("web/data/processed")
-    # Supports whether W0-B3 decided on a single file or multiple files
-    geojson_files = list(PROCESSED_DIR.glob("hotspots*.geojson"))
-    
-    if not geojson_files:
-        print("No GeoJSON files found. Run W1-B3 first.")
-        return
+from config import PROCESSED
 
-    records = []
-    
-    # 1. Extract data from GeoJSON
-    for file in geojson_files:
-        data = json.loads(file.read_text(encoding="utf-8"))
-        for feature in data.get("features", []):
-            props = feature["properties"]
-            records.append({
-                "t": props["t"],
-                # If FRP is null, convert it to 0.0 to allow summation
-                "frp": props.get("frp") or 0.0 
-            })
 
+def build_series(features: list[dict]) -> list[dict]:
+    records = [
+        {"t": feature["properties"]["t"],
+         # If FRP is null, count it as 0.0 so the sum still works
+         "frp": feature["properties"].get("frp") or 0.0}
+        for feature in features
+    ]
+    if not records:
+        return []
     df = pd.DataFrame(records)
-    output_path = PROCESSED_DIR / "hourly_series.json"
+    # t has decimals (e.g. 491683.88 = 52 min past the hour): bucket each hotspot into its hour
+    df["t"] = np.floor(df["t"].astype(float)).astype(int)
 
-    # No data at all (e.g. a period without fires)
-    if df.empty:
-        output_path.write_text("[]", encoding="utf-8")
-        return
+    grouped = df.groupby("t").agg(count=("t", "size"), total_frp=("frp", "sum"))
+    # Every hour of the period, with 0 where there is nothing
+    complete = grouped.reindex(range(df["t"].min(), df["t"].max() + 1), fill_value=0)
+    complete["total_frp"] = complete["total_frp"].round(1)
+    complete = complete.rename_axis("t").reset_index()
+    return [{"t": int(r.t), "count": int(r.count), "total_frp": float(r.total_frp)}
+            for r in complete.itertuples(index=False)]
 
-    # 2. Group by hour 't'
-    grouped = df.groupby("t").agg(
-        count=("t", "size"),
-        total_frp=("frp", "sum")
-    )
 
-    # 3. Fill missing hours (Zero-filling)
-    t_min = df["t"].min()
-    t_max = df["t"].max()
-    all_hours = range(t_min, t_max + 1)
-    
-    # reindex inserts missing hours and assigns them 0
-    complete_series = grouped.reindex(all_hours, fill_value=0)
-    
-    # Round FRP to 1 decimal place to avoid sending massive floats to the frontend
-    complete_series["total_frp"] = complete_series["total_frp"].round(1)
-    
-    # Convert the 't' index back to a column
-    complete_series = complete_series.reset_index().rename(columns={"index": "t"})
+def generate_hourly_series(processed_dir: Path = PROCESSED) -> Path | None:
+    # Works whether W0-B3 chose one hotspots file or one per day
+    geojson_files = sorted(processed_dir.glob("hotspots*.geojson"))
+    if not geojson_files:
+        print(f"[SKIP] no hotspots*.geojson in {processed_dir} yet (waiting for W1-B3).")
+        return None
 
-    # 4. Export to JSON optimized for charts (list of dictionaries)
-    # Example: [{"t": 491950, "count": 12, "total_frp": 340.5}, ...]
-    complete_series.to_json(output_path, orient="records")
-    
-    print(f"Hourly series exported to {output_path}")
-    print(f"Covered range: {len(complete_series)} hours.")
+    features = []
+    for file in geojson_files:
+        features += json.loads(file.read_text(encoding="utf-8")).get("features", [])
+    series = build_series(features)
+
+    output_path = processed_dir / "hourly_series.json"
+    updated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    output_path.write_text(json.dumps({"updated_at": updated_at, "series": series}, separators=(",", ":")),
+                           encoding="utf-8")
+    print(f"[SAVED] {output_path} ({len(series)} hours)")
+    return output_path
+
 
 if __name__ == "__main__":
     generate_hourly_series()

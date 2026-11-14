@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hourly_series.schema.json",
+  "title": "hourly_series.json — active hotspots and total FRP per hour (timeline counter and chart)",
+  "type": "object",
+  "required": ["updated_at", "series"],
+  "properties": {
+    "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["t", "count", "total_frp"],
+        "properties": {
+          "t": { "type": "integer", "minimum": 0, "description": "Whole hour, hours since 1970" },
+          "count": { "type": "integer", "minimum": 0 },
+          "total_frp": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

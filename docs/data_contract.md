@@ -40,6 +40,12 @@ Frozen in task **W0-B1** (B1 + F). Every script and the front end follow it; any
 ```
 An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe.
 
+### `web/data/processed/hourly_series.json`
+```json
+{ "updated_at": "2026-02-14T08:00:00Z", "series": [{ "t": 491950, "count": 12, "total_frp": 340.5 }, { "t": 491951, "count": 0, "total_frp": 0.0 }] }
+```
+One entry per **whole** hour of the period (`t` = hours since 1970, integer), zero-filled: feeds the timeline counter and chart.
+
 ### Rules shared by every file
 - **Style computed by the backend:** each Feature carries its display properties (`color`, `radius`, `border`, `opacity`, `rotation`, `size`, `width` depending on the layer type). The front end never picks colors.
 - **Timestamp:** each JSON file has `updated_at` (ISO 8601 UTC) at root level (in GeoJSON: a property of the `FeatureCollection`). The front end shows "Data from DD/MM HH:MM".
