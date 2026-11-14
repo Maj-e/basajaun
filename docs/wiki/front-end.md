@@ -1,0 +1,39 @@
+# Using the data in the front end
+
+The page is plain HTML + JavaScript with **MapLibre GL 4.7.1**; no framework, no build. It only reads static files.
+
+## How the page loads data
+1. `web/map.js` creates the single map, framed on `bbox` from `web/config.js`.
+2. `web/app.js` waits for the map style, then calls `loadLayers()`.
+3. `web/layers/loader.js` fetches the **manifest** (`CONFIG.manifest`) and, for every layer with `enabled: true`, adds a source + layer according to its `type`.
+4. Styles come **from the data**: `["get", "color"]`, `["get", "radius"]`, `["get", "stroke"]`…
+5. The legend and the popups are generated from the manifest (`legend`, `popup` fields).
+6. The status badge shows "Sample data" / "Live data", or "Layer unavailable: …" if a layer file fails.
+
+Right now the page reads **`web/data/sample/manifest.json`** (12 provisional hotspots). It will switch to `web/data/manifest.json` when the real export exists (W1-F2).
+
+## Layer types the loader knows
+| `type` | MapLibre rendering | Style properties read from features |
+|---|---|---|
+| `circle` | points | `color`, `radius`, `stroke`, `opacity` |
+| `fill` | polygons + outline | `color`, `opacity` |
+| `line` | lines | `color`, `width` |
+| `image` | georeferenced image (needs `corners` in the manifest) | — |
+| `arrows` | *(planned, W3-F1)* rotated symbols | `rotation`, `size` |
+
+## Adding a layer (backend side, no front-end code)
+1. Write a script that outputs a GeoJSON to `web/data/processed/` with the style properties above.
+2. Add an entry to the manifest:
+   ```json
+   { "id": "roads", "name": "Roads", "file": "processed/roads.geojson", "type": "line",
+     "enabled": false, "popup": ["name"], "legend": [{"color": "#555", "label": "Main road"}] }
+   ```
+3. Check it on the published site, then set `enabled: true`.
+
+A new `type` is the only case that needs front-end work.
+
+## Shared state
+`web/state.js` holds `date`, `range`, `sensors`, `confidences`, `hour`, `layers`. Modules change it with `setState()` and react with `subscribe()` — filters, calendar and timeline all go through it.
+
+## Page areas
+Stable ids where later modules mount: `#panel-filters`, `#panel-calendar`, `#panel-layers`, `#panel-alerts`, `#timeline`, `#status`.
