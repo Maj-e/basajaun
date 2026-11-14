@@ -15,7 +15,8 @@ _Last updated: 2026-11-14._
 | W1-B4 | Contract validator + manifest | ✅ merged (#16) |
 | W2-B1 | MODIS / VIIRS deduplication | ✅ merged (#20) — not yet applied to the exported file |
 | W1-F2 | Site switched to the real data (`data/manifest.json`) | ✅ merged → **MVP online** |
-| W2-F3 | Figures follow the visible area | ✅ `feature/viewport-scope` |
+| W2-F3 | Figures follow the visible area | ✅ merged |
+| W3-F2 | Alert panel (halo + label on the map, collapsed list) | ✅ shows once `processed/alerts.json` exists (needs the population raster for `exposure.py`) |
 | W0-B1 | Frozen contract + generated sample data | ✅ merged (`make sample`); contract names follow B1's code |
 | W1-B1 | MODIS / VIIRS normalization + tests | ✅ merged (`harmonize.py`) — FIRMS `type 2` filter still to add |
 | W2-B2 | Fires (DBSCAN grouping) | ✅ merged (`fires.py`) |

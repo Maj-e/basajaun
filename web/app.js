@@ -6,6 +6,7 @@ import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHots
 import { createTimeline } from "./timeline.js";
 import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
+import { loadAlerts, renderAlerts } from "./alerts.js";
 
 const $ = (id) => document.getElementById(id);
 const H = 3600 * 1000;
@@ -67,6 +68,8 @@ async function main() {
   let story = computeStory(features, days, counts);
   let scoped = features; // the hotspots the figures are computed on (whole area, visible area, or one fire)
   let isolatedFireId = null; // set while a fire polygon is isolated; viewport scope stays paused
+  let alertScope = () => true; // which alerts belong to the current scope
+  await loadAlerts();
   const start = Date.parse(`${days[0]}T00:00:00Z`) / H;
   const end = Date.parse(`${days.at(-1)}T00:00:00Z`) / H + 24;
   // Open three days before the peak (demo script), or at the start
@@ -83,6 +86,7 @@ async function main() {
   subscribe((s) => {
     timeline.render(s.hour);
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
+    renderAlerts(s.hour, (a) => alertScope(a));
     renderStory(story, s.hour);
     setHour(s.hour);
     updateSatellite(s.satellite, dayOf(s.hour));
@@ -116,12 +120,14 @@ async function main() {
     const visible = features.filter((f) => bounds.contains(f.geometry.coordinates));
     const whole = visible.length === features.length;
     const list = whole ? features : visible;
+    alertScope = whole ? () => true : (a) => bounds.contains(a.center);
     publishScope(list, !whole, whole ? "Figures for the whole area"
       : `Figures for the visible area · ${visible.length.toLocaleString("en")} of ${features.length.toLocaleString("en")} fires`);
   }
 
   function showWholeArea() {
     isolatedFireId = null;
+    alertScope = () => true;
     setHotspotFire(null);
     publishScope(features, false, "Figures for the whole area");
     map?.fitBounds(CONFIG.view, { padding: PADDING });
@@ -130,6 +136,7 @@ async function main() {
   function isolateFire(id, geometry) {
     if (isolatedFireId === id) { showWholeArea(); return; }
     isolatedFireId = id;
+    alertScope = (a) => Number(a.fire_id) === id;
     setHotspotFire(id);
     const list = features.filter((f) => Number(f.properties.fire_id) === id);
     publishScope(list, true, `Figures for fire ${id} · ${list.length.toLocaleString("en")} hotspots`);
@@ -186,7 +193,7 @@ async function main() {
 
   // Presenter keys (docs/demo-script.md)
   window.addEventListener("keydown", (e) => {
-    if (e.target.closest("input, textarea, select")) return;
+    if (e.target.closest?.("input, textarea, select")) return;
     const k = e.key.toLowerCase();
     if (e.code === "Space") { e.preventDefault(); timeline.toggle(); }
     else if (k === "s") timeline.jumpSpark();
