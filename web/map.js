@@ -1,8 +1,8 @@
 import { CONFIG } from "./config.js";
 
-// Única instancia del mapa: los demás módulos la importan desde aquí.
+// Single map instance: every other module imports it from here.
 export const map = new maplibregl.Map({
-  container: "mapa",
+  container: "map",
   style: CONFIG.basemap,
   bounds: CONFIG.bbox,
   fitBoundsOptions: { padding: 20 },
@@ -12,9 +12,9 @@ export const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl(), "top-right");
 map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
-// Se resuelve en cuanto el estilo está listo para recibir capas,
-// sin esperar a que todas las teselas del fondo de mapa estén descargadas.
-export const mapaListo = new Promise((resolve) => {
+// Resolves as soon as the style can accept layers,
+// without waiting for every basemap tile to download.
+export const mapReady = new Promise((resolve) => {
   if (map.isStyleLoaded()) resolve();
   else map.once("style.load", resolve);
 });

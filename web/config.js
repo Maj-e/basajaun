@@ -1,11 +1,11 @@
-// Configuración del front. La zona de demo la define B2 (W0-B2): cambiar BBOX aquí cuando esté elegida.
+// Front-end configuration. The demo area is chosen by B2 (W0-B2): update `bbox` here once it is decided.
 export const CONFIG = {
-  // oeste, sur, este, norte — provisional
+  // west, south, east, north — provisional (central Chile)
   bbox: [-72.0, -38.0, -70.0, -33.0],
-  // Raíz de los datos: las rutas `archivo` del manifest son relativas a esta carpeta
+  // Data root: the `file` paths in the manifest are relative to this folder
   dataRoot: "data/",
-  // Manifest de capas: data/sample/manifest.json hasta que el backend publique data/manifest.json
+  // Layer manifest: data/sample/manifest.json until the backend publishes data/manifest.json
   manifest: "data/sample/manifest.json",
-  // Fondo de carta vectorial gratuito, sin clave
+  // Free vector basemap, no API key
   basemap: "https://tiles.openfreemap.org/styles/positron",
 };
