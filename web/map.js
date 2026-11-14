@@ -4,9 +4,16 @@ import { CONFIG } from "./config.js";
 export let map = null;
 export let mapError = null;
 
+// Graticule around the episode: one line per degree (every 0.5° for small areas)
 const grid = { type: "FeatureCollection", features: [] };
-for (let lon = -76; lon <= -66; lon++) grid.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[lon, -41], [lon, -30]] } });
-for (let lat = -41; lat <= -30; lat++) grid.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[-76, lat], [-66, lat]] } });
+{
+  const [w, s, e, n] = CONFIG.bbox;
+  const step = Math.max(e - w, n - s) < 3 ? 0.5 : 1;
+  const x0 = Math.floor((w - 5) / step) * step, x1 = Math.ceil((e + 5) / step) * step;
+  const y0 = Math.floor((s - 5) / step) * step, y1 = Math.ceil((n + 5) / step) * step;
+  for (let x = x0; x <= x1; x += step) grid.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[x, y0], [x, y1]] } });
+  for (let y = y0; y <= y1; y += step) grid.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[x0, y], [x1, y]] } });
+}
 
 const style = {
   version: 8,

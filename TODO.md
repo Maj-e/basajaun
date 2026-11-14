@@ -303,7 +303,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** two episodes are generated and validated side by side
   - Depends on: W1-B3, W1-B4
 
-- [ ] **W4-F2** · Episode selector + world basemap · **F**
+- [x] **W4-F2** · Episode selector + world basemap · **F**
   - Episode list in the header; switching reframes the map and replays that episode (all figures are already computed from the data)
   - Replace the Chile/Argentina land outline with a world one (Natural Earth 50m, simplified); reference towns per episode
   - **Done when:** switching episodes works on the published URL, offline basemap included

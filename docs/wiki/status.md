@@ -54,4 +54,6 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 | 2026-11-14 | Area named "Chile–Argentina border, 33–38° S" instead of "Central Chile" | the spark (1,111 MW) and 110 of the 151 peak-day fires are in Mendoza, Argentina; 679 of 825 fires overall are in Chile |
 | 2026-11-14 | MapLibre GL 4.7.1 self-hosted in `web/vendor/` | the demo no longer depends on the unpkg CDN (it failed once during testing) |
 
+| 2026-11-14 | Demo refocused on Spain: default episode **Sierra Bermeja (Málaga), Sep 2021**; front reads `episodes.json`, episode selector, world land outline | real episode with every layer computed, alerts included |
+
 Add a row whenever the team makes a decision that someone could later ask "why?" about.
