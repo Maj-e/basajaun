@@ -2,7 +2,7 @@
 
 Wildfire hotspot visualization from the **MODIS** and **VIIRS** satellites (NASA FIRMS), harmonized into a single dataset and shown on a web page: layered map, calendar, population-density alerts and time playback.
 
-> Hackathon project (1 day). Work plan: [`TODO.md`](TODO.md) · data contract: [`docs/data_contract.md`](docs/data_contract.md).
+> Hackathon project (1 day). Work plan: [`TODO.md`](TODO.md) · data contract: [`docs/data_contract.md`](docs/data_contract.md) · **wiki: [`docs/wiki/`](docs/wiki/README.md)** (what we do, data sources, pipeline, operations, decisions).
 
 **Convention:** everything in this repository is in English — code, UI, documentation, data field names.
 
@@ -82,6 +82,7 @@ ulinautas/
 ├── .gitignore                      # .env, data/raw/, .venv/, __pycache__/
 ├── docs/
 │   ├── data_contract.md            # format of every data file + layer manifest
+│   ├── wiki/                       # project wiki: overview, data sources, pipeline, front end, operations, status
 │   └── schemas/                    # JSON schemas checked by CI
 ├── .github/
 │   └── workflows/
