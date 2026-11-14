@@ -99,8 +99,28 @@ def test_roads_layer_style_merge_and_minor_filter(layers):
 
 def test_water_layer_drops_tiny_ponds(layers):
     water = osm.water_layer(layers["water"], box(LON - 1, LAT - 1, LON + 1, LAT + 1))
-    assert len(water) == 3  # river, lake, reservoir — not the 50 m pond
+    assert sorted(water["name"]) == ["Embalse", "Laguna"]  # lake + reservoir — not the 50 m pond, not the river
     assert set(water["color"]) == {osm.WATER_COLOR}
+
+
+def test_water_and_rivers_never_mix_geometries(layers):
+    """A LineString in a fill layer is closed into a bogus polygon: rivers get their own line layer."""
+    area = box(LON - 1, LAT - 1, LON + 1, LAT + 1)
+    water = osm.water_layer(layers["water"], area)
+    rivers = osm.rivers_layer(layers["water"], area)
+    assert set(water.geom_type) <= {"Polygon", "MultiPolygon"}
+    assert set(rivers.geom_type) <= {"LineString", "MultiLineString"}
+    assert list(rivers["name"]) == ["Río X"]
+    assert set(rivers["width"]) == {osm.RIVER_WIDTH}
+
+
+def test_clipping_a_lake_to_a_line_drops_it(layers):
+    """A lake that only touches the area edge clips to a line: it must not end up in the fill layer."""
+    # Laguna spans LON+0.40..0.45; this area ends exactly on its west shore
+    area = box(LON + 0.30, LAT + 0.30, LON + 0.40, LAT + 0.50)
+    water = osm.water_layer(layers["water"], area)
+    assert "Laguna" not in set(water["name"])
+    assert set(water.geom_type) <= {"Polygon", "MultiPolygon"}
 
 
 def test_layers_are_clipped_to_the_area(layers):
@@ -112,6 +132,7 @@ def test_outputs_pass_the_contract(layers, tmp_path):
     area = box(LON - 1, LAT - 1, LON + 1, LAT + 1)
     registry = validate.load_registry()
     for name, gdf in [("water", osm.water_layer(layers["water"], area)),
+                      ("rivers", osm.rivers_layer(layers["water"], area)),
                       ("roads", osm.roads_layer(layers["roads"], area)),
                       ("fire_stations", osm.stations_layer(layers["stations"], area))]:
         path = tmp_path / "processed" / f"{name}.geojson"

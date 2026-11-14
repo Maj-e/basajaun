@@ -129,7 +129,17 @@ LAYERS: list[dict] = [
         "temporal": False,
         "active": True,
         "popup": ["name", "kind"],
-        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs, rivers"}],
+        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs"}],
+    },
+    {
+        "id": "rivers",
+        "name": "Rivers",
+        "file": "processed/rivers.geojson",
+        "type": "line",
+        "temporal": False,
+        "active": True,  # water is active: rivers were drawn (wrongly) inside it
+        "popup": ["name"],
+        "legend": [{"color": "#3d8bd4", "text": "Rivers"}],
     },
     {
         "id": "roads",

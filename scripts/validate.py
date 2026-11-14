@@ -67,6 +67,16 @@ def _format_error(error) -> str:
     return f"{location}: {error.message}"
 
 
+# Geometry families each layer type can draw (a LineString in a fill layer is closed into a bogus polygon)
+GEOMETRIES_BY_TYPE = {
+    "fill": {"Polygon", "MultiPolygon"},
+    "line": {"LineString", "MultiLineString"},
+    "circle": {"Point", "MultiPoint"},
+    "arrows": {"Point", "MultiPoint"},
+    "particles": {"Point", "MultiPoint"},
+}
+
+
 def check_manifest(manifest: dict, data_dir: Path) -> list[str]:
     """Checks a schema can't express: unique ids, listed files exist, temporal layers carry `t`."""
     errors = []
@@ -82,11 +92,23 @@ def check_manifest(manifest: dict, data_dir: Path) -> list[str]:
         if not target.is_file():
             errors.append(f"layers/{layer_id}: file '{file}' does not exist in {data_dir.name}/")
             continue
-        if layer.get("temporal") and target.suffix == ".geojson":
-            try:
-                features = json.loads(target.read_text(encoding="utf-8")).get("features", [])
-            except (json.JSONDecodeError, AttributeError):
-                continue  # reported when the file itself is validated
+        if target.suffix != ".geojson":
+            continue
+        try:
+            features = json.loads(target.read_text(encoding="utf-8")).get("features", [])
+        except (json.JSONDecodeError, AttributeError):
+            continue  # reported when the file itself is validated
+        allowed = GEOMETRIES_BY_TYPE.get(layer.get("type"))
+        if allowed:
+            wrong = {}
+            for f in features:
+                kind = (f.get("geometry") or {}).get("type")
+                if kind not in allowed:
+                    wrong[kind] = wrong.get(kind, 0) + 1
+            if wrong:
+                found = ", ".join(f"{n} {k}" for k, n in sorted(wrong.items(), key=lambda kv: str(kv[0])))
+                errors.append(f"layers/{layer_id}: type '{layer.get('type')}' draws {'/'.join(sorted(allowed))} only, file has {found}")
+        if layer.get("temporal"):
             missing = sum(1 for f in features if not isinstance(f.get("properties", {}).get("t"), (int, float)))
             if missing:
                 errors.append(f"layers/{layer_id}: temporal layer but {missing} feature(s) lack a numeric 't'")

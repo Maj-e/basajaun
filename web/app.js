@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -160,6 +160,7 @@ async function main() {
   mapReady.then(() => {
     addToMap();
     setHour(state.hour);
+    map.once("idle", prefetchLayers);
     map.on("moveend", scheduleScope);
     const fireLayers = ["fires", "fires-outline"].filter((id) => map.getLayer(id));
     if (fireLayers.length) map.on("click", (e) => {

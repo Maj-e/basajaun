@@ -3,7 +3,8 @@
 One Overpass query over the BBOX (padded so fires near the edge still find their nearest
 fire station) returns water, roads and fire stations. This script then:
     - writes three styled, simplified layers for the map:
-        web/data/processed/water.geojson          (fill: lakes, reservoirs, rivers)
+        web/data/processed/water.geojson          (fill: lakes, reservoirs)
+        web/data/processed/rivers.geojson         (line: rivers)
         web/data/processed/roads.geojson          (line: color and width by road type)
         web/data/processed/fire_stations.geojson  (circle)
         web/data/processed/water_points.geojson   (circle: hydrants, firefighting tanks, tanks, wells, springs)
@@ -293,18 +294,38 @@ def roads_layer(roads: gpd.GeoDataFrame, area) -> gpd.GeoDataFrame:
     return _finish(out[["geometry", "name", "highway", "color", "width"]])
 
 
+POLYGONS = ("Polygon", "MultiPolygon")
+LINES = ("LineString", "MultiLineString")
+
+
+def _clip_to(gdf: gpd.GeoDataFrame, area, families: tuple[str, ...]) -> gpd.GeoDataFrame:
+    """Clip to the area and keep one geometry family only (a fill layer can't draw lines, and vice versa)."""
+    gdf = gdf[gdf.intersects(area)].copy()
+    gdf["geometry"] = gdf.geometry.intersection(area)
+    gdf = gdf.explode(index_parts=False)          # clipping can return GeometryCollections
+    gdf = gdf[gdf.geom_type.isin(families + tuple(f.replace("Multi", "") for f in families))]
+    return gdf
+
+
 def water_layer(water: gpd.GeoDataFrame, area) -> gpd.GeoDataFrame:
-    water = water[water.intersects(area)].copy()
-    water["geometry"] = water.geometry.intersection(area)
-    is_area = water.geom_type.isin(["Polygon", "MultiPolygon"])
-    if is_area.any():
-        utm = water.estimate_utm_crs()
-        area_km2 = water.to_crs(utm).area / 1e6
-        water = water[~is_area | (area_km2 >= MIN_WATER_AREA_KM2)]
+    """Lakes and reservoirs only (fill layer); rivers go to rivers_layer."""
+    water = _clip_to(water[water.geom_type.isin(POLYGONS)], area, POLYGONS)
+    if not water.empty:
+        area_km2 = water.to_crs(water.estimate_utm_crs()).area / 1e6
+        water = water[area_km2 >= MIN_WATER_AREA_KM2]
     water = _simplify(water, WATER_SIMPLIFY_M)
     water["color"], water["opacity"] = WATER_COLOR, WATER_OPACITY
-    water["width"] = [RIVER_WIDTH if t in ("LineString", "MultiLineString") else None for t in water.geom_type]
-    return _finish(water[["geometry", "name", "kind", "color", "opacity", "width"]])
+    water = _finish(water[["geometry", "name", "kind", "color", "opacity"]])
+    return water[water.geom_type.isin(POLYGONS)]
+
+
+def rivers_layer(water: gpd.GeoDataFrame, area) -> gpd.GeoDataFrame:
+    """Rivers only (line layer)."""
+    rivers = _clip_to(water[water.geom_type.isin(LINES)], area, LINES)
+    rivers = _simplify(rivers, WATER_SIMPLIFY_M)
+    rivers["color"], rivers["width"] = WATER_COLOR, RIVER_WIDTH
+    rivers = _finish(rivers[["geometry", "name", "kind", "color", "width"]])
+    return rivers[rivers.geom_type.isin(LINES)]
 
 
 def water_points_layer(points: gpd.GeoDataFrame, area) -> gpd.GeoDataFrame:
@@ -379,6 +400,7 @@ def main() -> None:
 
     area = box(*BBOX)
     write(to_feature_collection(water_layer(layers["water"], area), updated_at), PROCESSED / "water.geojson")
+    write(to_feature_collection(rivers_layer(layers["water"], area), updated_at), PROCESSED / "rivers.geojson")
     write(to_feature_collection(roads_layer(layers["roads"], area), updated_at), PROCESSED / "roads.geojson")
     write(to_feature_collection(stations_layer(layers["stations"], area), updated_at), PROCESSED / "fire_stations.geojson")
     write(to_feature_collection(water_points_layer(layers["water_points"], area), updated_at), PROCESSED / "water_points.geojson")

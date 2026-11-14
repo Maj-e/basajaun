@@ -13,7 +13,7 @@ All paths are relative to `web/data/` (= `data/` on the site).
 | `episodes/<id>/manifest.json` | the other episodes |
 | `processed/live/manifest.json` | live mode, last 48 h, refreshed every 30 min (`live: true` in `episodes.json`) |
 
-Every layer comes **already styled**: the loader only maps feature properties (`color`, `radius`, `border`, `opacity`, `width`, `rotation`, `size`) to MapLibre paint. `active: false` = published but switched off until checked on the site; turn it on in `scripts/make_manifest.py`. The Map panel shows one checkbox per **loaded** (= active) layer, so an inactive layer appears there as soon as it is switched on.
+Every layer comes **already styled**: the loader only maps feature properties (`color`, `radius`, `border`, `opacity`, `width`, `rotation`, `size`) to MapLibre paint. `active: false` = published but switched off until checked on the site; turn it on in `scripts/make_manifest.py`. The Map panel shows one checkbox per active layer; layers not shown at start are downloaded only when their box is ticked.
 
 ## Episodes
 
@@ -33,16 +33,17 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 | `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp, country, region (Chile) | color, radius, border |
 | `fires` | fill | ✅ | | ✅ | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
 | `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius; also `u`, `v` (see [surface wind](#surface-wind)) |
-| `wind` | **arrows** | | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color — **needs the `arrows` type in the loader (W3-F1)** |
+| `wind` | **arrows** | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color (drawn by the loader's `arrows` type) |
 | `wind_particles` | **particles** | | ✅ `t` | ✅ | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — **needs the `particles` type in the loader** |
-| `spread` | fill | | | ✅ | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
-| `population` | image | | | ✅ | ✅ | — | — | — | PNG + `corners` in the manifest |
-| `water` | fill | | | ✅ | ✅ | — | — | name, kind (lake / reservoir / river) | color, opacity, width (rivers are lines) |
-| `roads` | line | | | ✅ | ✅ | — | — | name, highway | color, width (by road type) |
-| `fire_stations` | circle | | | ✅ | ✅ | — | — | name | color, radius, border |
-| `water_points` | circle | | | ✅ | ✅ | — | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
-| `regions` | fill | | | — | ✅ | — | — | country, region | color, opacity |
-| `groundwater` | fill | | | ✅ | — (Europe only) | — | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
+| `spread` | fill | ✅ | | ✅ | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
+| `population` | image | ✅ | | ✅ | ✅ | — | — | — | PNG + `corners` in the manifest |
+| `water` | fill | ✅ | | ✅ | ✅ | — | — | name, kind (lake / reservoir) | color, opacity |
+| `rivers` | line | ✅ | | ✅ | ✅ | — | — | name | color, width |
+| `roads` | line | ✅ | | ✅ | ✅ | — | — | name, highway | color, width (by road type) |
+| `fire_stations` | circle | ✅ | | ✅ | ✅ | — | — | name | color, radius, border |
+| `water_points` | circle | ✅ | | ✅ | ✅ | — | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
+| `regions` | fill | ✅ | | — | ✅ | — | — | country, region | color, opacity |
+| `groundwater` | fill | ✅ | | ✅ | — (Europe only) | — | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
 
 ### Fire properties
 Each fire polygon in `fires.geojson` carries (a property can be missing or `null` when the input wasn't available for that episode):
@@ -77,8 +78,6 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 ## Ready to implement (data side done)
 
-- **Layer panel**: the Map panel already lists the active layers; the inactive ones above are ready to be switched on once checked (`active: true` in `make_manifest.py`).
-- **`arrows` type (W3-F1)**: `wind` is ready (`rotation`, `size`, `color`, temporal).
 - **Fire sheet**: show the accessibility distances, the nearest water point and the aquifer risk (`gw_*`).
 - **Wind particles (`particles` type)**: data ready in every episode with weather (`wind_particles`, `active: false`). Particle engine: Miguel's `wind_particles.js` from TerraFlow (`ui/js/wind_particles.js`: bilinear u/v + light curl, own canvas, `pointer-events: none`) — expects exactly the field above; respect `prefers-reduced-motion`.
 - **Live button (W4-F1)**: `processed/live/manifest.json` is published and refreshed every 30 min.
@@ -88,6 +87,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
+| 2026-11-14 | Rivers moved out of `water` into their own `rivers` line layer (a fill layer closed each river into a bogus polygon); the validator now rejects a layer whose geometries don't match its type |
 | 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
 | 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |
 | 2026-11-14 | New layers `water_points` (Chile, Sierra Bermeja) and `groundwater` (Sierra Bermeja); fire fields `dist_water_point_km`, `gw_body`, `gw_vulnerability`, `gw_chemical_status` (W3-B7) |
