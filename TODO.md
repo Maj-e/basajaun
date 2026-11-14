@@ -334,3 +334,28 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 - [ ] **W5-B3** · Slope and land cover · **B3** — mean slope per fire (Copernicus DEM), vegetation (ESA WorldCover)
 - [ ] **W5-B4** · FastAPI API + hosting · **B4** — `GET /hotspots?from=&to=&bbox=`, `/fires`, `/alerts` on `api.<domain>` (Render / Railway / Fly.io), with fallback: if the API doesn't answer, the front end reads the static files
 - [ ] **W5-F1** · Mobile, i18n, animation export · **F** — collapsible panels, `web/i18n.js` (Spanish UI), MP4 / GIF capture
+
+
+---
+
+## Módulo IA — Modelo Predictivo de Riesgo Municipal (Rama `IA`)
+
+### Contratos Técnicos entre Roles
+* **Contrato IA1 → IA2 (`scripts/ml_features.py`):** expone `build_episode_dataset(processed_dir: Path, bbox: tuple) -> tuple[np.ndarray, np.ndarray, list[dict], list[str]]` devolviendo `(X, y, records, feature_names)` sin NaNs sobre malla `12×12`.
+* **Contrato IA2 → IA3 (`scripts/risk_ml.py`):** genera `<PROCESSED>/ignition_risk.geojson` (`FeatureCollection` válido según `geojson_layer.schema.json`) con `model_metrics` en raíz (`val_roc_auc`, `val_pr_auc`, `feature_importances`, `tier_counts`) y en cada celda `cell_id`, `reference_date`, `ignition_prob`, `risk_pct`, `risk_level`, `drivers`, `recommended_action` y estilos `fill` / `stroke`.
+
+### Oleada IA-1 · Cimientos en Paralelo (0 – 45 min)
+- [ ] **IA1-1** · Crear `scripts/ml_features.py`: malla espacial `12×12` sobre `BBOX`, agregación meteorológica diaria (`temp_max`, `humidity_min`, `wind_max`, `rain_sum`, `fwi_30_30_30`) e igniciones reales FIRMS (`y ∈ {0, 1}`) · **IA1**
+- [ ] **IA1-2** · Añadir variables geoespaciales en `scripts/ml_features.py`: distancias métricas UTM a `roads.geojson`, `fire_stations.geojson`, `water.geojson` y densidad de `population.tif` · **IA1**
+- [ ] **IA2-1** · Crear `scripts/risk_ml.py`: Regresión Logística Regularizada L2 balanceada (`numpy`/`scipy`) y validación adaptativa (`out_of_time_70_30` + fallback `stratified_kfold`) · **IA2**
+- [ ] **IA2-2** · Implementar exportación de `<PROCESSED>/ignition_risk.geojson` con `model_metrics` (`ROC-AUC`, `PR-AUC`, `feature_importances`), *drivers* explicables y recomendación municipal por celda · **IA2**
+- [ ] **IA3-1** · Registrar capa `ignition_risk` (`active: False`, estilo `fill`, popup municipal y leyenda de 4 niveles) en `scripts/make_manifest.py` · **IA3**
+- [ ] **IA3-2** · Integrar `scripts/risk_ml.py` en `Makefile` (dentro de `make data`, antes de `make_manifest.py`) · **IA3**
+
+### Oleada IA-2 · Integración, Tests y Multi-Episodio (45 – 90 min)
+- [ ] **IA1-3** · Añadir tests unitarios en `scripts/tests/test_ml_features.py` (dimensiones de malla, ausencia de NaNs y etiquetas binarias) · **IA1**
+- [ ] **IA2-3** · Conectar `scripts/risk_ml.py` con `ml_features.py` y añadir tests en `scripts/tests/test_risk_ml.py` (esquema GeoJSON, probabilidades en `[0, 1]` y métricas) · **IA2**
+- [ ] **IA3-3** · Ejecutar generación de `ignition_risk.geojson` y `manifest.json` para los episodios (`sierra-bermeja-2021-09`, `chile-2026-02`, `los-angeles-2025-01`) y añadir `scripts/tests/test_ml_integration.py` · **IA3**
+
+### Oleada IA-3 · Validación Final y PR a `dev` (90 – 120 min)
+- [ ] **IA3-4** · Pasar suite completa (`uv run pytest` y `uv run scripts/validate.py`) + prueba visual en `http://localhost:8000` antes de abrir PR `IA` → `dev` · **IA3** (con **IA1** e **IA2**)
