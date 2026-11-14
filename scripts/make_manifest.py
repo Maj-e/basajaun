@@ -1,4 +1,7 @@
-"""Generate web/data/manifest.json listing only the layers whose data file exists.
+"""Generate the episode's manifest.json listing only the layers whose data file exists.
+
+Default episode: web/data/manifest.json for the files in web/data/processed/. Other episodes
+(EPISODE=<id>, see web/data/episodes.json): web/data/episodes/<id>/manifest.json.
 
 Every layer the project knows is declared once in LAYERS below. A layer appears
 in the manifest only when its file is present under web/data/, so the front end
@@ -15,10 +18,10 @@ from pathlib import Path
 
 import rasterio
 
-from config import BBOX, PROCESSED
+from config import BBOX, MANIFEST, PROCESSED, WEB_DATA
 
-DATA_DIR = PROCESSED.parent  # web/data/ — manifest `file` paths are relative to it
-MANIFEST = DATA_DIR / "manifest.json"
+DATA_DIR = WEB_DATA  # manifest `file` paths are relative to web/data/
+EPISODE_SUBDIR = PROCESSED.relative_to(WEB_DATA).as_posix()  # "processed" or "episodes/<id>"
 
 _west, _south, _east, _north = BBOX
 # Image corners: top-left, top-right, bottom-right, bottom-left
@@ -173,9 +176,12 @@ def image_corners(png: Path) -> list[list[float]] | None:
     return [[round(x, 6), round(y, 6)] for x, y in ((w, n), (e, n), (e, s), (w, s))]
 
 
-def build_manifest(data_dir: Path = DATA_DIR, layers: list[dict] = LAYERS) -> dict:
+def build_manifest(data_dir: Path = DATA_DIR, layers: list[dict] = LAYERS,
+                   subdir: str = EPISODE_SUBDIR) -> dict:
+    """LAYERS files are written as processed/<name>; they are looked up in `subdir` (the episode's folder)."""
     present = []
-    for layer in layers:
+    for template in layers:
+        layer = {**template, "file": f"{subdir}/{Path(template['file']).name}"}
         path = data_dir / layer["file"]
         if path.is_file():
             entry = {**layer, "updated_at": file_updated(path)}
@@ -189,13 +195,13 @@ def main() -> None:
     manifest = build_manifest()
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    listed = {layer["id"] for layer in manifest["layers"]}
+    listed = {layer["id"]: layer for layer in manifest["layers"]}
     for layer in LAYERS:
         if layer["id"] in listed:
             state = "active" if layer["active"] else "disabled"
-            print(f"  + {layer['id']:<14} {layer['file']} ({state})")
+            print(f"  + {layer['id']:<14} {listed[layer['id']]['file']} ({state})")
         else:
-            print(f"  - {layer['id']:<14} {layer['file']} not found, skipped")
+            print(f"  - {layer['id']:<14} {EPISODE_SUBDIR}/{Path(layer['file']).name} not found, skipped")
     print(f"[SAVED] {MANIFEST} ({len(listed)}/{len(LAYERS)} layers)")
 
 

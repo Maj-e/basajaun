@@ -1,0 +1,80 @@
+{
+  "updated_at": "2026-11-14T20:19:21Z",
+  "2025-01-06": {
+    "hotspots": 5,
+    "total_frp": 4.0,
+    "modis": 0,
+    "viirs": 5,
+    "no_data": false
+  },
+  "2025-01-07": {
+    "hotspots": 170,
+    "total_frp": 24328.3,
+    "modis": 8,
+    "viirs": 162,
+    "no_data": false
+  },
+  "2025-01-08": {
+    "hotspots": 3173,
+    "total_frp": 143341.8,
+    "modis": 151,
+    "viirs": 3022,
+    "no_data": false
+  },
+  "2025-01-09": {
+    "hotspots": 1329,
+    "total_frp": 49986.6,
+    "modis": 78,
+    "viirs": 1251,
+    "no_data": false
+  },
+  "2025-01-10": {
+    "hotspots": 536,
+    "total_frp": 12724.0,
+    "modis": 37,
+    "viirs": 499,
+    "no_data": false
+  },
+  "2025-01-11": {
+    "hotspots": 606,
+    "total_frp": 40857.4,
+    "modis": 56,
+    "viirs": 550,
+    "no_data": false
+  },
+  "2025-01-12": {
+    "hotspots": 25,
+    "total_frp": 39.4,
+    "modis": 0,
+    "viirs": 25,
+    "no_data": false
+  },
+  "2025-01-13": {
+    "hotspots": 9,
+    "total_frp": 73.0,
+    "modis": 2,
+    "viirs": 7,
+    "no_data": false
+  },
+  "2025-01-14": {
+    "hotspots": 3,
+    "total_frp": 9.8,
+    "modis": 0,
+    "viirs": 3,
+    "no_data": false
+  },
+  "2025-01-15": {
+    "hotspots": 2,
+    "total_frp": 2.7,
+    "modis": 0,
+    "viirs": 2,
+    "no_data": false
+  },
+  "2025-01-16": {
+    "hotspots": 4,
+    "total_frp": 4.8,
+    "modis": 0,
+    "viirs": 4,
+    "no_data": false
+  }
+}

@@ -139,3 +139,12 @@ def test_manifest_legend_matches_road_style():
     [roads] = [layer for layer in make_manifest.LAYERS if layer["id"] == "roads"]
     legend = {item["text"].lower(): item["color"] for item in roads["legend"]}
     assert legend == {highway: style[0] for highway, style in osm.ROAD_STYLE.items()}
+
+
+def test_main_skips_when_overpass_is_down(monkeypatch, capsys):
+    def down(refresh=False):
+        raise RuntimeError("every Overpass endpoint failed: 504")
+    monkeypatch.setattr(osm, "download", down)
+    monkeypatch.setattr("sys.argv", ["osm.py"])
+    osm.main()  # must not raise: make data keeps going
+    assert "[SKIP] OpenStreetMap unavailable" in capsys.readouterr().out

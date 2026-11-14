@@ -15,7 +15,8 @@ _Last updated: 2026-11-14._
 | W1-B4 | Contract validator + manifest | ✅ merged (#16) |
 | W2-B1 | MODIS / VIIRS deduplication | ✅ merged (#20) — not yet applied to the exported file |
 | W1-F2 | Site switched to the real data (`data/manifest.json`) | ✅ merged → **MVP online** |
-| W2-F3 | Figures follow the visible area | ✅ `feature/viewport-scope` |
+| W2-F3 | Figures follow the visible area | ✅ merged |
+| W3-F2 | Alert panel (halo + label on the map, collapsed list) | ✅ shows once `processed/alerts.json` exists (needs the population raster for `exposure.py`) |
 | W0-B1 | Frozen contract + generated sample data | ✅ merged (`make sample`); contract names follow B1's code |
 | W1-B1 | MODIS / VIIRS normalization + tests | ✅ merged (`harmonize.py`) — FIRMS `type 2` filter still to add |
 | W2-B2 | Fires (DBSCAN grouping) | ✅ merged (`fires.py`) |
@@ -52,5 +53,10 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 
 | 2026-11-14 | Area named "Chile–Argentina border, 33–38° S" instead of "Central Chile" | the spark (1,111 MW) and 110 of the 151 peak-day fires are in Mendoza, Argentina; 679 of 825 fires overall are in Chile |
 | 2026-11-14 | MapLibre GL 4.7.1 self-hosted in `web/vendor/` | the demo no longer depends on the unpkg CDN (it failed once during testing) |
+
+| 2026-11-14 | Demo refocused on Spain: default episode **Sierra Bermeja (Málaga), Sep 2021**; front reads `episodes.json`, episode selector, world land outline | real episode with every layer computed, alerts included |
+
+| 2026-11-14 | Demo episodes: Málaga (story + alerts), Spain · Aug 2025 (national scale, 5–7 days, medium/high confidence, no OSM; Natural Earth major water), Chile (other continent); Madrid dropped | volume and readability at national scale |
+| 2026-11-14 | Persistent Map panel (layers, satellite, alerts on map); alert circles only when ticked, list always open; heatmap when zoomed out; Demo button | the screen was saturated with population labels and overlapping circles |
 
 Add a row whenever the team makes a decision that someone could later ask "why?" about.

@@ -26,5 +26,13 @@ feature/<task-id>-<name> ──PR──► dev ──PR──► main ──► 
 - Published site: **https://maj-e.github.io/ulinautas/** (custom domain later, via `web/CNAME` + DNS).
 - A task is done only when it works on the published URL.
 
-## Live refresh (planned, W4-B4)
-A scheduled workflow (every 30 min) will run the pipeline for the last 48 h with the secret key, validate the output, and publish the site directly — **without committing** the live data (a commit made by a workflow would not trigger `deploy.yml`, and it would bloat the history). If validation fails, the site keeps the previous version. Scheduled workflows are disabled by GitHub after 60 days without repository activity.
+## Live refresh (W4-B4)
+`.github/workflows/update-data.yml` runs **every 30 min**, on demand (*Actions → update-data → Run workflow*) and right after each `deploy` from `main` (which publishes `web/` without `live/`):
+1. `make live`: fresh download of the last 48 h for the `live` episode (`web/data/episodes.json`, Iberian Peninsula) → pipeline → `validate.py`
+2. valid → publish the site with `web/data/processed/live/` and keep a copy as "last good" (Actions cache)
+3. failed (FIRMS down, missing key, invalid file) → publish the last good copy instead (or nothing) and mark the run red
+4. a final `validate.py` runs right before every publication: an invalid file never reaches the site
+
+The live data is **never committed** (a commit made by a workflow would not trigger `deploy.yml`, and it would bloat the history); `web/data/processed/live/` is in `.gitignore`. Locally: `make live`.
+
+**Setup (once):** add the key as a repository secret named `FIRMS_MAP_KEY` (*Settings → Secrets and variables → Actions*, or `gh secret set FIRMS_MAP_KEY`). The workflow only runs from the default branch, so it starts after the next release to `main`. Scheduled workflows are disabled by GitHub after 60 days without repository activity.

@@ -87,7 +87,7 @@ def test_density_accounts_for_latitude():
 def test_manifest_takes_corners_from_population_tif(raw, tmp_path):
     data_dir = tmp_path / "data"
     population.run(raw, data_dir / "processed", BBOX)
-    manifest = make_manifest.build_manifest(data_dir)
+    manifest = make_manifest.build_manifest(data_dir, subdir="processed")
     [layer] = [layer for layer in manifest["layers"] if layer["id"] == "population"]
     assert layer["corners"] == [[-72.0, -34.0], [-70.0, -34.0], [-70.0, -36.0], [-72.0, -36.0]]
 
