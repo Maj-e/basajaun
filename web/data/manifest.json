@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T18:52:00Z",
+  "updated_at": "2026-11-14T18:59:07Z",
   "layers": [
     {
       "id": "hotspots",
@@ -29,7 +29,75 @@
           "text": "Low confidence"
         }
       ],
-      "updated_at": "2026-11-14T17:57:52Z"
+      "updated_at": "2026-11-14T18:37:53Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "processed/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2",
+        "dist_road_km",
+        "dist_water_km",
+        "dist_fire_station_km"
+      ],
+      "updated_at": "2026-11-14T18:56:43Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "processed/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T18:37:53Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "processed/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T18:37:53Z"
     },
     {
       "id": "water",
@@ -48,7 +116,7 @@
           "text": "Lakes, reservoirs, rivers"
         }
       ],
-      "updated_at": "2026-11-14T18:48:23Z"
+      "updated_at": "2026-11-14T18:56:43Z"
     },
     {
       "id": "roads",
@@ -83,7 +151,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T18:48:23Z"
+      "updated_at": "2026-11-14T18:56:43Z"
     },
     {
       "id": "fire_stations",
@@ -101,7 +169,7 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T18:48:23Z"
+      "updated_at": "2026-11-14T18:56:43Z"
     }
   ]
 }

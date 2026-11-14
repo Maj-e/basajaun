@@ -24,14 +24,14 @@ export function computeStory(features, days, counts) {
       prevDays: Math.round((start - dayStart(days[0])) / 24),
     };
   }
-  if (days.length) {
+  if (days.length && days.some((d) => counts[d] > 0)) {
     const i = days.reduce((best, d, k) => (counts[d] > counts[days[best]] ? k : best), 0);
     story.peak = { day: days[i], index: i, count: counts[days[i]], prevCount: i > 0 ? counts[days[i - 1]] : null, end: dayStart(days[i]) + 24 - 0.01 };
   }
   return story;
 }
 
-let sparkMarkers = null;
+let sparkMarkers = null, sparkFor = null;
 function buildSparkMarkers(spark) {
   const ring = document.createElement("div");
   ring.className = "spark-ring";
@@ -48,20 +48,25 @@ function buildSparkMarkers(spark) {
 
 // Show the beats that belong to the current playback hour.
 export function renderStory(story, hour) {
-  if (story.spark && map) {
-    sparkMarkers ??= buildSparkMarkers(story.spark);
+  if (map && sparkFor !== story.spark) {
+    // The story changed (new visible area): drop the old spark callout
+    sparkMarkers?.forEach((m) => m.remove());
+    sparkMarkers = story.spark ? buildSparkMarkers(story.spark) : null;
+    sparkFor = story.spark;
+  }
+  if (sparkMarkers) {
     const on = hour >= story.spark.t && hour < story.spark.t + 18;
     sparkMarkers.forEach((m) => (on ? m.addTo(map) : m.remove()));
   }
   const banner = document.getElementById("peak-banner");
-  if (story.peak) {
+  if (story.peak && story.peak.count > 0) {
     const start = story.peak.end - 24;
     banner.hidden = !(hour >= start && hour < story.peak.end + 8);
-  }
+  } else banner.hidden = true;
 }
 
 export function fillPeakBanner(story) {
-  if (!story.peak) return;
+  if (!story.peak || !story.peak.count) return;
   const d = new Date(`${story.peak.day}T00:00:00Z`);
   document.getElementById("peak-count").textContent = `${story.peak.count} fires`;
   document.getElementById("peak-text").textContent = `on ${d.getUTCDate()} ${d.toLocaleString("en", { month: "short", timeZone: "UTC" })}` +

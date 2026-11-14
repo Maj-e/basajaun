@@ -43,7 +43,7 @@ LAYERS: list[dict] = [
         "file": "processed/fires.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
                   "dist_road_km", "dist_water_km", "dist_fire_station_km"],
     },
@@ -81,7 +81,7 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "circle",
         "temporal": True,
-        "active": False,
+        "active": True,
         "popup": ["timestamp_utc", "temperature", "humidity", "rain", "speed"],
     },
     {
