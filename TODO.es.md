@@ -1,7 +1,7 @@
 # TODO — Ulinautas (focos de incendio MODIS + VIIRS)
 
 Equipo: **4 backend** (B1–B4) y **1 front / devops** (F).
-Contrato de datos (formatos, manifest de capas, correspondencia MODIS / VIIRS): [`docs/contrato_datos.md`](docs/contrato_datos.md).
+Contrato de datos (formatos, manifest de capas, correspondencia MODIS / VIIRS): [`docs/contrato_datos.es.md`](docs/contrato_datos.es.md).
 
 ---
 
@@ -72,7 +72,7 @@ Formato: **qué hacer** · **archivos** · **hecho cuando** · **depende de**.
 ### Wave 0 — Base (P0)
 
 - [ ] **W0-B1** · Contrato gelado + datos de ejemplo · **B1** (con F)
-  - Sesión de 20 min B1 + F: revisar [`docs/contrato_datos.md`](docs/contrato_datos.md) campo por campo (focos, resumen diario, incendios, alertas, **manifest**, propiedades de estilo, campo `actualizado`) y gelarlo
+  - Sesión de 20 min B1 + F: revisar [`docs/contrato_datos.es.md`](docs/contrato_datos.es.md) campo por campo (focos, resumen diario, incendios, alertas, **manifest**, propiedades de estilo, campo `actualizado`) y gelarlo
   - Script que **genera** los datos de ejemplo desde el contrato (no a mano): ~50 focos MODIS + VIIRS en la zona, 3 días, 3 confianzas, con `t`, `color`, `radio`; `resumen_diario`, `alertas`, `manifest.json`
   - Archivos: `scripts/make_sample.py` → `web/data/sample/*`
   - **Hecho cuando:** F carga los archivos de ejemplo sin pedir ningún cambio de formato
@@ -99,7 +99,7 @@ Formato: **qué hacer** · **archivos** · **hecho cuando** · **depende de**.
   - Depende de: W0-B2
 
 - [ ] **W0-B4** · Repo, entorno, Makefile, CI · **B4**
-  - Estructura de carpetas del [README](README.md#estructura-del-proyecto), `requirements.txt`, `.gitignore` (`.env`, `data/raw/`, `.venv/`), `.env.example`
+  - Estructura de carpetas del [README](README.es.md#estructura-del-proyecto), `pyproject.toml` + `uv.lock` (uv), `.gitignore` (`.env`, `data/raw/`, `.venv/`), `.env.example`
   - `Makefile`: `make data` (todos los scripts en orden), `make test`, `make serve`
   - `.github/workflows/ci.yml`: `pytest` en cada PR; protección de `main` (PR obligatorio + CI verde)
   - **Hecho cuando:** `make test` pasa en una máquina limpia y un PR con un test roto queda bloqueado
