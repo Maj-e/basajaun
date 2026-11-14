@@ -318,6 +318,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the Spain episode shows a short, sorted incident list on the published URL
   - Depends on: W3-B9, W3-F5
 
+- [x] **W3-B9** · Combined risk score + evacuation estimate · **B4**
+  - Per fire, four factors of 0–2 points: fire (intensity), people (within 5 km), smoke (toward people, W3-B8), strong wind (surface, during the fire)
+  - Level from the total, raised by combinations: smoke + people ≥ medium, fire + strong wind ≥ high, people + fire + smoke + strong wind = **extreme**
+  - Evacuation: people in fire + 1 km + 6 h spread (`evacuate_people`); the rest within 5 km on warning (`warn_people`)
+  - Files: `scripts/risk_score.py` → `fire_risk.geojson`, `evacuation.geojson` + fields on `fires.geojson`; thresholds `RISK_SCORE` in `config.py`
+  - **Done when:** every episode with population has a level and an evacuation estimate per fire, and both layers pass the validator
+  - Depends on: W3-B8, W5-B2
+
 - [ ] **W3-F5** · Alert types in the panel · **F**
   - One icon + label per type in the alert list, filter chips (Population · Wind · Smoke · Water), circle on the map colored by type
   - **Done when:** each type shows and filters on the published URL

@@ -26,6 +26,7 @@ PIPELINE := \
 	natural_earth_water \
 	groundwater \
 	exposure \
+	risk_score \
 	make_manifest \
 	validate
 

@@ -95,6 +95,19 @@ ALERT_THRESHOLDS = {
     "smoke_critical_people": 50_000,
 }
 
+# Combined risk score + evacuation (W3-B9): read by scripts/risk_score.py
+RISK_SCORE = {
+    "fire_intense_frp_mw": 100.0,    # fire factor = 2 when frp_max reaches this ...
+    "fire_intense_hotspots": 20,     # ... or the fire has this many hotspots
+    "people_some": 1_000,            # people within 5 km -> people factor 1
+    "people_many": 10_000,           # -> people factor 2
+    "smoke_many": 10_000,            # smoke alert reaching this many people -> smoke factor 2 (any smoke alert = 1)
+    "wind_strong_kmh": 20.0,         # strongest surface wind during the fire -> wind factor 1
+    "wind_very_strong_kmh": 30.0,    # -> wind factor 2
+    "evacuate_buffer_km": 1.0,       # evacuation zone = fire + this buffer + 6 h spread
+    "warn_radius_km": 5.0,           # warning zone = within this radius, outside the evacuation zone
+}
+
 _paths = episode_paths(EPISODE)
 RAW = _paths["raw"]
 PROCESSED = _paths["processed"]
