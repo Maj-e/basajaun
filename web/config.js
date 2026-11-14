@@ -19,6 +19,8 @@ export const CONFIG = {
   demoEpisodes: ["sierra-bermeja-2021-09", "spain-2025-08", "chile-2026-02"],
   // Fires stay visible this many hours after their detection, fading out
   trailHours: 24,
+  // Temporal layers that keep a trail; every other temporal layer (weather, wind) shows the current hour only
+  trailLayers: ["hotspots"],
 };
 
 // ---------- Episode: ?episode=<id>, else the default of episodes.json ----------
