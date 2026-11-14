@@ -46,6 +46,26 @@ An object (not a bare list) so it carries `updated_at` like every other file; `a
 ```
 One entry per **whole** hour of the period (`t` = hours since 1970, integer), zero-filled: feeds the timeline counter and chart.
 
+### `web/data/episodes.json` — fire episodes (W4-B5)
+```json
+{
+  "updated_at": "2026-02-14T08:00:00Z",
+  "default": "sierra-bermeja-2021-09",
+  "episodes": [
+    { "id": "sierra-bermeja-2021-09", "name": "Sierra Bermeja (Málaga) · Sep 2021", "bbox": [-5.6, 36.3, -4.6, 36.9],
+      "start": "2021-09-08", "end": "2021-09-20", "dir": "episodes/sierra-bermeja-2021-09",
+      "manifest": "episodes/sierra-bermeja-2021-09/manifest.json" },
+    { "id": "chile-2026-02", "name": "Chile–Argentina border · Feb 2026", "bbox": [-72.0, -38.0, -70.0, -33.0],
+      "start": "2026-02-01", "end": "2026-02-14", "dir": "processed", "manifest": "manifest.json" },
+    { "id": "los-angeles-2025-01", "name": "Los Angeles · Jan 2025", "bbox": [-119.0, 33.6, -117.4, 34.6],
+      "start": "2025-01-06", "end": "2025-01-16", "dir": "episodes/los-angeles-2025-01",
+      "manifest": "episodes/los-angeles-2025-01/manifest.json", "skip": ["osm"] }
+  ]
+}
+```
+Each episode has its own data folder (`dir`) and **its own manifest** (`manifest`), both relative to `web/data/`; the manifest's `file` paths point into that folder. The front end loads `default` first; switching episode = loading another `manifest`. `bbox` is west, south, east, north. `skip` lists pipeline steps that episode doesn't run (front end ignores it).
+Build an episode with `make data EPISODE=<id>`; without `EPISODE`, the default one. Chile keeps its files in `processed/` + `manifest.json`, which the current front end reads, until the episode selector (W4-F2) reads this file.
+
 ### Rules shared by every file
 - **Style computed by the backend:** each Feature carries its display properties (`color`, `radius`, `border`, `opacity`, `rotation`, `size`, `width` depending on the layer type). The front end never picks colors.
 - **Timestamp:** each JSON file has `updated_at` (ISO 8601 UTC) at root level (in GeoJSON: a property of the `FeatureCollection`). The front end shows "Data from DD/MM HH:MM".

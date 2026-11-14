@@ -1,0 +1,229 @@
+{
+  "updated_at": "2026-11-14T20:35:13Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "episodes/sierra-bermeja-2021-09/hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "sensor",
+        "satellite",
+        "timestamp_utc",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "text": "High confidence"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium confidence"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low confidence"
+        }
+      ],
+      "updated_at": "2026-11-14T20:34:58Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "episodes/sierra-bermeja-2021-09/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2",
+        "dist_road_km",
+        "dist_water_km",
+        "dist_fire_station_km"
+      ],
+      "updated_at": "2026-11-14T20:35:02Z"
+    },
+    {
+      "id": "spread",
+      "name": "6h spread estimate",
+      "file": "episodes/sierra-bermeja-2021-09/spread.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "horizon_hours",
+        "wind_speed_kmh",
+        "wind_to_deg",
+        "spread_km",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T20:34:59Z"
+    },
+    {
+      "id": "population",
+      "name": "Population density",
+      "file": "episodes/sierra-bermeja-2021-09/population.png",
+      "type": "image",
+      "corners": [
+        [
+          -5.6,
+          36.9
+        ],
+        [
+          -4.6,
+          36.9
+        ],
+        [
+          -4.6,
+          36.3
+        ],
+        [
+          -5.6,
+          36.3
+        ]
+      ],
+      "temporal": false,
+      "active": false,
+      "legend": [
+        {
+          "color": "#fee5d9",
+          "text": "< 10 people/km²"
+        },
+        {
+          "color": "#a50f15",
+          "text": "> 1000 people/km²"
+        }
+      ],
+      "updated_at": "2026-11-14T20:34:58Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T20:34:59Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T20:34:59Z"
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "file": "episodes/sierra-bermeja-2021-09/water.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name",
+        "kind"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Lakes, reservoirs, rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T20:35:02Z"
+    },
+    {
+      "id": "roads",
+      "name": "Roads",
+      "file": "episodes/sierra-bermeja-2021-09/roads.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name",
+        "highway"
+      ],
+      "legend": [
+        {
+          "color": "#f2a541",
+          "text": "Primary"
+        },
+        {
+          "color": "#f6c667",
+          "text": "Secondary"
+        },
+        {
+          "color": "#f9dfa0",
+          "text": "Tertiary"
+        },
+        {
+          "color": "#b08968",
+          "text": "Track"
+        },
+        {
+          "color": "#9c8b7a",
+          "text": "Path"
+        }
+      ],
+      "updated_at": "2026-11-14T20:35:02Z"
+    },
+    {
+      "id": "fire_stations",
+      "name": "Fire stations",
+      "file": "episodes/sierra-bermeja-2021-09/fire_stations.geojson",
+      "type": "circle",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#2b8cbe",
+          "text": "Fire station"
+        }
+      ],
+      "updated_at": "2026-11-14T20:35:02Z"
+    }
+  ]
+}

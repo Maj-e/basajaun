@@ -297,7 +297,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 ### Wave 4 — Live + episodes (P1 / P2)
 
-- [ ] **W4-B5** · Pipeline per episode · **B4** (with B2)
+- [x] **W4-B5** · Pipeline per episode · **B4** (with B2)
   - `web/data/episodes.json`: one entry per episode (`id`, `name`, `bbox`, `start`, `end`, `manifest`); the pipeline reads the episode instead of the fixed `BBOX`: `make data EPISODE=chile-2026-02` writes to `web/data/episodes/<id>/`
   - Pick 1–2 more real episodes (other continents, < 2 weeks, clearly visible in FIRMS)
   - **Done when:** two episodes are generated and validated side by side
