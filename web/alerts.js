@@ -45,11 +45,11 @@ function marker(a) {
   return new maplibregl.Marker({ element: el }).setLngLat(a.center);
 }
 
-// Alerts that have started at `hour` and lie in the current scope (inScope(lngLat) → boolean).
+// Alerts that have started at `hour` and belong to the current scope (inScope(alert) → boolean).
 export function renderAlerts(hour, inScope) {
   if (!alerts.length) return;
   const active = alerts
-    .filter((a) => a.t <= hour && inScope(a.center))
+    .filter((a) => a.t <= hour && inScope(a))
     .sort((a, b) => RANK[a.risk] - RANK[b.risk] || b.pop_5km - a.pop_5km);
   const key = active.map((a) => a.fire_id).join(",");
   if (key === shownKey) return;

@@ -1,0 +1,111 @@
+name: update-data
+
+# Live mode (W4-B4): every 30 min, download the last 48 h of FIRMS hotspots for the `live` episode
+# (web/data/episodes.json), run the pipeline, validate, and publish the site with
+# web/data/processed/live/ — without committing the data (a commit made by a workflow would not
+# trigger deploy.yml, and it would bloat the history every 30 min).
+# An invalid refresh never reaches the site: the last good live data is published instead.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+  # A deploy from main publishes web/ without live/: put the live data back right away
+  workflow_run:
+    workflows: [deploy]
+    types: [completed]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Same group as deploy.yml, so two publications never overlap
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Restore the last good live data
+        uses: actions/cache/restore@v4
+        with:
+          path: .live-last-good
+          key: live-good-${{ github.run_id }}
+          restore-keys: live-good-
+
+      - name: Refresh live data (last 48 h) and validate
+        id: refresh
+        continue-on-error: true
+        env:
+          FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+        run: |
+          if [ -z "$FIRMS_MAP_KEY" ]; then
+            echo "::error::Repository secret FIRMS_MAP_KEY is missing (Settings → Secrets and variables → Actions)"
+            exit 1
+          fi
+          make live   # download → pipeline → make_manifest → validate.py (fails on any invalid file)
+
+      - name: Keep this refresh as the last good one
+        if: steps.refresh.outcome == 'success'
+        run: rm -rf .live-last-good && cp -r web/data/processed/live .live-last-good
+
+      - name: Save the last good live data
+        if: steps.refresh.outcome == 'success'
+        uses: actions/cache/save@v4
+        with:
+          path: .live-last-good
+          key: live-good-${{ github.run_id }}
+
+      - name: Refresh failed — fall back to the last good live data
+        id: fallback
+        if: steps.refresh.outcome != 'success'
+        run: |
+          rm -rf web/data/processed/live
+          mkdir -p web/data/processed/live
+          if [ -f .live-last-good/manifest.json ]; then
+            cp -r .live-last-good/. web/data/processed/live/
+            echo "::warning::Refresh failed: publishing the last good live data"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::Refresh failed and there is no previous good live data: nothing published"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Final gate — every file about to be published must be valid
+        if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
+        run: uv run scripts/validate.py
+
+      - uses: actions/configure-pages@v5
+        if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
+        with:
+          path: web
+
+      - id: deployment
+        if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
+        uses: actions/deploy-pages@v4
+
+      - name: Mark the run as failed when the refresh failed
+        if: steps.refresh.outcome != 'success'
+        run: |
+          echo "::error::Live refresh failed (see the 'Refresh live data' step). The site keeps the last good live data."
+          exit 1

@@ -310,7 +310,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W4-B5
 
 - [ ] **W4-B4** · Automatic refresh with validation · **B4**
-  - `.github/workflows/update-data.yml` every 30 min + manual trigger: downloads the last 48 h → pipeline → **`validate.py`** → commit **only if valid**; otherwise the last good file is kept
+  - `.github/workflows/update-data.yml` every 30 min + manual trigger + after each deploy: downloads the last 48 h (`live` episode in `web/data/episodes.json`) → pipeline → **`validate.py`** → publishes the site **only if valid**, without committing the data; otherwise the last good live data is published
   - Data in `web/data/processed/live/` (the demo episode is untouched)
   - `FIRMS_MAP_KEY` in the repository secrets, never in the browser
   - **Done when:** a manual run refreshes `live/`, and an invalid file never reaches the site

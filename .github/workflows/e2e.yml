@@ -5,7 +5,7 @@ name: e2e
 # against the contract and times the first page load.
 on:
   workflow_run:
-    workflows: [deploy]
+    workflows: [deploy, update-data]
     types: [completed]
   workflow_dispatch:
     inputs:

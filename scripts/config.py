@@ -10,6 +10,7 @@ Without EPISODE the default episode is used (Chile, data in web/data/processed/ 
 import json
 import os
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 # Load .env by hand, without depending on an external library
@@ -53,6 +54,14 @@ def resolve_episode(doc: dict | None, episode_id: str | None = None) -> dict:
     return episodes[wanted]
 
 
+LIVE_DAYS = 2  # a live episode covers today and yesterday (~ the last 48 h of FIRMS NRT data)
+
+
+def live_dates(today: date | None = None, days: int = LIVE_DAYS) -> tuple[str, str]:
+    today = today or date.today()
+    return (today - timedelta(days=days - 1)).isoformat(), today.isoformat()
+
+
 def episode_paths(episode: dict, base_dir: Path = BASE_DIR) -> dict:
     """Where an episode's raw downloads, processed files and manifest live."""
     web_data = base_dir / "web" / "data"
@@ -68,7 +77,8 @@ _doc = json.loads(EPISODES_FILE.read_text(encoding="utf-8")) if EPISODES_FILE.ex
 EPISODE = resolve_episode(_doc, os.getenv("EPISODE") or None)
 EPISODE_ID = EPISODE["id"]
 BBOX = tuple(EPISODE["bbox"])                 # (west, south, east, north)
-START_DATE, END_DATE = EPISODE["start"], EPISODE["end"]
+IS_LIVE = bool(EPISODE.get("live"))          # live episode: the period moves with the clock
+START_DATE, END_DATE = live_dates() if IS_LIVE else (EPISODE["start"], EPISODE["end"])
 SKIP = set(EPISODE.get("skip", []))           # pipeline steps this episode doesn't run
 
 _paths = episode_paths(EPISODE)
