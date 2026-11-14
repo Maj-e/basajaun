@@ -1,0 +1,1027 @@
+{
+  "updated_at": "2026-11-14T21:13:08Z",
+  "alerts": [
+    {
+      "fire_id": 62,
+      "risk": "critical",
+      "since": "2026-02-14T05:20:00Z",
+      "pop_1km": 41412,
+      "pop_5km": 640817,
+      "pop_10km": 2227018,
+      "wind_toward_population": false,
+      "center": [
+        -70.6864,
+        -33.417
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 68,
+      "risk": "critical",
+      "since": "2026-02-05T17:40:00Z",
+      "pop_1km": 25692,
+      "pop_5km": 129912,
+      "pop_10km": 288404,
+      "wind_toward_population": false,
+      "center": [
+        -70.8825,
+        -33.6159
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 56,
+      "risk": "critical",
+      "since": "2026-02-09T19:16:00Z",
+      "pop_1km": 20286,
+      "pop_5km": 103771,
+      "pop_10km": 166958,
+      "wind_toward_population": false,
+      "center": [
+        -71.2578,
+        -34.9876
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 61,
+      "risk": "critical",
+      "since": "2026-02-13T05:38:00Z",
+      "pop_1km": 14250,
+      "pop_5km": 267619,
+      "pop_10km": 982583,
+      "wind_toward_population": false,
+      "center": [
+        -70.7846,
+        -33.3602
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 30,
+      "risk": "critical",
+      "since": "2026-02-10T04:55:00Z",
+      "pop_1km": 12591,
+      "pop_5km": 99362,
+      "pop_10km": 167569,
+      "wind_toward_population": false,
+      "center": [
+        -71.251,
+        -35.0037
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 51,
+      "risk": "critical",
+      "since": "2026-02-08T05:32:00Z",
+      "pop_1km": 12541,
+      "pop_5km": 178614,
+      "pop_10km": 299230,
+      "wind_toward_population": false,
+      "center": [
+        -70.7347,
+        -34.2015
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 15,
+      "risk": "critical",
+      "since": "2026-02-04T05:07:00Z",
+      "pop_1km": 11466,
+      "pop_5km": 251544,
+      "pop_10km": 970135,
+      "wind_toward_population": false,
+      "center": [
+        -70.7871,
+        -33.3594
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 17,
+      "risk": "critical",
+      "since": "2026-02-06T05:20:00Z",
+      "pop_1km": 7046,
+      "pop_5km": 117816,
+      "pop_10km": 987349,
+      "wind_toward_population": false,
+      "center": [
+        -70.7553,
+        -33.6237
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 47,
+      "risk": "critical",
+      "since": "2026-02-05T18:51:00Z",
+      "pop_1km": 6707,
+      "pop_5km": 169767,
+      "pop_10km": 830274,
+      "wind_toward_population": false,
+      "center": [
+        -70.7981,
+        -33.352
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 24,
+      "risk": "critical",
+      "since": "2026-02-08T05:32:00Z",
+      "pop_1km": 6281,
+      "pop_5km": 73835,
+      "pop_10km": 258562,
+      "wind_toward_population": false,
+      "center": [
+        -70.7289,
+        -33.6942
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 67,
+      "risk": "critical",
+      "since": "2026-02-04T05:37:00Z",
+      "pop_1km": 4791,
+      "pop_5km": 70035,
+      "pop_10km": 971782,
+      "wind_toward_population": false,
+      "center": [
+        -70.8731,
+        -33.5227
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 57,
+      "risk": "critical",
+      "since": "2026-02-09T19:16:00Z",
+      "pop_1km": 4584,
+      "pop_5km": 37395,
+      "pop_10km": 101226,
+      "wind_toward_population": false,
+      "center": [
+        -71.0226,
+        -33.6786
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 6,
+      "risk": "critical",
+      "since": "2026-02-13T18:31:00Z",
+      "pop_1km": 4208,
+      "pop_5km": 26210,
+      "pop_10km": 89812,
+      "wind_toward_population": false,
+      "center": [
+        -70.939,
+        -34.5163
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 66,
+      "risk": "critical",
+      "since": "2026-02-01T18:56:00Z",
+      "pop_1km": 3224,
+      "pop_5km": 30749,
+      "pop_10km": 157145,
+      "wind_toward_population": false,
+      "center": [
+        -71.2709,
+        -33.0342
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 35,
+      "risk": "critical",
+      "since": "2026-02-12T17:29:00Z",
+      "pop_1km": 2911,
+      "pop_5km": 57168,
+      "pop_10km": 154738,
+      "wind_toward_population": false,
+      "center": [
+        -71.2962,
+        -34.9718
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 34,
+      "risk": "critical",
+      "since": "2026-02-12T05:08:00Z",
+      "pop_1km": 2728,
+      "pop_5km": 19658,
+      "pop_10km": 83612,
+      "wind_toward_population": false,
+      "center": [
+        -70.9504,
+        -34.5285
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 52,
+      "risk": "critical",
+      "since": "2026-02-08T19:35:00Z",
+      "pop_1km": 2454,
+      "pop_5km": 39857,
+      "pop_10km": 364967,
+      "wind_toward_population": false,
+      "center": [
+        -70.6726,
+        -33.6986
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 60,
+      "risk": "critical",
+      "since": "2026-02-11T18:38:00Z",
+      "pop_1km": 184,
+      "pop_5km": 3200,
+      "pop_10km": 17952,
+      "wind_toward_population": true,
+      "center": [
+        -71.5225,
+        -35.6946
+      ],
+      "color": "#a50f15"
+    },
+    {
+      "fire_id": 13,
+      "risk": "high",
+      "since": "2026-02-02T18:58:00Z",
+      "pop_1km": 719,
+      "pop_5km": 11527,
+      "pop_10km": 37940,
+      "wind_toward_population": false,
+      "center": [
+        -70.6567,
+        -33.1039
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 26,
+      "risk": "high",
+      "since": "2026-02-08T18:45:00Z",
+      "pop_1km": 701,
+      "pop_5km": 17479,
+      "pop_10km": 176079,
+      "wind_toward_population": false,
+      "center": [
+        -71.7142,
+        -35.4985
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 14,
+      "risk": "high",
+      "since": "2026-02-02T18:58:00Z",
+      "pop_1km": 590,
+      "pop_5km": 5918,
+      "pop_10km": 21099,
+      "wind_toward_population": false,
+      "center": [
+        -70.7878,
+        -33.1029
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 54,
+      "risk": "high",
+      "since": "2026-02-09T17:35:00Z",
+      "pop_1km": 569,
+      "pop_5km": 2790,
+      "pop_10km": 11010,
+      "wind_toward_population": false,
+      "center": [
+        -71.3756,
+        -34.0902
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 69,
+      "risk": "high",
+      "since": "2026-02-06T19:02:00Z",
+      "pop_1km": 557,
+      "pop_5km": 6205,
+      "pop_10km": 21154,
+      "wind_toward_population": false,
+      "center": [
+        -70.789,
+        -33.0997
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 12,
+      "risk": "high",
+      "since": "2026-02-02T04:55:00Z",
+      "pop_1km": 438,
+      "pop_5km": 3830,
+      "pop_10km": 23379,
+      "wind_toward_population": false,
+      "center": [
+        -71.481,
+        -35.6565
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 16,
+      "risk": "high",
+      "since": "2026-02-05T18:01:00Z",
+      "pop_1km": 388,
+      "pop_5km": 2791,
+      "pop_10km": 7485,
+      "wind_toward_population": false,
+      "center": [
+        -70.93,
+        -33.1076
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 39,
+      "risk": "high",
+      "since": "2026-02-13T18:52:00Z",
+      "pop_1km": 345,
+      "pop_5km": 13081,
+      "pop_10km": 25780,
+      "wind_toward_population": false,
+      "center": [
+        -71.4449,
+        -33.2973
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 71,
+      "risk": "high",
+      "since": "2026-02-06T19:02:00Z",
+      "pop_1km": 312,
+      "pop_5km": 10138,
+      "pop_10km": 36293,
+      "wind_toward_population": false,
+      "center": [
+        -70.6798,
+        -33.1041
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 64,
+      "risk": "high",
+      "since": "2026-02-14T19:22:00Z",
+      "pop_1km": 281,
+      "pop_5km": 1942,
+      "pop_10km": 8249,
+      "wind_toward_population": false,
+      "center": [
+        -71.3677,
+        -33.8326
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 65,
+      "risk": "high",
+      "since": "2026-02-01T18:56:00Z",
+      "pop_1km": 226,
+      "pop_5km": 5064,
+      "pop_10km": 91591,
+      "wind_toward_population": false,
+      "center": [
+        -70.949,
+        -33.5335
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 38,
+      "risk": "high",
+      "since": "2026-02-13T18:51:00Z",
+      "pop_1km": 225,
+      "pop_5km": 4879,
+      "pop_10km": 98501,
+      "wind_toward_population": false,
+      "center": [
+        -70.9517,
+        -33.5399
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 70,
+      "risk": "high",
+      "since": "2026-02-06T19:02:00Z",
+      "pop_1km": 224,
+      "pop_5km": 4321,
+      "pop_10km": 34237,
+      "wind_toward_population": false,
+      "center": [
+        -70.6452,
+        -33.1018
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 46,
+      "risk": "high",
+      "since": "2026-02-05T18:51:00Z",
+      "pop_1km": 219,
+      "pop_5km": 5119,
+      "pop_10km": 100719,
+      "wind_toward_population": false,
+      "center": [
+        -70.9487,
+        -33.5358
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 20,
+      "risk": "high",
+      "since": "2026-02-06T19:02:00Z",
+      "pop_1km": 203,
+      "pop_5km": 2676,
+      "pop_10km": 12131,
+      "wind_toward_population": false,
+      "center": [
+        -71.0087,
+        -34.9238
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 53,
+      "risk": "high",
+      "since": "2026-02-09T05:14:00Z",
+      "pop_1km": 202,
+      "pop_5km": 2982,
+      "pop_10km": 21103,
+      "wind_toward_population": false,
+      "center": [
+        -71.5114,
+        -35.7017
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 27,
+      "risk": "high",
+      "since": "2026-02-09T05:14:00Z",
+      "pop_1km": 201,
+      "pop_5km": 1507,
+      "pop_10km": 11639,
+      "wind_toward_population": false,
+      "center": [
+        -71.3419,
+        -35.2349
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 59,
+      "risk": "high",
+      "since": "2026-02-10T18:57:00Z",
+      "pop_1km": 179,
+      "pop_5km": 3425,
+      "pop_10km": 33564,
+      "wind_toward_population": false,
+      "center": [
+        -70.6407,
+        -33.1036
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 48,
+      "risk": "high",
+      "since": "2026-02-05T18:51:00Z",
+      "pop_1km": 179,
+      "pop_5km": 3362,
+      "pop_10km": 32170,
+      "wind_toward_population": false,
+      "center": [
+        -70.6431,
+        -33.1032
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 40,
+      "risk": "high",
+      "since": "2026-02-13T18:52:00Z",
+      "pop_1km": 139,
+      "pop_5km": 12675,
+      "pop_10km": 32652,
+      "wind_toward_population": false,
+      "center": [
+        -70.9207,
+        -33.2635
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 4,
+      "risk": "high",
+      "since": "2026-02-11T17:48:00Z",
+      "pop_1km": 105,
+      "pop_5km": 1442,
+      "pop_10km": 5152,
+      "wind_toward_population": false,
+      "center": [
+        -70.4652,
+        -34.2283
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 11,
+      "risk": "high",
+      "since": "2026-02-02T04:55:00Z",
+      "pop_1km": 95,
+      "pop_5km": 1231,
+      "pop_10km": 5524,
+      "wind_toward_population": false,
+      "center": [
+        -71.8016,
+        -35.8232
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 18,
+      "risk": "high",
+      "since": "2026-02-06T05:21:00Z",
+      "pop_1km": 83,
+      "pop_5km": 2256,
+      "pop_10km": 5172,
+      "wind_toward_population": false,
+      "center": [
+        -71.6789,
+        -37.8464
+      ],
+      "color": "#d7301f"
+    },
+    {
+      "fire_id": 19,
+      "risk": "medium",
+      "since": "2026-02-06T19:02:00Z",
+      "pop_1km": 121,
+      "pop_5km": 911,
+      "pop_10km": 3422,
+      "wind_toward_population": false,
+      "center": [
+        -70.9168,
+        -34.974
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 45,
+      "risk": "medium",
+      "since": "2026-02-03T19:28:00Z",
+      "pop_1km": 59,
+      "pop_5km": 583,
+      "pop_10km": 4565,
+      "wind_toward_population": false,
+      "center": [
+        -71.5458,
+        -34.6723
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 5,
+      "risk": "medium",
+      "since": "2026-02-12T17:29:00Z",
+      "pop_1km": 51,
+      "pop_5km": 274,
+      "pop_10km": 1078,
+      "wind_toward_population": false,
+      "center": [
+        -71.2539,
+        -36.0267
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 63,
+      "risk": "medium",
+      "since": "2026-02-14T19:22:00Z",
+      "pop_1km": 48,
+      "pop_5km": 668,
+      "pop_10km": 2686,
+      "wind_toward_population": false,
+      "center": [
+        -71.926,
+        -36.03
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 73,
+      "risk": "medium",
+      "since": "2026-02-10T19:26:00Z",
+      "pop_1km": 46,
+      "pop_5km": 647,
+      "pop_10km": 2574,
+      "wind_toward_population": false,
+      "center": [
+        -71.9257,
+        -36.0271
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 55,
+      "risk": "medium",
+      "since": "2026-02-09T19:15:00Z",
+      "pop_1km": 45,
+      "pop_5km": 626,
+      "pop_10km": 2563,
+      "wind_toward_population": false,
+      "center": [
+        -71.9266,
+        -36.0283
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 43,
+      "risk": "medium",
+      "since": "2026-02-14T18:11:00Z",
+      "pop_1km": 37,
+      "pop_5km": 231,
+      "pop_10km": 935,
+      "wind_toward_population": false,
+      "center": [
+        -71.2493,
+        -36.0344
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 49,
+      "risk": "medium",
+      "since": "2026-02-07T05:52:00Z",
+      "pop_1km": 34,
+      "pop_5km": 353,
+      "pop_10km": 2437,
+      "wind_toward_population": false,
+      "center": [
+        -71.729,
+        -36.9051
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 32,
+      "risk": "medium",
+      "since": "2026-02-10T18:57:00Z",
+      "pop_1km": 23,
+      "pop_5km": 215,
+      "pop_10km": 884,
+      "wind_toward_population": false,
+      "center": [
+        -71.2529,
+        -36.0274
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 31,
+      "risk": "medium",
+      "since": "2026-02-09T19:15:00Z",
+      "pop_1km": 22,
+      "pop_5km": 215,
+      "pop_10km": 896,
+      "wind_toward_population": false,
+      "center": [
+        -71.2558,
+        -36.0235
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 9,
+      "risk": "medium",
+      "since": "2026-02-01T18:55:00Z",
+      "pop_1km": 19,
+      "pop_5km": 341,
+      "pop_10km": 1841,
+      "wind_toward_population": false,
+      "center": [
+        -71.4753,
+        -36.5425
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 44,
+      "risk": "medium",
+      "since": "2026-02-14T18:11:00Z",
+      "pop_1km": 17,
+      "pop_5km": 197,
+      "pop_10km": 846,
+      "wind_toward_population": false,
+      "center": [
+        -71.2591,
+        -36.019
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 10,
+      "risk": "medium",
+      "since": "2026-02-01T06:04:00Z",
+      "pop_1km": 13,
+      "pop_5km": 79,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4186,
+        -36.4575
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 3,
+      "risk": "medium",
+      "since": "2026-02-11T17:48:00Z",
+      "pop_1km": 13,
+      "pop_5km": 56,
+      "pop_10km": 128,
+      "wind_toward_population": false,
+      "center": [
+        -70.0692,
+        -35.9403
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 29,
+      "risk": "medium",
+      "since": "2026-02-09T06:05:00Z",
+      "pop_1km": 12,
+      "pop_5km": 163,
+      "pop_10km": 727,
+      "wind_toward_population": false,
+      "center": [
+        -71.258,
+        -36.0267
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 23,
+      "risk": "medium",
+      "since": "2026-02-08T06:03:00Z",
+      "pop_1km": 10,
+      "pop_5km": 168,
+      "pop_10km": 737,
+      "wind_toward_population": false,
+      "center": [
+        -71.2562,
+        -36.0244
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 33,
+      "risk": "medium",
+      "since": "2026-02-12T05:08:00Z",
+      "pop_1km": 10,
+      "pop_5km": 154,
+      "pop_10km": 731,
+      "wind_toward_population": false,
+      "center": [
+        -71.2587,
+        -36.0216
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 8,
+      "risk": "medium",
+      "since": "2026-02-01T17:35:00Z",
+      "pop_1km": 10,
+      "pop_5km": 81,
+      "pop_10km": 346,
+      "wind_toward_population": false,
+      "center": [
+        -71.4014,
+        -36.4914
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 1,
+      "risk": "medium",
+      "since": "2026-02-09T18:25:00Z",
+      "pop_1km": 9,
+      "pop_5km": 75,
+      "pop_10km": 328,
+      "wind_toward_population": false,
+      "center": [
+        -71.4093,
+        -36.4865
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 37,
+      "risk": "medium",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 8,
+      "pop_5km": 71,
+      "pop_10km": 322,
+      "wind_toward_population": false,
+      "center": [
+        -71.4119,
+        -36.4889
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 21,
+      "risk": "medium",
+      "since": "2026-02-07T18:43:00Z",
+      "pop_1km": 8,
+      "pop_5km": 69,
+      "pop_10km": 299,
+      "wind_toward_population": false,
+      "center": [
+        -71.4049,
+        -36.4837
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 2,
+      "risk": "medium",
+      "since": "2026-02-10T13:19:00Z",
+      "pop_1km": 7,
+      "pop_5km": 69,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4089,
+        -36.4882
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 25,
+      "risk": "medium",
+      "since": "2026-02-08T18:44:00Z",
+      "pop_1km": 7,
+      "pop_5km": 69,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4074,
+        -36.4853
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 42,
+      "risk": "medium",
+      "since": "2026-02-14T18:32:00Z",
+      "pop_1km": 7,
+      "pop_5km": 68,
+      "pop_10km": 311,
+      "wind_toward_population": false,
+      "center": [
+        -71.4135,
+        -36.49
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 22,
+      "risk": "medium",
+      "since": "2026-02-07T18:13:00Z",
+      "pop_1km": 7,
+      "pop_5km": 67,
+      "pop_10km": 271,
+      "wind_toward_population": false,
+      "center": [
+        -71.428,
+        -36.454
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 7,
+      "risk": "medium",
+      "since": "2026-02-01T05:14:00Z",
+      "pop_1km": 6,
+      "pop_5km": 68,
+      "pop_10km": 306,
+      "wind_toward_population": false,
+      "center": [
+        -71.4015,
+        -36.4924
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 36,
+      "risk": "medium",
+      "since": "2026-02-12T18:49:00Z",
+      "pop_1km": 6,
+      "pop_5km": 68,
+      "pop_10km": 309,
+      "wind_toward_population": false,
+      "center": [
+        -71.4118,
+        -36.4886
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 50,
+      "risk": "medium",
+      "since": "2026-02-07T05:52:00Z",
+      "pop_1km": 6,
+      "pop_5km": 63,
+      "pop_10km": 262,
+      "wind_toward_population": false,
+      "center": [
+        -71.4289,
+        -36.4545
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 41,
+      "risk": "medium",
+      "since": "2026-02-14T05:20:00Z",
+      "pop_1km": 5,
+      "pop_5km": 60,
+      "pop_10km": 248,
+      "wind_toward_population": false,
+      "center": [
+        -71.4302,
+        -36.4491
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 28,
+      "risk": "medium",
+      "since": "2026-02-09T05:44:00Z",
+      "pop_1km": 5,
+      "pop_5km": 59,
+      "pop_10km": 246,
+      "wind_toward_population": false,
+      "center": [
+        -71.4281,
+        -36.4514
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 58,
+      "risk": "medium",
+      "since": "2026-02-10T18:57:00Z",
+      "pop_1km": 5,
+      "pop_5km": 59,
+      "pop_10km": 256,
+      "wind_toward_population": false,
+      "center": [
+        -71.4333,
+        -36.4527
+      ],
+      "color": "#fc8d59"
+    },
+    {
+      "fire_id": 72,
+      "risk": "medium",
+      "since": "2026-02-08T06:03:00Z",
+      "pop_1km": 5,
+      "pop_5km": 59,
+      "pop_10km": 236,
+      "wind_toward_population": false,
+      "center": [
+        -71.4091,
+        -36.4458
+      ],
+      "color": "#fc8d59"
+    }
+  ]
+}
