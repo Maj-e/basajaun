@@ -128,6 +128,19 @@ const BUILDERS = {
     return [layer.id];
   },
 
+  // Rain (front-side style, see CONFIG.rainLayer): blue patches where it rains, bigger and darker with mm/h
+  rain: (layer) => {
+    const mm = ["coalesce", ["get", "rain"], 0];
+    map.addLayer({ id: layer.id, type: "circle", source: layer.id, filter: [">", mm, 0], paint: {
+      "circle-color": ["interpolate", ["linear"], mm, 0.1, "#9ecae1", 2, "#4292c6", 8, "#08519c"],
+      "circle-radius": ["interpolate", ["linear"], ["zoom"],
+        6, ["interpolate", ["linear"], mm, 0.1, 6, 10, 18],
+        11, ["interpolate", ["linear"], mm, 0.1, 18, 10, 48]],
+      "circle-blur": 0.7,
+      "circle-opacity": 0.75 } });
+    return [layer.id];
+  },
+
   line: (layer) => {
     map.addLayer({ id: layer.id, type: "line", source: layer.id, paint: {
       "line-color": color, "line-width": ["coalesce", ["get", "width"], 1.5] } });
@@ -151,6 +164,7 @@ export async function loadData() {
   manifest = await response.json();
   // Layers shown at start are downloaded now, all at once; the others only when their box is ticked
   const active = manifest.layers.filter((l) => l.active);
+  active.forEach((l) => { if (l.id === CONFIG.rainLayer.id) l.name = CONFIG.rainLayer.name; });
   const files = await Promise.all(active.map(async (layer) => {
     if (!isDefaultVisible(layer)) return { layer, data: null, lazy: true };
     const data = await fetchLayer(layer);
@@ -181,7 +195,7 @@ export function addToMap() {
 
 function addEntry(entry) {
   const { layer, data } = entry;
-  const build = BUILDERS[layer.type];
+  const build = BUILDERS[layer.id === CONFIG.rainLayer.id ? "rain" : layer.type];
   if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); return false; }
   map.addSource(layer.id, layer.type === "image"
     ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
