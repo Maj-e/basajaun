@@ -19,6 +19,9 @@ export const CONFIG = {
   demoEpisodes: ["sierra-bermeja-2021-09", "spain-2025-08", "chile-2026-02"],
   // Fires stay visible this many hours after their detection, fading out
   trailHours: 24,
+  // The backend "weather" layer is drawn as rain (blue, sized by mm/h, only where it rains). Exception to
+  // "the style comes from the data": weather.geojson is shared with the wind and its colors are wind speed.
+  rainLayer: { id: "weather", name: "Rain" },
   // Temporal layers that keep a trail; every other temporal layer (weather, wind) shows the current hour only
   trailLayers: ["hotspots"],
 };
