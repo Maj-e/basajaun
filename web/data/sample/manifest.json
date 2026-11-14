@@ -1,32 +1,32 @@
 {
-  "actualizado": "2026-11-14T16:42:54Z",
-  "capas": [
+  "updated": "2026-02-14T08:00:00Z",
+  "layers": [
     {
-      "id": "focos",
-      "nombre": "Focos de calor",
-      "archivo": "sample/focos.geojson",
-      "tipo": "circle",
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "sample/hotspots_sample.geojson",
+      "type": "circle",
       "temporal": true,
-      "activa": true,
+      "enabled": true,
       "popup": [
         "sensor",
-        "satelite",
-        "fecha_hora_utc",
-        "confianza",
+        "satellite",
+        "datetime_utc",
+        "confidence",
         "frp"
       ],
-      "leyenda": [
+      "legend": [
         {
           "color": "#d7301f",
-          "texto": "Confianza alta"
+          "label": "High confidence"
         },
         {
           "color": "#fc8d59",
-          "texto": "Confianza media"
+          "label": "Medium confidence"
         },
         {
           "color": "#fdcc8a",
-          "texto": "Confianza baja"
+          "label": "Low confidence"
         }
       ]
     }
