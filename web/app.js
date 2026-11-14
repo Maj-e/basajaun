@@ -14,12 +14,14 @@ const presenter = new URLSearchParams(location.search).get("demo") === "1";
 const fmtDay = (d, opts = {}) => new Date(`${d}T00:00:00Z`).toLocaleString("en", { day: "numeric", month: "short", timeZone: "UTC", ...opts });
 
 // Fires per day: daily_summary.json when available, otherwise counted from the hotspots. Every day of the range is present.
+// Requested right away, in parallel with the manifest and the layers
+const summaryRequest = fetch(CONFIG.dailySummary).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+
 async function dailyCounts(features) {
   const counts = {};
   try {
-    const r = await fetch(CONFIG.dailySummary);
-    if (r.ok) {
-      const summary = await r.json();
+    const summary = await summaryRequest;
+    if (summary) {
       for (const [day, v] of Object.entries(summary)) if (/^\d{4}-\d{2}-\d{2}$/.test(day)) counts[day] = v.hotspots ?? 0;
     }
   } catch { /* fall back to counting below */ }
