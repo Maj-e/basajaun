@@ -8,11 +8,24 @@ import { CONFIG } from "../config.js";
 const dataUrl = (file) => CONFIG.dataRoot + file;
 const color = ["coalesce", ["get", "color"], "#888888"];
 const isRing = ["==", ["coalesce", ["get", "ring"], false], true];
+const byZoom = (value) => ["interpolate", ["linear"], ["zoom"], 6, ["*", value, 0.35], 9, ["*", value, 0.65], 12, value];
+const radius = ["coalesce", ["get", "radius"], 5];
 
 // One builder per layer type: returns the ids of the map layers it created.
 const BUILDERS = {
   circle: (layer) => {
     const ids = [];
+    // Dense layers: a heatmap reads better than overlapping circles when zoomed out
+    if (CONFIG.heatmapLayers.includes(layer.id)) {
+      map.addLayer({ id: `${layer.id}-heat`, type: "heatmap", source: layer.id, maxzoom: 11, paint: {
+        "heatmap-weight": 0,
+        "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 5, 0.6, 10, 1.4],
+        "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 5, 8, 10, 22],
+        "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 7, 0.85, 10.5, 0],
+        "heatmap-color": ["interpolate", ["linear"], ["heatmap-density"],
+          0, "rgba(0,0,0,0)", 0.2, "rgba(154,61,18,0.55)", 0.45, "#c95b17", 0.7, "#ec8128", 0.9, "#f9a957", 1, "#ffd9a8"] } });
+      ids.push(`${layer.id}-heat`);
+    }
     if (layer.glow) {
       map.addLayer({ id: `${layer.id}-glow`, type: "circle", source: layer.id, paint: {
         "circle-color": color, "circle-blur": 1,
@@ -21,15 +34,15 @@ const BUILDERS = {
     }
     map.addLayer({ id: layer.id, type: "circle", source: layer.id, filter: ["!", isRing], paint: {
       "circle-color": color,
-      "circle-radius": ["coalesce", ["get", "radius"], 5],
+      "circle-radius": byZoom(radius),
       "circle-stroke-color": ["coalesce", ["get", "border"], "#070c16"],
-      "circle-stroke-width": 1,
+      "circle-stroke-width": 0.6,
       "circle-opacity": ["coalesce", ["get", "opacity"], 0.95] } });
     // Features with `ring: true` (e.g. MODIS, 1 km pixel) are drawn as rings
     map.addLayer({ id: `${layer.id}-ring`, type: "circle", source: layer.id, filter: isRing, paint: {
       "circle-color": "rgba(0,0,0,0)",
-      "circle-radius": ["+", ["coalesce", ["get", "radius"], 5], 2],
-      "circle-stroke-color": color, "circle-stroke-width": 2 } });
+      "circle-radius": byZoom(["+", radius, 2]),
+      "circle-stroke-color": color, "circle-stroke-width": 1.5 } });
     ids.push(layer.id, `${layer.id}-ring`);
     return ids;
   },
@@ -106,14 +119,16 @@ export function setHour(hour) {
   const trail = CONFIG.trailHours;
   const age = ["-", hour, ["get", "t"]];
   const visible = ["all", ["<=", ["get", "t"], hour], [">", ["get", "t"], hour - trail]];
-  const fade = ["case", visible, ["interpolate", ["linear"], age, 0, 1, trail, 0.35], 0];
+  const fade = ["case", visible, ["interpolate", ["linear"], age, 0, 0.8, trail, 0.25], 0];
+  const heatWeight = ["case", visible, ["interpolate", ["linear"], age, 0, 1, trail, 0.2], 0];
   const glowFade = ["case", visible, ["interpolate", ["linear"], age, 0, 0.8, 6, 0.3, trail, 0.05], 0];
   for (const entry of layers.values()) {
     const { mapLayerIds } = entry;
     if (!followsTime(entry)) continue;
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
-      if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
+      if (id.endsWith("-heat")) map.setPaintProperty(id, "heatmap-weight", heatWeight);
+      else if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
       else if (id.endsWith("-ring")) map.setPaintProperty(id, "circle-stroke-opacity", fade);
       else if (type === "circle") { map.setPaintProperty(id, "circle-opacity", fade); map.setPaintProperty(id, "circle-stroke-opacity", fade); }
       else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", ["<=", ["get", "t_start"], hour], ["coalesce", ["get", "opacity"], 0.35], 0]);
