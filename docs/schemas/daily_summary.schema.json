@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "daily_summary.schema.json",
+  "title": "daily_summary.json — hotspots and FRP per day (feeds the calendar)",
+  "type": "object",
+  "required": ["updated"],
+  "properties": {
+    "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" }
+  },
+  "patternProperties": {
+    "^\\d{4}-\\d{2}-\\d{2}$": {
+      "type": "object",
+      "required": ["hotspots", "frp_total", "modis", "viirs", "no_data"],
+      "additionalProperties": false,
+      "properties": {
+        "hotspots": { "type": "integer", "minimum": 0 },
+        "frp_total": { "type": "number", "minimum": 0 },
+        "modis": { "type": "integer", "minimum": 0 },
+        "viirs": { "type": "integer", "minimum": 0 },
+        "no_data": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

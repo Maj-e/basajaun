@@ -1,0 +1,25 @@
+{
+  "updated": "2026-02-14T08:00:00Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "../../valid/hotspots.geojson",
+      "type": "heatmap",
+      "temporal": true,
+      "enabled": true,
+      "updated": "2026-02-14T08:00:00Z",
+      "popup": [
+        "sensor",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "label": "High confidence"
+        }
+      ]
+    }
+  ]
+}

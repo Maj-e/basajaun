@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "manifest.schema.json",
+  "title": "manifest.json — layers available to the front-end loader",
+  "type": "object",
+  "required": ["updated", "layers"],
+  "properties": {
+    "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "layers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/layer" }
+    }
+  },
+  "$defs": {
+    "layer": {
+      "type": "object",
+      "required": ["id", "name", "file", "type", "temporal", "enabled"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "file": {
+          "type": "string",
+          "pattern": "^[^/].*\\.(geojson|json|png)$",
+          "description": "Path relative to web/data/ (never absolute)"
+        },
+        "type": { "enum": ["circle", "fill", "line", "image", "arrows"] },
+        "temporal": { "type": "boolean" },
+        "enabled": { "type": "boolean" },
+        "updated": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+        "popup": { "type": "array", "items": { "type": "string" } },
+        "legend": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["color", "label"],
+            "properties": {
+              "color": { "$ref": "common.schema.json#/$defs/hexColor" },
+              "label": { "type": "string" }
+            }
+          }
+        },
+        "corners": {
+          "type": "array",
+          "items": { "$ref": "common.schema.json#/$defs/lonLat" },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "Image corners: top-left, top-right, bottom-right, bottom-left"
+        }
+      },
+      "if": { "properties": { "type": { "const": "image" } } },
+      "then": { "required": ["corners"] }
+    }
+  }
+}

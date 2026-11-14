@@ -1,0 +1,33 @@
+{
+  "updated": "2026-02-14T08:00:00Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "enabled": true,
+      "updated": "2026-02-14T08:00:00Z",
+      "popup": [
+        "sensor",
+        "confidence",
+        "frp"
+      ],
+      "legend": [
+        {
+          "color": "#d7301f",
+          "label": "High confidence"
+        }
+      ]
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "meteo.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "enabled": false
+    }
+  ]
+}

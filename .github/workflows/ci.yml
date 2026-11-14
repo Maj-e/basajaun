@@ -3,7 +3,8 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, dev]
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
 
 jobs:
   test:
@@ -18,5 +19,11 @@ jobs:
       - name: Install dependencies (Python from .python-version, versions from uv.lock)
         run: uv sync --locked
 
-      - name: Tests
+      - name: Contract self-test (validator accepts good files, rejects broken ones)
+        run: make contract-test
+
+      - name: Unit tests
         run: make test
+
+      - name: Validate data contract (web/data/ against docs/schemas/)
+        run: make validate

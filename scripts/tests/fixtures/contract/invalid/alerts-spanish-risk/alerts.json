@@ -1,0 +1,19 @@
+{
+  "updated": "2026-02-14T08:00:00Z",
+  "alerts": [
+    {
+      "fire_id": 12,
+      "risk": "critico",
+      "since": "2026-02-14T07:42:00Z",
+      "pop_1km": 800,
+      "pop_5km": 23400,
+      "pop_10km": 51000,
+      "wind_toward_population": false,
+      "center": [
+        -70.65,
+        -33.46
+      ],
+      "color": "#a50f15"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "updated": "2026-02-14T08:00:00Z",
+  "2026-02-14": {
+    "focos": 3,
+    "frp_total": 55.2,
+    "modis": 1,
+    "viirs": 2,
+    "sin_datos": false
+  }
+}
