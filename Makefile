@@ -24,6 +24,7 @@ PIPELINE := \
 	spread \
 	exposure \
 	osm \
+	natural_earth_water \
 	groundwater \
 	make_manifest \
 	validate

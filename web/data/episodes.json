@@ -17,6 +17,28 @@
       "manifest": "episodes/sierra-bermeja-2021-09/manifest.json"
     },
     {
+      "id": "spain-2025-08",
+      "name": "Spain · Aug 2025 (1 km cells)",
+      "bbox": [
+        -9.6,
+        35.9,
+        3.4,
+        43.9
+      ],
+      "start": "2025-08-15",
+      "end": "2025-08-19",
+      "dir": "episodes/spain-2025-08",
+      "manifest": "episodes/spain-2025-08/manifest.json",
+      "skip": [
+        "osm"
+      ],
+      "min_confidence": "medium",
+      "thin": {
+        "cell_deg": 0.01,
+        "hours": 6
+      }
+    },
+    {
       "id": "chile-2026-02",
       "name": "Chile–Argentina border · Feb 2026",
       "bbox": [
