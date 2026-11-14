@@ -16,11 +16,11 @@ Visualización de focos de incendio a partir de los satélites **MODIS** y **VII
 | Front | **HTML + JavaScript** (módulos ES, sin framework, sin build) | Interfaz |
 | Mapa | **MapLibre GL JS 4.7.1** (CDN) | Mapa vectorial, filtros, animación, capas |
 | Hosting | **GitHub Pages** + dominio propio | Publicación automática en cada push a `main`, HTTPS gratis |
-| CI/CD | **GitHub Actions** | Despliegue de la carpeta `web/` |
+| CI/CD | **GitHub Actions** | Tests y validación en cada PR, despliegue de `web/`, actualización automática de los datos |
 
 ### Por qué esta stack
 
-- **Sin servidor.** Los datos se calculan antes con Python y se publican como archivos. La página no depende de ninguna API en vivo: nada puede caerse durante la demo.
+- **Sin servidor que mantener.** Los datos se calculan con Python, en local o en GitHub Actions cada 30 min (la misma frescura que FIRMS, que publica ~3 h después de cada paso de satélite), y se publican como archivos. La página no depende de ninguna API en vivo: nada puede caerse durante la demo.
 - **Python para lo geoespacial.** Proyecciones, rásteres, clustering y estadísticas zonales son mucho más simples en Python que en JavaScript.
 - **MapLibre para el mapa.** Gratis, sin clave, muestra decenas de miles de puntos con fluidez y permite filtrar y animar con expresiones, sin recargar los datos.
 - **Sin framework ni build.** Nadie pierde tiempo configurando npm, Webpack o Docker. Se abre con `python -m http.server`.
@@ -72,15 +72,19 @@ Visualización de focos de incendio a partir de los satélites **MODIS** y **VII
 ```
 ulinautas/
 ├── README.md
-├── TODO.md                         # roles, tareas por rol, waves
+├── TODO.md                         # roles, tareas por rol, waves, detalle de cada tarea
+├── Makefile                        # make data / make test / make serve
 ├── docs/
-│   └── detalle_tareas.md           # especificación técnica de cada tarea
+│   ├── contrato_datos.md           # formato de cada archivo de datos
+│   └── schemas/                    # esquemas JSON validados por el CI
 ├── requirements.txt
 ├── .env.example                    # FIRMS_MAP_KEY=
 ├── .gitignore                      # .env, data/raw/, __pycache__/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml              # publica web/ en GitHub Pages en cada push a main
+│       ├── ci.yml                  # tests + validación del contrato en cada PR
+│       ├── deploy.yml              # publica web/ en GitHub Pages en cada push a main
+│       └── update-data.yml         # regenera los datos cada 30 min
 │
 ├── data/
 │   └── raw/                        # CSV FIRMS descargados (no versionados)
@@ -94,6 +98,7 @@ ulinautas/
 │   ├── exposure.py                 # población expuesta + riesgo + viento → alertas.json
 │   ├── weather.py                  # viento y meteorología por hora → meteo.json
 │   ├── osm.py                      # agua, rutas, bomberos + distancias por incendio
+│   ├── live.py                     # últimas 48 h para el modo en vivo
 │   └── tests/
 │       └── test_harmonize.py
 │
@@ -107,6 +112,7 @@ ulinautas/
     ├── calendar.js                 # calendario mensual de focos
     ├── timeline.js                 # reproducción temporal (play / pausa / velocidad)
     ├── alerts.js                   # panel de alertas por población
+    ├── live.js                     # modo en vivo (recarga periódica)
     ├── layers/                     # una capa = un archivo
     │   ├── index.js                # registro de capas → genera el panel de capas
     │   ├── focos.js
@@ -121,6 +127,8 @@ ulinautas/
     └── data/
         ├── sample/                 # datos de ejemplo del contrato (para desarrollar el front sin esperar)
         └── processed/              # salidas de los scripts (versionadas y publicadas)
+            ├── demo/               # episodio fijo para la reproducción
+            └── live/               # últimas 48 h, actualizadas por update-data.yml
 ```
 
 ### Reglas de la estructura
@@ -145,7 +153,7 @@ ulinautas/
 | `meteo.json` | Viento, temperatura, humedad, lluvia por hora | `weather.py` |
 | `agua.geojson`, `rutas.geojson`, `bomberos.geojson` | Capas OpenStreetMap | `osm.py` |
 
-Esquema detallado de cada archivo y correspondencia de campos MODIS / VIIRS: ver [`docs/detalle_tareas.md` → Contrato de datos](docs/detalle_tareas.md#contrato-de-datos-se-fija-en-w0-d2-todos-lo-respetan).
+Esquema detallado de cada archivo y correspondencia de campos MODIS / VIIRS: ver [`docs/contrato_datos.md`](docs/contrato_datos.md).
 
 ### Armonización MODIS / VIIRS (resumen)
 
@@ -171,32 +179,29 @@ cp .env.example .env              # poner la FIRMS_MAP_KEY
 uv venv && source .venv/bin/activate
 uv pip install -r requirements.txt
 
-python scripts/download_firms.py  # → data/raw/
-python scripts/harmonize.py       # → web/data/processed/focos.geojson + resumen_diario.json
-python scripts/fires.py           # → incendios.geojson
-python scripts/population.py      # → poblacion.png
-python scripts/weather.py         # → meteo.json
-python scripts/exposure.py        # → alertas.json
-python scripts/osm.py             # → agua, rutas, bomberos
-
-pytest scripts/tests
+make data                         # ejecuta todos los scripts en orden → web/data/processed/
+make test                         # pytest
 ```
 
 ### Front en local
 ```bash
-cd web
-python -m http.server 8000        # → http://localhost:8000
+make serve                        # → http://localhost:8000
 ```
 
 ### Publicación
-Cada push a `main` despliega `web/` en GitHub Pages (`.github/workflows/deploy.yml`). El dominio se define en `web/CNAME` y en *Settings → Pages → Custom domain*.
+Cada push a `main` despliega `web/` en GitHub Pages (`.github/workflows/deploy.yml`). El dominio se define en `web/CNAME` y en *Settings → Pages → Custom domain*. Los datos se regeneran solos cada 30 min (`.github/workflows/update-data.yml`, con `FIRMS_MAP_KEY` en los secrets del repo).
 
 ---
 
 ## Flujo de trabajo del equipo
 
-- Dos pistas: **D** (datos, `scripts/`) y **F** (front, `web/`).
-- Una tarea de `TODO.md` = una rama `feature/<id>-<nombre>` = un PR corto.
+| Rol | Carpeta |
+|---|---|
+| **D1, D2** — Datos | `scripts/`, `docs/contrato_datos.md` |
+| **F** — Front | `web/` |
+| **O** — DevOps | `.github/`, `Makefile`, `requirements.txt`, despliegue y dominio |
+
+- Una tarea de `TODO.md` = una rama `feature/<id>-<nombre>` = un PR corto, con el CI en verde antes del merge.
 - `main` siempre funciona y siempre está publicado.
 
 ## Fuentes de datos
