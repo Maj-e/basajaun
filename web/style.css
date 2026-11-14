@@ -357,3 +357,14 @@ body.alert-labels .alert-mark { display: block; }
   background: #172236; border: 1px solid var(--land-edge); border-radius: 999px; padding: 3px 9px; cursor: pointer; }
 .alert-filters button svg { width: 12px; height: 12px; color: var(--c, var(--ink-2)); }
 .alert-filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--c, var(--frp-4)); }
+
+/* ---------- Demo disclaimer (W5-F2) ---------- */
+.demo-banner {
+  position: fixed; left: 50%; transform: translateX(-50%); top: calc(48px + env(safe-area-inset-top, 0px)); z-index: 8;
+  display: flex; align-items: center; gap: 12px; max-width: min(620px, calc(100vw - 32px));
+  padding: 8px 10px 8px 14px; border-radius: 8px; background: var(--band); border: 1px solid #4a3420;
+  color: var(--ink-2); font: 13px var(--font-ui); box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+.demo-banner b { color: var(--frp-4); }
+.demo-banner button { flex: none; font: 600 12px var(--font-ui); color: #1a0c03; background: var(--frp-3); border: 0; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+@media (max-width: 760px) { .demo-banner { top: auto; bottom: calc(var(--tl-h) + var(--bar-h) + 8px); font-size: 12px; } }
