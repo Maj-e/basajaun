@@ -116,7 +116,8 @@ def test_daily_summary(registry, data_dir):
 
 
 def test_alerts(registry, data_dir):
-    alert = {"fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800,
+    alert = {"fire_id": 12, "type": "population", "message": "≈23,400 people within 5 km",
+             "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800,
              "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": False,
              "center": [-70.65, -33.46], "color": "#a50f15"}
     path = write(data_dir / "processed/alerts.json", {"updated_at": UPDATED, "alerts": [alert]})
@@ -126,6 +127,13 @@ def test_alerts(registry, data_dir):
     assert validate.validate_file(path, registry, data_dir)
 
     write(path, [alert])  # old bare-list format: no room for `updated_at`
+    assert validate.validate_file(path, registry, data_dir)
+
+    write(path, {"updated_at": UPDATED, "alerts": [{**alert, "type": "earthquake"}]})
+    assert validate.validate_file(path, registry, data_dir)
+
+    untyped = {k: v for k, v in alert.items() if k not in ("type", "message")}
+    write(path, {"updated_at": UPDATED, "alerts": [untyped]})
     assert validate.validate_file(path, registry, data_dir)
 
 

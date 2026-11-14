@@ -38,9 +38,24 @@ Frozen in task **W0-B1** (B1 + F). Every script and the front end follow it; any
 
 ### `web/data/processed/alerts.json`
 ```json
-{ "updated_at": "2026-02-14T08:00:00Z", "alerts": [{ "fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" }] }
+{ "updated_at": "2026-02-14T08:00:00Z", "alerts": [
+  { "fire_id": 12, "type": "population", "risk": "critical", "since": "2026-02-14T07:42:00Z", "message": "≈23,400 people within 5 km",
+    "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false, "center": [-70.65, -33.46], "color": "#a50f15" },
+  { "fire_id": 12, "type": "smoke", "risk": "high", "since": "2026-02-14T09:00:00Z", "message": "Smoke toward ≈12,000 people (wind 25 km/h from W)",
+    "smoke_people": 12000, "wind_kmh": 25.0, "pop_1km": 800, "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": false,
+    "center": [-70.65, -33.46], "color": "#d7301f" }
+] }
 ```
-An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe.
+An object (not a bare list) so it carries `updated_at` like every other file; `alerts` is sorted from most to least severe. One fire can have several alerts, one per **`type`** (W3-B8), each with a short `message`:
+
+| `type` | When | Extra fields |
+|---|---|---|
+| `population` | people within 1 / 5 / 10 km of the fire (W3-B1) | — |
+| `wind` | strongest surface wind (10 m) during the fire's active hours ≥ 30 km/h (high) / 45 km/h (critical) | `wind_kmh` |
+| `smoke` | people in a ±30° sector downwind, as far as the wind carries the smoke in 2 h (max 25 km); calm (< 5 km/h) = none | `smoke_people`, `wind_kmh` |
+| `contamination` | fire or its 6 h spread over a medium / high vulnerability aquifer (ash leachate, Europe only) | `gw_body`, `gw_vulnerability` |
+
+Every type also carries the fire's `pop_1km` / `pop_5km` / `pop_10km`, `center` and `since`. Thresholds: `ALERT_THRESHOLDS` in `scripts/config.py`. Alerts need `population.tif`: an episode without population has no `alerts.json`.
 
 ### `web/data/processed/hourly_series.json`
 ```json

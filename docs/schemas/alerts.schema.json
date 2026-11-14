@@ -3,33 +3,162 @@
   "$id": "alerts.schema.json",
   "title": "alerts.json — one record per fire with exposed population and risk",
   "type": "object",
-  "required": ["updated_at", "alerts"],
+  "required": [
+    "updated_at",
+    "alerts"
+  ],
   "properties": {
-    "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+    "updated_at": {
+      "$ref": "common.schema.json#/$defs/datetimeUtc"
+    },
     "alerts": {
       "type": "array",
       "description": "Sorted from most to least severe",
-      "items": { "$ref": "#/$defs/alert" }
+      "items": {
+        "$ref": "#/$defs/alert"
+      }
     }
   },
   "$defs": {
     "alert": {
       "type": "object",
       "required": [
-        "fire_id", "risk", "since", "pop_1km", "pop_5km", "pop_10km",
-        "wind_toward_population", "center", "color"
+        "fire_id",
+        "type",
+        "risk",
+        "since",
+        "message",
+        "pop_1km",
+        "pop_5km",
+        "pop_10km",
+        "wind_toward_population",
+        "center",
+        "color"
       ],
       "properties": {
-        "fire_id": { "type": "integer" },
-        "risk": { "enum": ["critical", "high", "medium", "low"] },
-        "since": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
-        "pop_1km": { "type": "number", "minimum": 0 },
-        "pop_5km": { "type": "number", "minimum": 0 },
-        "pop_10km": { "type": "number", "minimum": 0 },
-        "wind_toward_population": { "type": "boolean" },
-        "center": { "$ref": "common.schema.json#/$defs/lonLat" },
-        "color": { "$ref": "common.schema.json#/$defs/hexColor" }
-      }
+        "fire_id": {
+          "type": "integer"
+        },
+        "risk": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "since": {
+          "$ref": "common.schema.json#/$defs/datetimeUtc"
+        },
+        "pop_1km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pop_5km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "pop_10km": {
+          "type": "number",
+          "minimum": 0
+        },
+        "wind_toward_population": {
+          "type": "boolean"
+        },
+        "center": {
+          "$ref": "common.schema.json#/$defs/lonLat"
+        },
+        "color": {
+          "$ref": "common.schema.json#/$defs/hexColor"
+        },
+        "type": {
+          "enum": [
+            "population",
+            "wind",
+            "smoke",
+            "contamination"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wind_kmh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "smoke_people": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gw_body": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gw_vulnerability": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "wind"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "wind_kmh"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "smoke"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "smoke_people",
+              "wind_kmh"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "contamination"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "required": [
+              "gw_vulnerability"
+            ]
+          }
+        }
+      ]
     }
   }
 }

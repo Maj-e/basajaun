@@ -173,7 +173,8 @@ def test_run_exposure_reads_weather_geojson_and_writes_valid_alerts(tmp_path: Pa
 
     alerts_path = exposure.run_exposure(tmp_path)
 
-    [alert] = json.loads(alerts_path.read_text())["alerts"]
+    alerts = json.loads(alerts_path.read_text())["alerts"]
+    [alert] = [a for a in alerts if a["type"] == "population"]
     assert alert["wind_toward_population"] is True
     assert validate.validate_file(alerts_path, validate.load_registry(), tmp_path) == []
 

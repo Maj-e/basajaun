@@ -81,6 +81,20 @@ IS_LIVE = bool(EPISODE.get("live"))          # live episode: the period moves wi
 START_DATE, END_DATE = live_dates() if IS_LIVE else (EPISODE["start"], EPISODE["end"])
 SKIP = set(EPISODE.get("skip", []))           # pipeline steps this episode doesn't run
 
+# Typed alerts (W3-B8): simple, documented thresholds read by scripts/alert_types.py
+ALERT_THRESHOLDS = {
+    "wind_high_kmh": 30.0,        # strong surface wind on an active fire -> high
+    "wind_critical_kmh": 45.0,    # -> critical
+    "smoke_range_km": 25.0,       # how far downwind the smoke sector can reach at most
+    "smoke_transport_hours": 2.0, # sector length = wind speed × these hours (capped by smoke_range_km)
+    "smoke_min_wind_kmh": 5.0,    # calmer than this: no downwind direction (the population alert covers it)
+    "smoke_half_angle_deg": 30.0, # sector = downwind direction ± this angle
+    "smoke_min_people": 100,      # below this, no smoke alert
+    "smoke_medium_people": 1_000,
+    "smoke_high_people": 10_000,
+    "smoke_critical_people": 50_000,
+}
+
 _paths = episode_paths(EPISODE)
 RAW = _paths["raw"]
 PROCESSED = _paths["processed"]

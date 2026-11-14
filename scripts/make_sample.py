@@ -136,6 +136,8 @@ def main():
     alerts = [
         {
             "fire_id": 12,
+            "type": "population",
+            "message": "≈23,400 people within 5 km · wind toward them",
             "risk": "critical",
             "color": RISK_COLORS["critical"],
             "since": "2026-02-12T07:42:00Z",
@@ -147,6 +149,8 @@ def main():
         },
         {
             "fire_id": 15,
+            "type": "population",
+            "message": "≈2,400 people within 5 km",
             "risk": "high",
             "color": RISK_COLORS["high"],
             "since": "2026-02-13T14:15:00Z",
@@ -156,6 +160,16 @@ def main():
             "wind_toward_population": False,
             "center": [round(center_lon + 0.25, 2), round(center_lat - 0.25, 2)],
         },
+    ]
+    # Typed alerts (W3-B8) on fire 12: same figures and position, one per type
+    alerts += [
+        {**alerts[0], "type": "smoke", "risk": "high", "color": RISK_COLORS["high"],
+         "message": "Smoke toward ≈18,000 people (wind 28 km/h from SW)", "smoke_people": 18000, "wind_kmh": 28.0},
+        {**alerts[0], "type": "wind", "risk": "high", "color": RISK_COLORS["high"],
+         "message": "Strong wind (34 km/h from SW) feeding the fire", "wind_kmh": 34.0},
+        {**alerts[0], "type": "contamination", "risk": "high", "color": RISK_COLORS["high"],
+         "message": "Ash leachate risk: high-vulnerability aquifer under the fire",
+         "gw_body": "Sample karst aquifer", "gw_vulnerability": "high"},
     ]
     alerts_doc = {"updated_at": now_iso, "alerts": alerts}
     (SAMPLE / "alerts.json").write_text(json.dumps(alerts_doc, indent=2), encoding="utf-8")
