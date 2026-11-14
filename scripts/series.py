@@ -27,7 +27,7 @@ def generar_serie_horaria():
     df = pd.DataFrame(records)
     output_path = PROCESSED_DIR / "hourly_series.json"
 
-    # Si no hay datos en absoluto (ej. periodo sin incendios)
+    # No data at all (e.g. a period without fires)
     if df.empty:
         output_path.write_text("[]", encoding="utf-8")
         return
