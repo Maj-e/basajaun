@@ -1,0 +1,30 @@
+[
+  {
+    "fire_id": 12,
+    "risk": "critical",
+    "color": "#d7301f",
+    "since": "2026-02-12T07:42:00Z",
+    "pop_1km": 1200,
+    "pop_5km": 23400,
+    "pop_10km": 51000,
+    "wind_toward_population": true,
+    "center": [
+      -71.0,
+      -35.5
+    ]
+  },
+  {
+    "fire_id": 15,
+    "risk": "high",
+    "color": "#fc8d59",
+    "since": "2026-02-13T14:15:00Z",
+    "pop_1km": 80,
+    "pop_5km": 2400,
+    "pop_10km": 9500,
+    "wind_toward_population": false,
+    "center": [
+      -70.75,
+      -35.75
+    ]
+  }
+]

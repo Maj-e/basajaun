@@ -1,32 +1,32 @@
 {
-  "updated": "2026-02-14T08:00:00Z",
+  "updated_at": "2026-11-14T17:18:49Z",
   "layers": [
     {
       "id": "hotspots",
-      "name": "Fire hotspots",
-      "file": "sample/hotspots_sample.geojson",
+      "name": "Thermal Hotspots",
+      "file": "sample/hotspots.geojson",
       "type": "circle",
       "temporal": true,
-      "enabled": true,
+      "active": true,
       "popup": [
         "sensor",
         "satellite",
-        "datetime_utc",
+        "timestamp_utc",
         "confidence",
         "frp"
       ],
       "legend": [
         {
           "color": "#d7301f",
-          "label": "High confidence"
+          "text": "High confidence"
         },
         {
           "color": "#fc8d59",
-          "label": "Medium confidence"
+          "text": "Medium confidence"
         },
         {
           "color": "#fdcc8a",
-          "label": "Low confidence"
+          "text": "Low confidence"
         }
       ]
     }
