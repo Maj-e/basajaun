@@ -1,12 +1,26 @@
 # Demo script
 
-The page is the support of a short story told to the jury. This script decides what the playback screen must show and what the backend must precompute. Validated by the design council (2026-11-14); figures come from the real FIRMS download (vegetation fires only, see below).
+The page is the support of a short story told to the jury. This script decides what the playback screen shows; figures come from the real FIRMS data of each episode (vegetation fires only). Spark (strongest FRP) and peak (day with most detections) are **computed by the page**, never hard-coded.
 
-**Episode:** Chile–Argentina border, 33–38° S (central Chile and Mendoza, Argentina), 1–14 Feb 2026 · **825 vegetation fires** detected by MODIS + VIIRS — 679 in Chile, 146 in Argentina.
+## Main episode — Sierra Bermeja (Málaga, Spain), 8–12 Sep 2021
+
+Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer computed, **real population alerts**.
 
 | # | Beat | Screen | Presenter says |
 |---|---|---|---|
-| 1 | **Open** | Dark map of the Chile–Argentina border. Caption always visible: *"Active fires detected by NASA satellites — MODIS + VIIRS merged · Chile–Argentina border, 33–38° S · 1–14 Feb 2026"*. Playback paused on **9 Feb**. | "Two NASA instruments, two formats — we merged them into one view." |
+| 1 | **Open** | Dark map of the Costa del Sol, caption *"MODIS + VIIRS merged · Sierra Bermeja (Málaga)"*. Playback paused on **8 Sep**. | "Two NASA instruments, two formats — we merged them into one view." |
+| 2 | **Ignition** | `Space`: the first detections appear on the evening of **8 Sep** (12 detections). At **22:19 UTC** the first alert fires: **critical, ≈59,000 people within 5 km**. | "Within hours of the first detection, we know who is threatened: almost 60,000 people within 5 km." |
+| 3 | **Peak** | Auto-pause on **9 Sep**: **625 detections** in one day, strongest fire **970 MW** (FRP, fire intensity) at 02:07 UTC. Open the alert panel: 1 critical + high alerts. | "Day two: 625 detections in 24 hours — this is the peak." |
+| 4 | **Second front** | Playback into **12 Sep**: a second surge (**490 detections**) and two new high alerts. Optional: tick *Satellite image of the day* (NASA VIIRS) to show the burn scar. | "And on day five it flares up again — the alerts follow, fire by fire." |
+| 5 | **Anywhere** | Episode selector → **Los Angeles, Jan 2025** (or Chile, Feb 2026): same screen, same pipeline. | "Any fire, anywhere on Earth: the same pipeline, fresh from NASA FIRMS." |
+
+**Zoom tip:** at beat 3, zoom on the fire or click its outline: every figure and alert is recomputed for that fire only (*Show whole area* returns).
+
+## Other episode — Chile–Argentina border, 1–14 Feb 2026
+
+| # | Beat | Screen | Presenter says |
+|---|---|---|---|
+| 1 | **Open** | Dark map of the Chile–Argentina border. Caption always visible: *"Active fires detected by NASA satellites — MODIS + VIIRS merged · Chile–Argentina border, 33–38° S · 1–14 Feb 2026"*. Select *Chile–Argentina border* in the episode list. Playback paused on **9 Feb**. | "Two NASA instruments, two formats — we merged them into one view." |
 | 2 | **Calm** | `Space` starts playback 9 → 11 Feb. Big date ticking. Counter around **44–68 fires/day**. | "A normal summer week: a few dozen fires a day." |
 | 3 | **Spark** | Auto-pause on **11 Feb, 20:42 UTC**: one hotspot at **1,111 MW** fire intensity (FRP), near 35.94° S, 70.07° W, in **Mendoza, Argentina**, ~30 km east of the border — **31× the strongest fire of the previous 10 days** (36 MW). | "Here — one ignition 31 times more intense than anything we saw before." |
 | 4 | **Peak** | Playback resumes into 12–13 Feb: **151 then 149 fires/day** (on 12 Feb: 110 in Argentina, 41 in Chile), the activity curve spikes. *If population data is ready:* halo + "≈ N people within 5 km". | "In 24 hours the region goes from 68 to 151 active fires." |
