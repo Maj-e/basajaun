@@ -51,7 +51,9 @@
             "fire_id": { "type": ["integer", "null"] },
             "color": { "$ref": "common.schema.json#/$defs/hexColor" },
             "radius": { "type": "number", "exclusiveMinimum": 0 },
-            "border": { "$ref": "common.schema.json#/$defs/hexColor" }
+            "border": { "$ref": "common.schema.json#/$defs/hexColor" },
+            "country": { "type": ["string", "null"] },
+            "region": { "type": ["string", "null"] }
           }
         }
       }
