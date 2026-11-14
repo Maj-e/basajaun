@@ -435,14 +435,17 @@ def compute_local_contributions(
     return results
 
 
-def classify_risk_tier(prob: float) -> str:
-    if prob >= 0.35:
+def classify_risk_tier(prob: float, base_rate: float = 0.05) -> str:
+    effective_base = max(0.005, float(base_rate))
+    lift = prob / effective_base
+    if prob >= 0.35 or (prob >= 0.08 and lift >= 8.5):
         return "critical"
-    if prob >= 0.18:
+    if prob >= 0.18 or (prob >= 0.045 and lift >= 4.5):
         return "high"
-    if prob >= 0.08:
+    if prob >= 0.08 or (prob >= 0.02 and lift >= 2.0):
         return "moderate"
     return "low"
+
 
 
 def format_drivers(row: dict, top_drivers: list[dict] | None = None) -> str:
@@ -531,11 +534,12 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
         metrics["feature_importances"] = {}
         local_drivers = [[] for _ in latest_records]
 
+    base_rate = float(y_all.mean())
     features = []
     tier_counts = {"critical": 0, "high": 0, "moderate": 0, "low": 0}
     for rec, prob, cell_top_drivers in zip(latest_records, latest_probs, local_drivers):
         p_val = round(float(np.clip(prob, 0.0, 1.0)), 4)
-        tier = classify_risk_tier(p_val)
+        tier = classify_risk_tier(p_val, base_rate=base_rate)
         tier_counts[tier] += 1
         cell = rec["cell"]
         features.append({

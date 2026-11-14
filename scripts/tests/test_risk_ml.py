@@ -56,13 +56,17 @@ def test_local_contributions_rank_dominant_driver():
     assert contribs[1][0]["feature"] == "temp_max"
     assert contribs[1][0]["share_pct"] == 90.0
 
-
 def test_risk_tier_thresholds():
-    assert classify_risk_tier(0.42) == "critical"
-    assert classify_risk_tier(0.24) == "high"
-    assert classify_risk_tier(0.11) == "moderate"
-    assert classify_risk_tier(0.03) == "low"
+    # Umbrales absolutos (episodios de alta incidencia)
+    assert classify_risk_tier(0.42, base_rate=0.15) == "critical"
+    assert classify_risk_tier(0.24, base_rate=0.15) == "high"
+    assert classify_risk_tier(0.11, base_rate=0.15) == "moderate"
+    assert classify_risk_tier(0.03, base_rate=0.15) == "low"
 
+    assert classify_risk_tier(0.14, base_rate=0.015) == "critical"
+    assert classify_risk_tier(0.075, base_rate=0.015) == "high"
+    assert classify_risk_tier(0.035, base_rate=0.015) == "moderate"
+    assert classify_risk_tier(0.01, base_rate=0.015) == "low"
 
 def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
     bbox = (-5.3, 36.4, -5.0, 36.6)
