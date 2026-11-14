@@ -293,13 +293,81 @@ def _fallback_build_dataset(
     return X, y, records, DEFAULT_FEATURE_NAMES
 
 
+def _normalize_external_dataset(
+    X: np.ndarray,
+    y: np.ndarray,
+    records: list[dict],
+    feature_names: list[str],
+    processed_dir: Path,
+    bbox: tuple[float, float, float, float],
+) -> tuple[np.ndarray, np.ndarray, list[dict], list[str]]:
+    """Normalize IA1 `build_episode_dataset` output to the full spatial-temporal contract."""
+    if not records or len(X) != len(records):
+        return _fallback_build_dataset(processed_dir, bbox)
+
+    has_day = all("day" in r and "cell" in r and "geometry" in r["cell"] for r in records)
+    temp_idx = feature_names.index("temp_max") if "temp_max" in feature_names else -1
+    has_weather_signal = temp_idx >= 0 and float(np.std(X[:, temp_idx])) > 1e-6
+
+    if not has_day or not has_weather_signal:
+        return _fallback_build_dataset(processed_dir, bbox)
+
+    cells_by_id = {c["cell_id"]: c for c in _build_grid(bbox)}
+    fallback_cells = list(cells_by_id.values())
+    default_day = "reference-day"
+    weather_fc = _load_geojson(processed_dir / "weather.geojson")
+    for feat in weather_fc.get("features", []):
+        ts = (feat.get("properties") or {}).get("timestamp_utc", "")
+        if len(ts) >= 10:
+            default_day = max(default_day, ts[:10]) if default_day != "reference-day" else ts[:10]
+
+    normalized: list[dict] = []
+    for idx, rec in enumerate(records):
+        row_vals = {fname: float(X[idx, col_i]) for col_i, fname in enumerate(feature_names)}
+        cell = rec.get("cell")
+        if not isinstance(cell, dict) or "geometry" not in cell:
+            cid = str(rec.get("cell_id", f"SEC-{idx + 1:03d}"))
+            base_cell = cells_by_id.get(cid) or fallback_cells[idx % len(fallback_cells)]
+            cell = {
+                "cell_id": cid,
+                "lon": float(rec.get("lon", base_cell["lon"])),
+                "lat": float(rec.get("lat", base_cell["lat"])),
+                "geometry": base_cell["geometry"],
+            }
+
+        dist_road_km = row_vals.get("dist_road_km", row_vals.get("dist_roads_m", 2000.0) / 1000.0)
+        dist_station_km = row_vals.get("dist_fire_station_km", row_vals.get("dist_stations_m", 15000.0) / 1000.0)
+        dist_water_km = row_vals.get("dist_water_km", row_vals.get("dist_water_m", 5000.0) / 1000.0)
+
+        normalized.append({
+            "day": str(rec.get("day", default_day)),
+            "cell": cell,
+            "temp_max": round(row_vals.get("temp_max", 28.5), 2),
+            "humidity_min": round(row_vals.get("humidity_min", 35.0), 2),
+            "wind_max": round(row_vals.get("wind_max", 18.0), 2),
+            "rain_sum": round(row_vals.get("rain_sum", 0.0), 2),
+            "fwi_30_30_30": round(row_vals.get("fwi_30_30_30", 1.0), 3),
+            "dist_road_km": round(dist_road_km, 2),
+            "dist_fire_station_km": round(dist_station_km, 2),
+            "dist_water_km": round(dist_water_km, 2),
+            "pop_density": round(row_vals.get("pop_density", 0.0), 1),
+            "slope_deg": round(row_vals.get("slope_deg", 0.0), 2),
+            "y": int(y[idx]),
+        })
+
+    X_norm = np.array([[r[f] for f in DEFAULT_FEATURE_NAMES] for r in normalized], dtype=float)
+    y_norm = np.array([r["y"] for r in normalized], dtype=int)
+    return X_norm, y_norm, normalized, DEFAULT_FEATURE_NAMES
+
+
 def get_dataset(
     processed_dir: Path, bbox: tuple[float, float, float, float]
 ) -> tuple[np.ndarray, np.ndarray, list[dict], list[str]]:
-    """Load dataset via IA1 `ml_features.build_episode_dataset` when present, else fallback."""
+    """Load dataset via IA1 `ml_features.build_episode_dataset` when present, normalizing schema."""
     try:
         from ml_features import build_episode_dataset
-        return build_episode_dataset(processed_dir, bbox)
+        X_ext, y_ext, records_ext, feat_ext = build_episode_dataset(processed_dir, bbox)
+        return _normalize_external_dataset(X_ext, y_ext, records_ext, feat_ext, processed_dir, bbox)
     except ImportError:
         return _fallback_build_dataset(processed_dir, bbox)
 
