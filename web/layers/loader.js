@@ -128,6 +128,22 @@ export function setLayerVisible(id, visible) {
   entry.mapLayerIds.forEach((l) => map.setLayoutProperty(l, "visibility", visible ? "visible" : "none"));
 }
 
+// Keep one fire's hotspots. `null` restores every hotspot.
+// The ring / fill split stays in the filter: replacing it would draw MODIS pixels as dots.
+export function setHotspotFire(fireId) {
+  if (!map) return;
+  const entry = layers.get("hotspots");
+  if (!entry) return;
+  const byFire = fireId == null ? null : ["any",
+    ["==", ["get", "fire_id"], fireId],
+    ["==", ["get", "fire_id"], String(fireId)]];
+  for (const id of entry.mapLayerIds) {
+    const base = id.endsWith("-glow") ? null : id.endsWith("-ring") ? isRing : ["!", isRing];
+    const filter = byFire ? (base ? ["all", base, byFire] : byFire) : base;
+    map.setFilter(id, filter);
+  }
+}
+
 // Human labels for known fields; unknown fields show their name.
 const LABELS = { sensor: "Sensor", satellite: "Satellite", timestamp_utc: "Time (UTC)", confidence: "Confidence", frp: "FRP (fire intensity)" };
 const format = (field, v) => {

@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, renderLegend, renderLayerList } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -12,6 +12,20 @@ const H = 3600 * 1000;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const presenter = new URLSearchParams(location.search).get("demo") === "1";
 const fmtDay = (d, opts = {}) => new Date(`${d}T00:00:00Z`).toLocaleString("en", { day: "numeric", month: "short", timeZone: "UTC", ...opts });
+const PADDING = { top: 130, bottom: 200, left: 60, right: 60 };
+
+// [[west, south], [east, north]] of a Polygon or MultiPolygon, for fitBounds.
+function boundsOf(geometry) {
+  let west = Infinity, south = Infinity, east = -Infinity, north = -Infinity;
+  const visit = (node) => {
+    if (typeof node[0] === "number") {
+      west = Math.min(west, node[0]); east = Math.max(east, node[0]);
+      south = Math.min(south, node[1]); north = Math.max(north, node[1]);
+    } else node.forEach(visit);
+  };
+  visit(geometry.coordinates);
+  return Number.isFinite(west) ? [[west, south], [east, north]] : null;
+}
 
 // Fires per day: daily_summary.json when available, otherwise counted from the hotspots. Every day of the range is present.
 // Requested right away, in parallel with the manifest and the layers
@@ -51,7 +65,8 @@ async function main() {
   const features = main ? main.data.features : [];
   const { days, counts } = await dailyCounts(features);
   let story = computeStory(features, days, counts);
-  let scoped = features; // the hotspots the figures are computed on (whole area or visible area)
+  let scoped = features; // the hotspots the figures are computed on (whole area, visible area, or one fire)
+  let isolatedFireId = null; // set while a fire polygon is isolated; viewport scope stays paused
   const start = Date.parse(`${days[0]}T00:00:00Z`) / H;
   const end = Date.parse(`${days.at(-1)}T00:00:00Z`) / H + 24;
   // Open three days before the peak (demo script), or at the start
@@ -73,31 +88,72 @@ async function main() {
     updateSatellite(s.satellite, dayOf(s.hour));
   });
 
-  // Figures follow the visible area: zoom on a zone and the readouts, timeline, spark and peak are recomputed for it
-  function applyScope() {
-    const bounds = map.getBounds();
-    const visible = features.filter((f) => bounds.contains(f.geometry.coordinates));
-    const whole = visible.length === features.length;
-    scoped = whole ? features : visible;
-    const c = whole ? counts : Object.fromEntries(days.map((d) => [d, 0]));
-    if (!whole) visible.forEach((f) => { const d = dayOf(f.properties.t); if (d in c) c[d] += 1; });
+  // Recount hotspots per day. The precomputed summary is the whole area; any narrower scope counts its own features.
+  function countsFor(list, useSummary) {
+    if (useSummary) return counts;
+    const c = Object.fromEntries(days.map((d) => [d, 0]));
+    list.forEach((f) => { const d = dayOf(f.properties.t); if (d in c) c[d] += 1; });
+    return c;
+  }
+
+  function publishScope(list, narrowed, text) {
+    scoped = list;
+    const c = countsFor(list, !narrowed);
     story = computeStory(scoped, days, c);
     timeline.setData(c, story);
     fillPeakBanner(story);
-    $("scope").classList.toggle("visible-area", !whole);
-    $("scope-text").textContent = whole ? "Figures for the whole area"
-      : `Figures for the visible area · ${visible.length.toLocaleString("en")} of ${features.length.toLocaleString("en")} fires`;
-    $("scope-reset").hidden = whole;
+    $("scope").classList.toggle("visible-area", narrowed);
+    $("scope-text").textContent = text;
+    $("scope-reset").hidden = !narrowed;
     setState({}); // re-render readouts and story for the new scope
   }
+
+  // Figures follow the visible area: zoom on a zone and the readouts, timeline, spark and peak are recomputed for it.
+  // A selected fire owns the figures until it is cleared; the camera move from fitBounds must not replace them.
+  function applyScope() {
+    if (isolatedFireId != null) return;
+    const bounds = map.getBounds();
+    const visible = features.filter((f) => bounds.contains(f.geometry.coordinates));
+    const whole = visible.length === features.length;
+    const list = whole ? features : visible;
+    publishScope(list, !whole, whole ? "Figures for the whole area"
+      : `Figures for the visible area · ${visible.length.toLocaleString("en")} of ${features.length.toLocaleString("en")} fires`);
+  }
+
+  function showWholeArea() {
+    isolatedFireId = null;
+    setHotspotFire(null);
+    publishScope(features, false, "Figures for the whole area");
+    map?.fitBounds(CONFIG.view, { padding: PADDING });
+  }
+
+  function isolateFire(id, geometry) {
+    if (isolatedFireId === id) { showWholeArea(); return; }
+    isolatedFireId = id;
+    setHotspotFire(id);
+    const list = features.filter((f) => Number(f.properties.fire_id) === id);
+    publishScope(list, true, `Figures for fire ${id} · ${list.length.toLocaleString("en")} hotspots`);
+    const bounds = geometry && boundsOf(geometry);
+    if (bounds) map.fitBounds(bounds, { padding: PADDING });
+  }
+
   let scopeTimer = null;
   const scheduleScope = () => { clearTimeout(scopeTimer); scopeTimer = setTimeout(applyScope, 150); };
-  $("scope-reset").onclick = () => map?.fitBounds(CONFIG.view, { padding: { top: 130, bottom: 200, left: 60, right: 60 } });
+  $("scope-reset").onclick = () => showWholeArea();
 
   mapReady.then(() => {
     addToMap();
     setHour(state.hour);
     map.on("moveend", scheduleScope);
+    const fireLayers = ["fires", "fires-outline"].filter((id) => map.getLayer(id));
+    if (fireLayers.length) map.on("click", (e) => {
+      const hits = map.queryRenderedFeatures(e.point, { layers: fireLayers });
+      if (!hits.length) return;
+      const id = Number(hits[0].properties.fire_id);
+      if (!Number.isFinite(id)) return;
+      const stored = layers.get("fires")?.data?.features?.find((f) => Number(f.properties.fire_id) === id);
+      isolateFire(id, stored?.geometry ?? hits[0].geometry);
+    });
   }).catch(() => {
     const el = $("map-error");
     el.hidden = false;
