@@ -10,7 +10,11 @@ _Last updated: 2026-11-14._
 | W0-B2 / W1-B2 | FIRMS config + downloader | ✅ merged in `dev`; first real download done (1,075 detections) |
 | W1-F1 | Generic layer loader + hotspot layer | ✅ merged in `dev` (provisional sample data); not yet on `main` |
 | W1-F0 | Playback screen mockup + demo script | ✅ `docs/mockup/`, `docs/demo-script.md` |
-| W2-F2 | Playback screen implemented in `web/` | ✅ on `feature/W2-F2-playback-screen` (B1 sample data); waits for the real export (W1-B3) |
+| W2-F2 | Playback screen implemented in `web/` | ✅ merged |
+| W1-B3 | Hotspot export (825 vegetation fires, `type 2` excluded) | ✅ merged (#19) |
+| W1-B4 | Contract validator + manifest | ✅ merged (#16) |
+| W2-B1 | MODIS / VIIRS deduplication | ✅ merged (#20) — not yet applied to the exported file |
+| W1-F2 | Site switched to the real data (`data/manifest.json`) | ✅ this PR → **MVP** |
 | W0-B1 | Frozen contract + generated sample data | ✅ merged (`make sample`); contract names follow B1's code |
 | W1-B1 | MODIS / VIIRS normalization + tests | ✅ merged (`harmonize.py`) — FIRMS `type 2` filter still to add |
 | W2-B2 | Fires (DBSCAN grouping) | ✅ merged (`fires.py`) |
