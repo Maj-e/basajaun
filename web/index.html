@@ -81,6 +81,13 @@
   <aside class="legend" id="legend" aria-label="Legend" hidden></aside>
   <p class="sat-badge" id="sat-badge" hidden></p>
 
+  <!-- Mobile only: one bottom sheet at a time -->
+  <nav class="mobile-bar" id="mobile-bar" aria-label="Map panels">
+    <button type="button" data-sheet="layers" aria-pressed="false">Layers</button>
+    <button type="button" data-sheet="alerts" aria-pressed="false">Alerts <span id="mb-alerts">0</span></button>
+    <button type="button" data-sheet="legend" aria-pressed="false">Legend</button>
+  </nav>
+
   <section id="timeline" class="timeline" aria-label="Playback">
     <div class="clock">
       <div>

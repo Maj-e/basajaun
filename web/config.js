@@ -10,6 +10,10 @@ export const CONFIG = {
     maxzoom: 9,
     attribution: "Imagery: NASA GIBS / VIIRS",
   },
+  // Map margins kept clear of the header and the timeline (mobile: taller header + panel bar)
+  framePadding: window.matchMedia("(max-width: 760px)").matches
+    ? { top: 170, bottom: 230, left: 16, right: 16 }
+    : { top: 130, bottom: 200, left: 60, right: 60 },
   // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
   // (design council: one place to look during playback)
   defaultLayers: ["hotspots", "fires"],
