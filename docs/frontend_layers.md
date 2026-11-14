@@ -13,7 +13,7 @@ All paths are relative to `web/data/` (= `data/` on the site).
 | `episodes/<id>/manifest.json` | the other episodes |
 | `processed/live/manifest.json` | live mode, last 48 h, refreshed every 30 min (`live: true` in `episodes.json`) |
 
-Every layer comes **already styled**: the loader only maps feature properties (`color`, `radius`, `border`, `opacity`, `width`, `rotation`, `size`) to MapLibre paint. `active: false` = published but switched off until checked on the site; turn it on in `scripts/make_manifest.py`.
+Every layer comes **already styled**: the loader only maps feature properties (`color`, `radius`, `border`, `opacity`, `width`, `rotation`, `size`) to MapLibre paint. `active: false` = published but switched off until checked on the site; turn it on in `scripts/make_manifest.py`. The Map panel shows one checkbox per **loaded** (= active) layer, so an inactive layer appears there as soon as it is switched on.
 
 ## Episodes
 
@@ -30,7 +30,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 
 | id | Type | Active | Time | Sierra Bermeja | Chile | Los Angeles | Live | Popup fields | Style properties |
 |---|---|---|---|---|---|---|---|---|---|
-| `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp | color, radius, border |
+| `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp, country, region (Chile) | color, radius, border |
 | `fires` | fill | ✅ | | ✅ | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
 | `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius |
 | `wind` | **arrows** | | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color — **needs the `arrows` type in the loader (W3-F1)** |
@@ -40,6 +40,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 | `roads` | line | | | ✅ | ✅ | — | — | name, highway | color, width (by road type) |
 | `fire_stations` | circle | | | ✅ | ✅ | — | — | name | color, radius, border |
 | `water_points` | circle | | | ✅ | ✅ | — | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
+| `regions` | fill | | | — | ✅ | — | — | country, region | color, opacity |
 | `groundwater` | fill | | | ✅ | — (Europe only) | — | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
 
 ### Fire properties
@@ -65,7 +66,7 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 
 ## Ready to implement (data side done)
 
-- **Layer panel (W3-F1)**: one checkbox per manifest layer, including the inactive ones above.
+- **Layer panel**: the Map panel already lists the active layers; the inactive ones above are ready to be switched on once checked (`active: true` in `make_manifest.py`).
 - **`arrows` type (W3-F1)**: `wind` is ready (`rotation`, `size`, `color`, temporal).
 - **Fire sheet**: show the accessibility distances, the nearest water point and the aquifer risk (`gw_*`).
 - **Live button (W4-F1)**: `processed/live/manifest.json` is published and refreshed every 30 min.
@@ -75,5 +76,6 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 
 | Date | Change |
 |---|---|
+| 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |
 | 2026-11-14 | New layers `water_points` (Chile, Sierra Bermeja) and `groundwater` (Sierra Bermeja); fire fields `dist_water_point_km`, `gw_body`, `gw_vulnerability`, `gw_chemical_status` (W3-B7) |
 | 2026-11-14 | Live mode published in `processed/live/` (W4-B4); episodes Sierra Bermeja (default) and Los Angeles (W4-B5); Chile `alerts.json` and `population` |

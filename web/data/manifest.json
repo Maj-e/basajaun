@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:52:44Z",
+  "updated_at": "2026-11-14T21:58:38Z",
   "layers": [
     {
       "id": "hotspots",
@@ -13,7 +13,9 @@
         "satellite",
         "timestamp_utc",
         "confidence",
-        "frp"
+        "frp",
+        "country",
+        "region"
       ],
       "legend": [
         {
@@ -29,7 +31,20 @@
           "text": "Low confidence"
         }
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T21:34:37Z"
+    },
+    {
+      "id": "regions",
+      "name": "Regions",
+      "file": "processed/regions.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "country",
+        "region"
+      ],
+      "updated_at": "2026-11-14T21:34:36Z"
     },
     {
       "id": "fires",

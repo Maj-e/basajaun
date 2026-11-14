@@ -15,6 +15,7 @@ PIPELINE := \
 	download_firms \
 	export_hotspots \
 	dedup \
+	regions \
 	fires \
 	series \
 	population \

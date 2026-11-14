@@ -23,11 +23,13 @@ Frozen in task **W0-B1** (B1 + F). Every script and the front end follow it; any
     "fire_id": null,
     "color": "#d7301f",
     "radius": 6.2,
-    "border": "#222222"
+    "border": "#222222",
+    "country": "Chile",
+    "region": "Maule"
   }
 }
 ```
-`t` = hours since 1970 (number), for fast filtering in the animation.
+`t` = hours since 1970 (number), for fast filtering in the animation. `country` and `region` are written by `regions.py` (geoBoundaries ADM1): the name of the country and the first-level region that contain the point, or `null` when the point falls outside every polygon. They are optional in the schema so episodes generated before that step still validate.
 
 ### `web/data/processed/daily_summary.json`
 ```json
