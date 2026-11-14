@@ -6,7 +6,7 @@ import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHots
 import { createTimeline } from "./timeline.js";
 import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
-import { loadAlerts, renderAlerts } from "./alerts.js";
+import { loadAlerts, renderAlerts, setAlertLabels } from "./alerts.js";
 
 const $ = (id) => document.getElementById(id);
 const H = 3600 * 1000;
@@ -185,11 +185,21 @@ async function main() {
     setState({ speed: Number(b.dataset.speed) });
     document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
   }));
-  $("layers-toggle").onclick = () => {
-    const panel = $("panel-layers");
-    panel.hidden = !panel.hidden;
-    $("layers-toggle").setAttribute("aria-expanded", String(!panel.hidden));
+  // Map panel: always visible on desktop, folded on small screens
+  if (window.matchMedia("(max-width: 760px)").matches) $("panel-details").open = false;
+  $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
+  // Demo button: the pitch episodes, opened in presenter mode (paused, keyboard)
+  const demoList = CONFIG.demoEpisodes.map((id) => CONFIG.episodes.find((e) => e.id === id)).filter(Boolean);
+  $("demo-menu").innerHTML = demoList.map((e, i) => `<li><button type="button" data-demo="${e.id}">${i + 1}. ${e.name}</button></li>`).join("");
+  $("demo-toggle").parentElement.hidden = !demoList.length;
+  $("demo-toggle").onclick = () => {
+    const menu = $("demo-menu");
+    menu.hidden = !menu.hidden;
+    $("demo-toggle").setAttribute("aria-expanded", String(!menu.hidden));
   };
+  $("demo-menu").querySelectorAll("[data-demo]").forEach((b) => (b.onclick = () => {
+    location.search = new URLSearchParams({ episode: b.dataset.demo, demo: "1" }).toString();
+  }));
   $("satellite-toggle").onchange = (e) => {
     setState({ satellite: e.target.checked });
     if (!e.target.checked) $("sat-badge").hidden = true;
