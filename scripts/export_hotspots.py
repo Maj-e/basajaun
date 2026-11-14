@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import BBOX, END_DATE, PROCESSED, RAW, START_DATE
+from config import BBOX, END_DATE, EPISODE, PROCESSED, RAW, START_DATE
 from harmonize import normalize_modis, normalize_viirs
 
 
@@ -132,6 +132,30 @@ def daily_summary(df: pd.DataFrame, days: list[str], updated: str) -> dict:
     return summary
 
 
+CONFIDENCE_ORDER = {"low": 0, "medium": 1, "high": 2}
+
+
+def filter_and_thin(df: pd.DataFrame, episode: dict) -> pd.DataFrame:
+    """Options for very large episodes (set in episodes.json), off by default:
+    - min_confidence: "medium" or "high"
+    - thin: {"cell_deg": 0.01, "hours": 6} keeps one hotspot (the strongest FRP) per grid cell and time slot
+    """
+    if df.empty:
+        return df
+    minimum = episode.get("min_confidence")
+    if minimum:
+        df = df[df["confidence"].map(CONFIDENCE_ORDER) >= CONFIDENCE_ORDER[minimum]]
+    thin = episode.get("thin")
+    if thin:
+        cell, hours = thin["cell_deg"], thin["hours"]
+        key = ((df["lat"] / cell).round().astype(int).astype(str) + "_"
+               + (df["lon"] / cell).round().astype(int).astype(str) + "_"
+               + (df["t"] // hours).astype(int).astype(str))
+        df = (df.assign(_key=key).sort_values("frp", ascending=False, na_position="last")
+                .drop_duplicates("_key").drop(columns="_key").sort_values("t"))
+    return df.reset_index(drop=True)
+
+
 def main() -> None:
     paths = csvs_to_read(RAW, START_DATE, END_DATE)
     if not paths:
@@ -139,6 +163,7 @@ def main() -> None:
         raise SystemExit(1)
 
     hotspots = clip_to_bbox(read_hotspots(paths), BBOX)
+    hotspots = filter_and_thin(hotspots, EPISODE)
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     PROCESSED.mkdir(parents=True, exist_ok=True)
 
