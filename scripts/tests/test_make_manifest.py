@@ -7,13 +7,13 @@ import validate
 
 def test_only_existing_files_are_listed(tmp_path):
     (tmp_path / "processed").mkdir()
-    (tmp_path / "processed/meteo.geojson").write_text(
+    (tmp_path / "processed/weather.geojson").write_text(
         json.dumps({"type": "FeatureCollection", "updated": "2026-02-14T08:00:00Z", "features": []})
     )
     manifest = make_manifest.build_manifest(tmp_path)
 
     ids = [layer["id"] for layer in manifest["layers"]]
-    assert ids == ["wind", "weather"]  # both read meteo.geojson; nothing else exists
+    assert ids == ["wind", "weather"]  # both read weather.geojson; nothing else exists
     assert all(layer["updated"] == "2026-02-14T08:00:00Z" for layer in manifest["layers"])
 
 

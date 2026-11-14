@@ -173,10 +173,10 @@ def test_temporal_layer_needs_t(registry, data_dir):
 # --- other files --------------------------------------------------------------
 
 def test_generic_geojson_layer(registry, data_dir):
-    meteo = {"type": "FeatureCollection", "updated": UPDATED, "features": [
+    weather = {"type": "FeatureCollection", "updated": UPDATED, "features": [
         {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-71, -35]},
-         "properties": {"t": 493927.0, "vel": 12.0, "rotation": 90.0}}]}
-    path = write(data_dir / "processed/meteo.geojson", meteo)
+         "properties": {"t": 493927.0, "speed": 12.0, "rotation": 90.0}}]}
+    path = write(data_dir / "processed/weather.geojson", weather)
     assert validate.validate_file(path, registry, data_dir) == []
 
 

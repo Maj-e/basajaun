@@ -24,7 +24,7 @@
     {
       "id": "wind",
       "name": "Wind",
-      "file": "meteo.geojson",
+      "file": "weather.geojson",
       "type": "arrows",
       "temporal": true,
       "enabled": false

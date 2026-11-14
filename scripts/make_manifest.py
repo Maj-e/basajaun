@@ -62,11 +62,11 @@ LAYERS: list[dict] = [
     {
         "id": "wind",
         "name": "Wind",
-        "file": "processed/meteo.geojson",
+        "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
         "enabled": False,
-        "popup": ["datetime_utc", "vel", "dir"],
+        "popup": ["datetime_utc", "speed", "direction"],
         "legend": [
             {"color": "#91cf60", "label": "< 15 km/h"},
             {"color": "#fee08b", "label": "15–30 km/h"},
@@ -77,11 +77,11 @@ LAYERS: list[dict] = [
     {
         "id": "weather",
         "name": "Weather",
-        "file": "processed/meteo.geojson",
+        "file": "processed/weather.geojson",
         "type": "circle",
         "temporal": True,
         "enabled": False,
-        "popup": ["datetime_utc", "temp", "humidity", "rain", "vel"],
+        "popup": ["datetime_utc", "temperature", "humidity", "rain", "speed"],
     },
     {
         "id": "water",
