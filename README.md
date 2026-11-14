@@ -1,217 +1,218 @@
 # Ulinautas
 
-Visualización de focos de incendio a partir de los satélites **MODIS** y **VIIRS** (NASA FIRMS), armonizados en una sola fuente de datos y mostrados en una página web: mapa con capas, calendario, alertas por densidad poblacional y reproducción temporal.
+Wildfire hotspot visualization from the **MODIS** and **VIIRS** satellites (NASA FIRMS), harmonized into a single dataset and shown on a web page: layered map, calendar, population-density alerts and time playback.
 
-> Proyecto de hackathon (1 día). El plan de trabajo está en [`TODO.md`](TODO.md).
+> Hackathon project (1 day). Work plan: [`TODO.md`](TODO.md) · data contract: [`docs/data_contract.md`](docs/data_contract.md).
+
+**Convention:** everything in this repository is in English — code, UI, documentation, data field names.
 
 ---
 
 ## Stack
 
-| Parte | Tecnología | Rol |
+| Part | Technology | Role |
 |---|---|---|
-| Procesamiento de datos | **Python 3.11** · pandas · geopandas · rasterio · rasterstats · scikit-learn · requests | Descargar, armonizar y enriquecer los datos |
-| Entorno Python | **uv** (o `venv` + `pip`) | Instalación en segundos |
-| Formato de intercambio | **GeoJSON / JSON** estáticos | Contrato entre los scripts y el front |
-| Front | **HTML + JavaScript** (módulos ES, sin framework, sin build) | Interfaz |
-| Mapa | **MapLibre GL JS 4.7.1** (CDN) | Mapa vectorial, filtros, animación, capas |
-| Hosting | **GitHub Pages** + dominio propio | Publicación automática en cada push a `main`, HTTPS gratis |
-| CI/CD | **GitHub Actions** | Tests y validación en cada PR, despliegue de `web/`, actualización automática de los datos |
+| Data processing | **Python 3.11** · pandas · geopandas · rasterio · rasterstats · scikit-learn · requests | Download, harmonize and enrich the data |
+| Python environment | **[uv](https://docs.astral.sh/uv/)** (`pyproject.toml` + `uv.lock`) | Installs in seconds, pinned versions |
+| Data exchange | Static **GeoJSON / JSON** files | Contract between the scripts and the front end |
+| Front end | **HTML + JavaScript** (ES modules, no framework, no build) | User interface |
+| Map | **MapLibre GL JS 4.7.1** (CDN) | Vector map, filters, animation, layers |
+| Hosting | **GitHub Pages** + custom domain | Published automatically on every push to `main`, free HTTPS |
+| CI/CD | **GitHub Actions** | Tests and validation on every PR, deploy of `web/`, automatic data refresh |
 
-### Por qué esta stack
+### Why this stack
 
-- **Sin servidor que mantener.** Los datos se calculan con Python, en local o en GitHub Actions cada 30 min (la misma frescura que FIRMS, que publica ~3 h después de cada paso de satélite), y se publican como archivos. La página no depende de ninguna API en vivo: nada puede caerse durante la demo.
-- **Python para lo geoespacial.** Proyecciones, rásteres, clustering y estadísticas zonales son mucho más simples en Python que en JavaScript.
-- **MapLibre para el mapa.** Gratis, sin clave, muestra decenas de miles de puntos con fluidez y permite filtrar y animar con expresiones, sin recargar los datos.
-- **Sin framework ni build.** Nadie pierde tiempo configurando npm, Webpack o Docker. Se abre con `python -m http.server`.
-- **Dos equipos que no se bloquean.** El contrato de datos separa la pista datos de la pista front: el front avanza con datos de ejemplo mientras los scripts preparan los reales.
+- **No server to maintain.** Data is computed with Python, locally or in GitHub Actions every 30 min (as fresh as FIRMS itself, which publishes ~3 h after each satellite pass), and published as files. The page depends on no live API: nothing can go down during the demo.
+- **Python for geospatial work.** Projections, rasters, clustering and zonal statistics are much simpler in Python than in JavaScript.
+- **MapLibre for the map.** Free, no API key, renders tens of thousands of points smoothly and filters / animates them with expressions, without reloading data.
+- **No framework, no build.** Nobody loses time configuring npm, Webpack or Docker. It runs with `make serve`.
+- **Teams that don't block each other.** The data contract separates the backend from the front end: the front end moves forward with sample data while the scripts produce the real data.
 
-### Alternativas descartadas (por ahora)
+### Alternatives set aside (for now)
 
-| Alternativa | Por qué no hoy | Cuándo sí |
+| Alternative | Why not today | When it would make sense |
 |---|---|---|
-| React + Vite | Configuración y gestión de estado de más para un día | Si el proyecto continúa y la interfaz crece |
-| deck.gl | Una API más que aprender | Si la animación con MapLibre no es fluida |
-| Streamlit | Interfaz y animación limitadas | Si nadie del equipo hace JavaScript |
-| FastAPI + PostGIS | Infraestructura de más | Para el modo en tiempo real, después del hackathon |
-| Leaflet | Menos rendimiento con muchos puntos | Si alguien lo domina y hay pocos datos |
+| React + Vite | Too much setup and state management for one day | If the project continues and the UI grows |
+| deck.gl | One more API to learn | If the MapLibre animation is not smooth enough |
+| Streamlit | Limited UI and animation | If nobody on the team writes JavaScript |
+| FastAPI + PostGIS | Too much infrastructure | For the real-time mode, after the hackathon |
+| Leaflet | Slower with many points | If someone masters it and the data is small |
 
-**Plan B de demo:** si el front falla, `web/data/processed/focos.geojson` se puede arrastrar en [kepler.gl/demo](https://kepler.gl/demo) para tener un mapa animado en 2 minutos.
+**Demo fallback:** if the front end fails, `web/data/processed/hotspots.geojson` can be dragged into [kepler.gl/demo](https://kepler.gl/demo) to get an animated map in 2 minutes.
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```
-                 ┌────────────────────── scripts/ (Python, se ejecutan una vez) ──────────────────────┐
-                 │                                                                                    │
- NASA FIRMS ───► │ download_firms.py ──► data/raw/*.csv ──► harmonize.py ──► fires.py ──► exposure.py │
- (MODIS, VIIRS)  │                                              │               │             ▲      │
-                 │                                              │               │             │      │
- WorldPop ─────► │ population.py ───────────────────────────────┼───────────────┼─────────────┤      │
- Open-Meteo ───► │ weather.py ──────────────────────────────────┼───────────────┼─────────────┘      │
- OpenStreetMap ► │ osm.py ──────────────────────────────────────┼───────────────┤                    │
-                 └──────────────────────────────────────────────┼───────────────┼────────────────────┘
-                                                                ▼               ▼
-                                                  web/data/processed/*.geojson / *.json
-                                                                │
-                                                                ▼
-                                        web/ (HTML + JS + MapLibre) ──► GitHub Pages ──► https://<dominio>
+                 ┌──────────────────── scripts/ (Python, run by make data) ─────────────────────┐
+                 │                                                                              │
+ NASA FIRMS ───► │ download_firms.py ─► data/raw/*.csv ─► harmonize.py ─► fires.py ─► exposure.py │
+ (MODIS, VIIRS)  │                                           │              │            ▲      │
+                 │                                           │              │            │      │
+ WorldPop ─────► │ population.py ────────────────────────────┼──────────────┼────────────┤      │
+ Open-Meteo ───► │ weather.py ───────────────────────────────┼──────────────┼────────────┘      │
+ OpenStreetMap ► │ osm.py ───────────────────────────────────┼──────────────┤                   │
+                 └───────────────────────────────────────────┼──────────────┼───────────────────┘
+                                                             ▼              ▼
+                                    web/data/processed/*.geojson|json + web/data/manifest.json
+                                                             │
+                                                             ▼
+                                web/ (HTML + JS + MapLibre) ──► GitHub Pages ──► https://<domain>
 ```
 
-1. **Descarga**: los CSV de FIRMS (MODIS + VIIRS S-NPP, NOAA-20, NOAA-21) se guardan en `data/raw/`.
-2. **Armonización**: los dos sensores se llevan a un esquema común (confianza, fecha UTC, FRP, brillo, resolución).
-3. **Enriquecimiento**: deduplicación MODIS/VIIRS, agrupación en incendios, población expuesta, viento, distancias a agua, rutas y bomberos.
-4. **Publicación**: los resultados se escriben en `web/data/processed/`, se versionan y se publican con el sitio.
-5. **Visualización**: el front carga esos archivos y todo el filtrado y la animación ocurren en el navegador.
+1. **Download**: FIRMS CSVs (MODIS + VIIRS S-NPP, NOAA-20, NOAA-21) are saved in `data/raw/`.
+2. **Harmonization**: both sensors are mapped to one schema (confidence, UTC datetime, FRP, brightness, resolution).
+3. **Enrichment**: MODIS/VIIRS deduplication, grouping into fires, exposed population, wind, distances to water, roads and fire stations.
+4. **Publication**: results are written to `web/data/processed/`, **already styled** (colors, sizes), and declared in `web/data/manifest.json`; they are versioned and published with the site.
+5. **Display**: the front end reads the manifest and builds each layer with a generic loader; all filtering and animation happen in the browser.
 
 ---
 
-## Estructura del proyecto
+## Project layout
 
 ```
 ulinautas/
 ├── README.md
-├── TODO.md                         # roles, tareas por rol, waves, detalle de cada tarea
-├── Makefile                        # make data / make test / make serve
-├── docs/
-│   ├── contrato_datos.md           # formato de cada archivo de datos
-│   └── schemas/                    # esquemas JSON validados por el CI
-├── requirements.txt
+├── TODO.md                         # roles, tasks per role, waves, task details
+├── Makefile                        # install / data / sample / test / serve
+├── pyproject.toml, uv.lock         # dependencies (uv)
+├── .python-version                 # 3.11
 ├── .env.example                    # FIRMS_MAP_KEY=
-├── .gitignore                      # .env, data/raw/, __pycache__/
+├── .gitignore                      # .env, data/raw/, .venv/, __pycache__/
+├── docs/
+│   ├── data_contract.md            # format of every data file + layer manifest
+│   └── schemas/                    # JSON schemas checked by CI
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml                  # tests + validación del contrato en cada PR
-│       ├── deploy.yml              # publica web/ en GitHub Pages en cada push a main
-│       ├── e2e.yml                 # valida los datos servidos por la URL publicada
-│       └── update-data.yml         # regenera los datos recientes cada 30 min (solo si son válidos)
+│       ├── ci.yml                  # tests + contract validation on every PR
+│       ├── deploy.yml              # publishes web/ to GitHub Pages on every push to main
+│       ├── e2e.yml                 # validates the data served by the published URL
+│       └── update-data.yml         # refreshes recent data every 30 min (only if valid)
 │
 ├── data/
-│   └── raw/                        # CSV FIRMS descargados (no versionados)
+│   └── raw/                        # downloaded FIRMS CSVs (not versioned)
 │
 ├── scripts/                        # BACKEND (B1–B4)
-│   ├── config.py                   # zona (bbox), fechas, rutas, umbrales de riesgo
-│   ├── make_sample.py              # datos de ejemplo generados desde el contrato
-│   ├── download_firms.py           # descarga MODIS + VIIRS desde la API FIRMS
-│   ├── harmonize.py                # normalización MODIS / VIIRS
-│   ├── export_focos.py             # focos.geojson (ya estilizado) + resumen_diario.json
-│   ├── dedup.py                    # deduplicación MODIS / VIIRS
-│   ├── fires.py                    # agrupación en incendios → incendios.geojson
-│   ├── series.py                   # series temporales por hora
-│   ├── population.py               # recorte WorldPop → poblacion.tif / poblacion.png
-│   ├── weather.py                  # viento y meteorología por hora → meteo.geojson
-│   ├── exposure.py                 # población expuesta + riesgo + viento → alertas.json
-│   ├── osm.py                      # agua, rutas, bomberos + distancias por incendio
-│   ├── make_manifest.py            # manifest.json: lista de capas disponibles
-│   ├── validate.py                 # valida web/data/ contra docs/schemas/
-│   ├── check_site.py               # prueba de extremo a extremo sobre la URL publicada
+│   ├── config.py                   # area (bbox), dates, paths, risk thresholds
+│   ├── make_sample.py              # sample data generated from the contract
+│   ├── download_firms.py           # MODIS + VIIRS download from the FIRMS API
+│   ├── harmonize.py                # MODIS / VIIRS normalization
+│   ├── export_hotspots.py          # hotspots.geojson (already styled) + daily_summary.json
+│   ├── dedup.py                    # MODIS / VIIRS deduplication
+│   ├── fires.py                    # grouping into fires → fires.geojson
+│   ├── series.py                   # hourly time series
+│   ├── population.py               # WorldPop crop → population.tif / population.png
+│   ├── weather.py                  # hourly wind and weather → weather.geojson
+│   ├── exposure.py                 # exposed population + risk + wind → alerts.json
+│   ├── osm.py                      # water, roads, fire stations + distances per fire
+│   ├── make_manifest.py            # manifest.json: list of available layers
+│   ├── validate.py                 # validates web/data/ against docs/schemas/
+│   ├── check_site.py               # end-to-end check against the published URL
 │   └── tests/
-│       └── test_harmonize.py
 │
-└── web/                            # FRONT (F) — todo lo que está aquí se publica
-    ├── CNAME                       # nombre de dominio
-    ├── index.html                  # estructura de la página (mapa + paneles + línea de tiempo)
+└── web/                            # FRONT END (F) — everything here is published
+    ├── CNAME                       # custom domain (later)
+    ├── index.html                  # page layout (map + panels + timeline)
     ├── style.css
-    ├── app.js                      # crea el mapa, conecta los módulos
-    ├── state.js                    # estado global compartido (fecha, filtros, hora, capas)
-    ├── filters.js                  # filtros por fecha, sensor, confianza + banda de estado
-    ├── calendar.js                 # calendario mensual de focos
-    ├── timeline.js                 # reproducción temporal (play / pausa / velocidad)
-    ├── alerts.js                   # panel de alertas por población
-    ├── live.js                     # modo en vivo (recarga periódica)
+    ├── config.js                   # demo area, data paths, basemap
+    ├── map.js                      # the single MapLibre map instance
+    ├── state.js                    # shared state (date, filters, playback hour, layers)
+    ├── app.js                      # entry point, wires the modules
+    ├── filters.js                  # date / sensor / confidence filters + status banner
+    ├── calendar.js                 # monthly hotspot calendar
+    ├── timeline.js                 # time playback (play / pause / speed)
+    ├── alerts.js                   # population alert panel
+    ├── live.js                     # live mode (periodic reload)
     ├── layers/
-    │   └── loader.js               # cargador genérico: lee manifest.json y crea cada capa
+    │   └── loader.js               # generic loader: reads manifest.json and builds each layer
     └── data/
-        ├── manifest.json           # capas disponibles (generado por el backend)
-        ├── sample/                 # datos de ejemplo del contrato (para desarrollar el front sin esperar)
-        └── processed/              # salidas de los scripts (versionadas y publicadas)
-            ├── demo/               # episodio fijo para la reproducción
-            └── live/               # últimas 48 h, actualizadas por update-data.yml
+        ├── manifest.json           # available layers (generated by the backend)
+        ├── sample/                 # sample data from the contract (front-end development)
+        └── processed/              # pipeline outputs (versioned and published)
+            ├── demo/               # fixed episode for playback
+            └── live/               # last 48 h, refreshed by update-data.yml
 ```
 
-### Reglas de la estructura
+### Layout rules
 
-- **Los scripts escriben en `web/data/processed/`**, nunca en otro lugar: así el sitio local y el publicado leen las mismas rutas.
-- **En el front, rutas siempre relativas** (`data/processed/focos.geojson`, nunca `/data/...`), para que funcione en el dominio y en `github.io/ulinautas/`.
-- **Una capa = un archivo de datos ya estilizado + una entrada en `web/data/manifest.json`.** El cargador genérico del front (`web/layers/loader.js`) la muestra sin código nuevo; el campo `activa` sirve de interruptor.
-- **Un solo estado** en `state.js`: los módulos leen `state` y lo cambian con `setState()`; se suscriben con `subscribe()` para reaccionar.
-- **`data/raw/` no se versiona** (peso); `web/data/processed/` sí (la demo funciona sin volver a ejecutar nada).
+- **Scripts write only to `web/data/`**: the local site and the published site read the same relative paths.
+- **Front-end paths are always relative** (`data/processed/hotspots.geojson`, never `/data/...`), so the site works on the custom domain and on `github.io/ulinautas/`.
+- **One layer = one already-styled data file + one entry in `web/data/manifest.json`.** The generic front-end loader (`web/layers/loader.js`) displays it with no new code; the `enabled` field is the feature toggle.
+- **One shared state** in `web/state.js`: modules read `state`, change it with `setState()` and react with `subscribe()`.
+- **`data/raw/` is not versioned** (size); `web/data/processed/` is (the demo works without re-running anything).
 
 ---
 
-## Contrato de datos
+## Data contract
 
-| Archivo | Contenido | Producido por |
+| File | Content | Produced by |
 |---|---|---|
-| `focos.geojson` | Un punto por foco, MODIS y VIIRS armonizados | `harmonize.py`, completado por `fires.py` |
-| `resumen_diario.json` | Focos y FRP por día (alimenta el calendario) | `harmonize.py` |
-| `incendios.geojson` | Polígono por incendio (focos agrupados) | `fires.py`, completado por `osm.py` |
-| `alertas.json` | Un registro por incendio con población expuesta y riesgo | `exposure.py` |
-| `poblacion.png` | Densidad poblacional recortada a la zona | `population.py` |
-| `meteo.json` | Viento, temperatura, humedad, lluvia por hora | `weather.py` |
-| `agua.geojson`, `rutas.geojson`, `bomberos.geojson` | Capas OpenStreetMap | `osm.py` |
+| `manifest.json` | List of available layers, their type, legend and toggle | `make_manifest.py` |
+| `hotspots.geojson` | One point per hotspot, MODIS and VIIRS harmonized | `export_hotspots.py`, completed by `dedup.py` / `fires.py` |
+| `daily_summary.json` | Hotspots and FRP per day (feeds the calendar) | `export_hotspots.py` |
+| `hourly_series.json` | Active hotspots and FRP per hour (timeline counter) | `series.py` |
+| `fires.geojson` | One polygon per fire (grouped hotspots) | `fires.py`, completed by `osm.py` |
+| `alerts.json` | One record per fire with exposed population and risk | `exposure.py` |
+| `population.png` | Population density cropped to the area | `population.py` |
+| `weather.geojson` | Wind, temperature, humidity, rain per hour | `weather.py` |
+| `water.geojson`, `roads.geojson`, `fire_stations.geojson` | OpenStreetMap layers | `osm.py` |
 
-Esquema detallado de cada archivo y correspondencia de campos MODIS / VIIRS: ver [`docs/contrato_datos.md`](docs/contrato_datos.md).
+Detailed schema of each file and MODIS / VIIRS field mapping: see [`docs/data_contract.md`](docs/data_contract.md).
 
-### Armonización MODIS / VIIRS (resumen)
+### MODIS / VIIRS harmonization (summary)
 
-| | MODIS | VIIRS | Armonizado |
+| | MODIS | VIIRS | Harmonized |
 |---|---|---|---|
-| Resolución | ~1 km | ~375 m | `resolucion_m` |
-| Confianza | 0–100 | `low` / `nominal` / `high` | `baja` / `media` / `alta` |
-| Brillo | `brightness` | `bright_ti4` | `brillo_k` |
-| Fecha | `acq_date` + `acq_time` | igual | `fecha_hora_utc` (ISO 8601) |
-| Doble detección | — | — | un solo foco, `detectado_por: ["MODIS","VIIRS"]` |
+| Resolution | ~1 km | ~375 m | `resolution_m` |
+| Confidence | 0–100 | `low` / `nominal` / `high` | `low` / `medium` / `high` |
+| Brightness | `brightness` | `bright_ti4` | `brightness_k` |
+| Date | `acq_date` + `acq_time` | same | `datetime_utc` (ISO 8601) |
+| Double detection | — | — | a single hotspot, `detected_by: ["MODIS","VIIRS"]` |
 
 ---
 
-## Instalación y uso
+## Getting started
 
-### Requisitos
-- Python 3.11+
-- Una clave de API FIRMS: https://firms.modaps.eosdis.nasa.gov/api/map_key/
+Requirements: [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs Python 3.11 if needed) and a [FIRMS API key](https://firms.modaps.eosdis.nasa.gov/api/map_key/).
 
-### Datos
 ```bash
-cp .env.example .env              # poner la FIRMS_MAP_KEY
-uv venv && source .venv/bin/activate
-uv pip install -r requirements.txt
-
-make data                         # ejecuta todos los scripts en orden → web/data/processed/
-make test                         # pytest
+cp .env.example .env     # set FIRMS_MAP_KEY
+make install             # uv sync → .venv with the locked dependencies
+make test                # pytest
+make sample              # sample data → web/data/sample/
+make data                # run the pipeline in order → web/data/processed/
+make serve               # front end at http://localhost:8000
 ```
 
-### Front en local
-```bash
-make serve                        # → http://localhost:8000
-```
+Add a dependency with `uv add <package>` (`uv add --dev <package>` for dev-only tools) and commit `uv.lock` with it.
 
-### Publicación
-Cada push a `main` despliega `web/` en GitHub Pages (`.github/workflows/deploy.yml`). El dominio se define en `web/CNAME` y en *Settings → Pages → Custom domain*. Los datos se regeneran solos cada 30 min (`.github/workflows/update-data.yml`, con `FIRMS_MAP_KEY` en los secrets del repo).
+### Publishing
+Every push to `main` deploys `web/` to GitHub Pages (`.github/workflows/deploy.yml`): https://maj-e.github.io/ulinautas/. The custom domain will be set in `web/CNAME` and in *Settings → Pages → Custom domain*. Recent data is refreshed automatically every 30 min (`.github/workflows/update-data.yml`, with `FIRMS_MAP_KEY` in the repository secrets).
 
 ---
 
-## Flujo de trabajo del equipo
+## Team workflow
 
-| Rol | Carpeta |
+| Role | Folders |
 |---|---|
 | **B1–B4** — Backend | `scripts/`, `docs/`, `.github/workflows/ci.yml`, `e2e.yml`, `update-data.yml`, `Makefile` |
-| **F** — Front / DevOps | `web/`, `.github/workflows/deploy.yml`, dominio |
+| **F** — Front end / DevOps | `web/`, `.github/workflows/deploy.yml`, domain |
 
-- Una tarea de `TODO.md` = una rama `feature/<id>-<nombre>` = un PR corto, con el CI en verde antes del merge.
-- `main` siempre funciona y siempre está publicado.
+- Branches: `feature/<task-id>-<name>` → PR to **`dev`** → `dev` is merged into **`main`** (published) once checked.
+- One task in `TODO.md` = one branch = one short PR, merged only with green CI.
+- `main` always works and is always published.
 
-## Fuentes de datos
+## Data sources
 
-| Uso | Fuente | Acceso |
+| Use | Source | Access |
 |---|---|---|
-| Focos MODIS / VIIRS | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | API con MAP_KEY |
-| Viento / meteorología | [Open-Meteo](https://open-meteo.com/) (archivo histórico, ERA5) | API sin clave |
-| Población | [WorldPop](https://www.worldpop.org/) 1 km | GeoTIFF por país |
-| Agua, rutas, bomberos | [OpenStreetMap](https://www.openstreetmap.org/) | Overpass API |
-| Relieve | Teselas Terrarium (AWS Open Data) | Teselas sin clave |
+| MODIS / VIIRS hotspots | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | API with MAP_KEY |
+| Wind / weather | [Open-Meteo](https://open-meteo.com/) (historical archive, ERA5) | API, no key |
+| Population | [WorldPop](https://www.worldpop.org/) 1 km | GeoTIFF per country |
+| Water, roads, fire stations | [OpenStreetMap](https://www.openstreetmap.org/) | Overpass API |
+| Relief | Terrarium tiles (AWS Open Data) | Tiles, no key |
 
-## Equipo
+## Team
 
-- _Nombre_ — rol
+- _Name_ — role
