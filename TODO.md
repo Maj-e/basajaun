@@ -36,7 +36,7 @@ A **—** cell: the role helps the others (testing, PR review, data for the fron
 
 ## 3. Waves
 
-Each wave leaves the app **working and published**. From Wave 1 on there is a presentable MVP; later waves add features **behind a toggle** (the manifest `enabled` field): a feature that isn't ready stays off and doesn't break the demo.
+Each wave leaves the app **working and published**. From Wave 1 on there is a presentable MVP; later waves add features **behind a toggle** (the manifest `active` field): a feature that isn't ready stays off and doesn't break the demo.
 
 | Wave | Goal | Visible result | Prio |
 |---|---|---|---|
@@ -59,8 +59,8 @@ Each wave leaves the app **working and published**. From Wave 1 on there is a pr
 
 ### How to add a feature after the MVP
 1. Backend: a script in `scripts/` that writes a file to `web/data/processed/` **already styled** (`color`, `radius`, etc. properties), added to `make data`.
-2. Backend: an entry in `web/data/manifest.json` (layer type, legend, `enabled: false` until checked).
-3. The validator (W1-B4) passes in CI → merge → check on the URL → `enabled: true`.
+2. Backend: an entry in `web/data/manifest.json` (layer type, legend, `active: false` until checked).
+3. The validator (W1-B4) passes in CI → merge → check on the URL → `active: true`.
 4. F only steps in if the layer needs a display type the loader doesn't know yet.
 
 ---
@@ -72,7 +72,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 ### Wave 0 — Base (P0)
 
 - [ ] **W0-B1** · Frozen contract + sample data · **B1** (with F)
-  - 20-min session B1 + F: go through [`docs/data_contract.md`](docs/data_contract.md) field by field (hotspots, daily summary, fires, alerts, **manifest**, style properties, `updated` field) and freeze it
+  - 20-min session B1 + F: go through [`docs/data_contract.md`](docs/data_contract.md) field by field (hotspots, daily summary, fires, alerts, **manifest**, style properties, `updated_at` field) and freeze it
   - Script that **generates** the sample data from the contract (not by hand): ~50 MODIS + VIIRS hotspots in the area, 3 days, 3 confidence levels, with `t`, `color`, `radius`; `daily_summary`, `alerts`, `manifest.json`
   - Files: `scripts/make_sample.py` → `web/data/sample/*` (replaces the provisional files written for W1-F1)
   - **Done when:** F loads the sample files without asking for any format change
@@ -136,10 +136,10 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 - [ ] **W1-B3** · Hotspot export + daily summary · **B3**
   - Read `data/raw/*.csv` → W1-B1 functions → `pd.concat` → `id`, `date`, `t` (hours since 1970) → clip to `BBOX`
-  - **Style computed here**: `color` by confidence (`high` `#d7301f`, `medium` `#fc8d59`, `low` `#fdcc8a`), `radius` by FRP (3 to 16 px), `stroke` by sensor
+  - **Style computed here**: `color` by confidence (`high` `#d7301f`, `medium` `#fc8d59`, `low` `#fdcc8a`), `radius` by FRP (3 to 16 px), `border` by sensor
   - Coordinates to 4 decimals, FRP to 1; one or several files depending on the W0-B3 decision
   - `daily_summary.json`: **every** day of the period (`hotspots: 0`, `no_data: true` when empty)
-  - `updated` field (generation time) in every file
+  - `updated_at` field (generation time) in every file
   - Files: `scripts/export_hotspots.py` → `web/data/processed/hotspots*.geojson`, `daily_summary.json`
   - **Done when:** `make data` generates the files and the validator (W1-B4) accepts them
   - Depends on: W1-B1, W1-B2, W0-B3
@@ -147,14 +147,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 - [ ] **W1-B4** · Contract validator + manifest · **B4**
   - JSON schemas for every contract file (`docs/schemas/*.json`) + `scripts/validate.py` validating all of `web/data/` (`jsonschema`)
   - Add `uv run scripts/validate.py` to CI
-  - `scripts/make_manifest.py`: generates `web/data/manifest.json` listing **only layers whose file exists** (name, file, type, temporal, legend, `enabled`, `updated`)
+  - `scripts/make_manifest.py`: generates `web/data/manifest.json` listing **only layers whose file exists** (name, file, type, temporal, legend, `active`, `updated_at`)
   - **Done when:** breaking a field in a PR fails CI, and the manifest reflects the files present
   - Depends on: W0-B1, W0-B4
 
 - [ ] **W1-F1** · Layer loader + hotspot layer · **F** — *code done on `feature/W1-F1-layer-loader`, with provisional sample data*
-  - `web/layers/loader.js`: reads `manifest.json` and, for each `enabled` layer, creates source + layer by `type` (`circle`, `fill`, `line`, `image`) using **the style properties from the file**:
+  - `web/layers/loader.js`: reads `manifest.json` and, for each `active` layer, creates source + layer by `type` (`circle`, `fill`, `line`, `image`) using **the style properties from the file**:
     ```js
-    "circle-color": ["get", "color"], "circle-radius": ["get", "radius"], "circle-stroke-color": ["get", "stroke"]
+    "circle-color": ["get", "color"], "circle-radius": ["get", "radius"], "circle-stroke-color": ["get", "border"]
     ```
   - Legend built from the manifest; generic popup (shows the properties listed in the manifest)
   - **Done when:** the sample hotspots show with their style and popup, with no hand-written style in the front end
@@ -162,7 +162,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 - [ ] **W1-F2** · Filters + "no data" status · **F**
   - Date (`<input type="date">`), sensor (MODIS / VIIRS), confidence → `setState` → `map.setFilter`
-  - Status banner: "Data from DD/MM HH:MM" (`updated` field) or "Layer unavailable" when the file is missing
+  - Status banner: "Data from DD/MM HH:MM" (`updated_at` field) or "Layer unavailable" when the file is missing
   - Switch `CONFIG.manifest` from `data/sample/` to `data/manifest.json` once W1-B3 is on `main`
   - **Done when:** the filters work **with real data on the published URL** → ✅ **MVP**
   - Depends on: W1-F1, W1-B3
@@ -179,7 +179,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 - [ ] **W2-B2** · Fires (grouping) · **B2** · P1
   - `DBSCAN(eps=1.0, min_samples=2)` on `[x_km, y_km, t / 12]` → `fire_id` on each hotspot
   - One polygon per fire (convex hull + 500 m buffer), **already styled** (`color`, `opacity`), with `start`, `end`, `n_hotspots`, `frp_max`, `area_km2`
-  - Manifest entry with `enabled: false` until checked
+  - Manifest entry with `active: false` until checked
   - Files: `scripts/fires.py` → `web/data/processed/fires.geojson`
   - **Done when:** known fires in the area come out as 1 group and the layer shows on the map with no new front-end code
   - Depends on: W2-B1
@@ -248,7 +248,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W2-B2
 
 - [ ] **W3-F1** · Layer panel + temporal layers + relief · **F**
-  - Checkbox panel generated from the manifest (one checkbox per `enabled` layer)
+  - Checkbox panel generated from the manifest (one checkbox per `active` layer)
   - New `arrows` type in the loader: `symbol` layer with `icon-rotate: ["get","rotation"]`, `icon-size: ["get","size"]`
   - Relief: `raster-dem` source (AWS Terrarium tiles) + `hillshade` layer
   - Fire popup: shows the W3-B4 distances
@@ -278,7 +278,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 - [ ] **W4-F1** · "Live" button · **F**
   - Button in the bottom bar: switches the data base from `processed/` to `processed/live/`, reloads the manifest every 5 min, "pulse" on new hotspots, "Updated X min ago" indicator
-  - Demo mode (fixed episode) stays the default; `enabled: false` if live mode isn't ready
+  - Demo mode (fixed episode) stays the default; `active: false` if live mode isn't ready
   - **Done when:** one click switches to live mode and recent hotspots appear without a reload
   - Depends on: W4-B4
 

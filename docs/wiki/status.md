@@ -26,11 +26,13 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 | 2026-11-14 | Static site, Python pipeline, no backend for the demo | nothing can go down during the demo; FIRMS itself is ~3 h behind real time |
 | 2026-11-14 | Plain JS + MapLibre, no framework, no build | one front-end developer, no setup time |
 | 2026-11-14 | Backend ships pre-styled data + a layer manifest; one generic loader in the front end | 4 backend vs 1 front end: new layers need no front-end code |
-| 2026-11-14 | Contract frozen before filters; validator in CI; site online from Wave 0; feature toggles (`enabled`) | dev council verdict: the contract is the only hard-to-undo piece |
+| 2026-11-14 | Contract frozen before filters; validator in CI; site online from Wave 0; feature toggles (`active`) | dev council verdict: the contract is the only hard-to-undo piece |
 | 2026-11-14 | Everything in English (code, UI, docs, data fields); Spanish `.es.md` copies removed | team rule |
 | 2026-11-14 | Branch flow `feature/*` → `dev` → `main` (published) | `main` stays stable for the jury |
 | 2026-11-14 | Repository made public | GitHub Pages on a free account requires it |
 | 2026-11-14 | FIRMS download in 5-day chunks, `_NRT` / `_SP` chosen by data age | as implemented by B2 |
 | 2026-11-14 | FIRMS key in `.env` locally and in the `FIRMS_MAP_KEY` repository secret | the published site never needs it |
+
+| 2026-11-14 | Contract field names follow B1's implementation: `updated_at`, `timestamp_utc`, `day_night`, `border`, `active`, legend `text`, `total_frp` | B1 owns the contract; doc, front end, `fires.py`, `weather.py` aligned |
 
 Add a row whenever the team makes a decision that someone could later ask "why?" about.
