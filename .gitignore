@@ -1,0 +1,19 @@
+# Secrets
+.env
+
+# Raw FIRMS / WorldPop data (heavy, not versioned)
+data/raw/*
+!data/raw/.gitkeep
+
+# Python environment
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
