@@ -1,0 +1,30 @@
+[
+  {
+    "incendio_id": 12,
+    "riesgo": "critico",
+    "color": "#d7301f",
+    "desde": "2026-02-12T07:42:00Z",
+    "pob_1km": 1200,
+    "pob_5km": 23400,
+    "pob_10km": 51000,
+    "viento_hacia_poblacion": true,
+    "centro": [
+      -71.0,
+      -35.5
+    ]
+  },
+  {
+    "incendio_id": 15,
+    "riesgo": "alto",
+    "color": "#fc8d59",
+    "desde": "2026-02-13T14:15:00Z",
+    "pob_1km": 80,
+    "pob_5km": 2400,
+    "pob_10km": 9500,
+    "viento_hacia_poblacion": false,
+    "centro": [
+      -70.75,
+      -35.75
+    ]
+  }
+]

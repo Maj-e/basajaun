@@ -1,0 +1,31 @@
+{
+  "actualizado": "2026-11-14T16:42:54Z",
+  "2026-02-12": {
+    "focos": 17,
+    "frp_total": 2680.3,
+    "modis": 8,
+    "viirs": 9,
+    "sin_datos": false
+  },
+  "2026-02-13": {
+    "focos": 17,
+    "frp_total": 1943.3,
+    "modis": 8,
+    "viirs": 9,
+    "sin_datos": false
+  },
+  "2026-02-14": {
+    "focos": 16,
+    "frp_total": 2292.3,
+    "modis": 6,
+    "viirs": 10,
+    "sin_datos": false
+  },
+  "2026-02-11": {
+    "focos": 0,
+    "frp_total": 0.0,
+    "modis": 0,
+    "viirs": 0,
+    "sin_datos": true
+  }
+}
