@@ -1,0 +1,17 @@
+{
+  "updated_at": "2026-02-14T08:00:00Z",
+  "2026-02-13": {
+    "hotspots": 0,
+    "total_frp": 0.0,
+    "modis": 0,
+    "viirs": 0,
+    "no_data": true
+  },
+  "2026-02-14": {
+    "hotspots": 3,
+    "total_frp": 55.2,
+    "modis": 1,
+    "viirs": 2,
+    "no_data": false
+  }
+}

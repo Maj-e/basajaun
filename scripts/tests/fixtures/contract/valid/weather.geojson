@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "updated_at": "2026-02-14T08:00:00Z",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.0,
+          -35.0
+        ]
+      },
+      "properties": {
+        "timestamp_utc": "2026-02-14T07:00:00Z",
+        "t": 493927.0,
+        "direction": 270.0,
+        "speed": 22.5,
+        "rotation": 90.0,
+        "size": 0.95,
+        "color": "#fee08b"
+      }
+    }
+  ]
+}
