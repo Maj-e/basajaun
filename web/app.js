@@ -6,6 +6,7 @@ import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, renderL
 import { createTimeline } from "./timeline.js";
 import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
+import { loadAlerts, renderAlerts } from "./alerts.js";
 
 const $ = (id) => document.getElementById(id);
 const H = 3600 * 1000;
@@ -52,6 +53,9 @@ async function main() {
   const { days, counts } = await dailyCounts(features);
   let story = computeStory(features, days, counts);
   let scoped = features; // the hotspots the figures are computed on (whole area or visible area)
+  let scopeBounds = null; // null = whole area
+  const inScope = (lngLat) => !scopeBounds || scopeBounds.contains(lngLat);
+  await loadAlerts();
   const start = Date.parse(`${days[0]}T00:00:00Z`) / H;
   const end = Date.parse(`${days.at(-1)}T00:00:00Z`) / H + 24;
   // Open three days before the peak (demo script), or at the start
@@ -68,6 +72,7 @@ async function main() {
   subscribe((s) => {
     timeline.render(s.hour);
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
+    renderAlerts(s.hour, inScope);
     renderStory(story, s.hour);
     setHour(s.hour);
     updateSatellite(s.satellite, dayOf(s.hour));
@@ -79,6 +84,7 @@ async function main() {
     const visible = features.filter((f) => bounds.contains(f.geometry.coordinates));
     const whole = visible.length === features.length;
     scoped = whole ? features : visible;
+    scopeBounds = whole ? null : bounds;
     const c = whole ? counts : Object.fromEntries(days.map((d) => [d, 0]));
     if (!whole) visible.forEach((f) => { const d = dayOf(f.properties.t); if (d in c) c[d] += 1; });
     story = computeStory(scoped, days, c);
@@ -130,7 +136,7 @@ async function main() {
 
   // Presenter keys (docs/demo-script.md)
   window.addEventListener("keydown", (e) => {
-    if (e.target.closest("input, textarea, select")) return;
+    if (e.target.closest?.("input, textarea, select")) return;
     const k = e.key.toLowerCase();
     if (e.code === "Space") { e.preventDefault(); timeline.toggle(); }
     else if (k === "s") timeline.jumpSpark();

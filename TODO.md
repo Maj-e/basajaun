@@ -226,7 +226,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 ### Wave 3 — Layers + alerts (P1)
 
-- [ ] **W3-B1** · Exposed population + risk + alerts · **B1**
+- [x] **W3-B1** · Exposed population + risk + alerts · **B1**
   - 1 / 5 / 10 km buffers per fire, `rasterstats.zonal_stats(stats="sum")` → `pop_1km`, `pop_5km`, `pop_10km`
   - Risk (thresholds in `config.py`): `critical` if `pop_1km ≥ 1000` or (`pop_5km ≥ 10000` and `frp_max ≥ 100`) · `high` if `pop_5km ≥ 1000` · `medium` if `pop_10km ≥ 100` · `low` otherwise
   - +1 level if the wind (W3-B2) blows toward the populated area (< 45°) at ≥ 20 km/h → `wind_toward_population: true`
@@ -244,14 +244,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the file passes the validator and covers every hour
   - Depends on: W0-B2
 
-- [ ] **W3-B3** · Population (WorldPop) · **B3**
+- [x] **W3-B3** · Population (WorldPop) · **B3**
   - WorldPop "Population counts, 1 km, UN adjusted" for the country → crop to `BBOX` (`rasterio.mask`)
   - Export `population.tif` (for W3-B1) and a colored `population.png` + its 4 corners in the manifest (type `image`)
   - Files: `scripts/population.py`
   - **Done when:** the image overlays the map exactly
   - Depends on: W0-B2
 
-- [ ] **W3-B4** · OSM: water, roads, fire stations + accessibility · **B4**
+- [x] **W3-B4** · OSM: water, roads, fire stations + accessibility · **B4**
   - One Overpass query over the `BBOX`: water (`natural=water`, `waterway=river`, `landuse=reservoir`), roads (`highway=primary|secondary|tertiary|track|path`), fire stations (`amenity=fire_station`)
   - Style computed (color and width by road type), simplified geometries
   - For each fire: `dist_road_km`, `dist_water_km`, `dist_fire_station_km`
@@ -330,7 +330,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 ### Wave 5 — Later (P2, independent)
 
 - [ ] **W5-B1** · Notifications · **B1** — new `critical` alert in `live/` → webhook message (Telegram / Discord / email)
-- [ ] **W5-B2** · Spread projection · **B2** — 6-hour ellipse from wind and slope, "estimate" layer in the manifest
+- [x] **W5-B2** · Spread projection · **B2** — 6-hour ellipse from wind and slope, "estimate" layer in the manifest
 - [ ] **W5-B3** · Slope and land cover · **B3** — mean slope per fire (Copernicus DEM), vegetation (ESA WorldCover)
 - [ ] **W5-B4** · FastAPI API + hosting · **B4** — `GET /hotspots?from=&to=&bbox=`, `/fires`, `/alerts` on `api.<domain>` (Render / Railway / Fly.io), with fallback: if the API doesn't answer, the front end reads the static files
 - [ ] **W5-F1** · Mobile, i18n, animation export · **F** — collapsible panels, `web/i18n.js` (Spanish UI), MP4 / GIF capture
