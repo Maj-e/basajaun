@@ -12,5 +12,9 @@ export const map = new maplibregl.Map({
 map.addControl(new maplibregl.NavigationControl(), "top-right");
 map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
-// Se resuelve cuando el fondo de mapa está cargado y se pueden agregar capas.
-export const mapaListo = new Promise((resolve) => map.on("load", resolve));
+// Se resuelve en cuanto el estilo está listo para recibir capas,
+// sin esperar a que todas las teselas del fondo de mapa estén descargadas.
+export const mapaListo = new Promise((resolve) => {
+  if (map.isStyleLoaded()) resolve();
+  else map.once("style.load", resolve);
+});

@@ -88,3 +88,21 @@ body {
   .cabecera h1 span { display: none; }
   .panel-izq, .panel-der { border: 0; border-top: 1px solid var(--borde); }
 }
+
+/* Leyenda (control MapLibre) */
+.leyenda {
+  max-width: 220px;
+  padding: 8px 10px;
+  background: var(--panel);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+  font-size: 12px;
+}
+.leyenda h3 { margin: 0 0 4px; font-size: 12px; }
+.leyenda h3:not(:first-child) { margin-top: 8px; }
+.leyenda div { display: flex; align-items: center; gap: 6px; }
+.leyenda span { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+/* Popup de una Feature */
+.popup { margin-top: 4px; border-collapse: collapse; font-size: 12px; }
+.popup th { padding-right: 8px; text-align: left; color: var(--suave); font-weight: 500; }
