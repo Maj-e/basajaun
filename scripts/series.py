@@ -27,7 +27,7 @@ def generate_hourly_series():
     df = pd.DataFrame(records)
     output_path = PROCESSED_DIR / "hourly_series.json"
 
-    # If there is no data at all (e.g., period without fires)
+    # No data at all (e.g. a period without fires)
     if df.empty:
         output_path.write_text("[]", encoding="utf-8")
         return

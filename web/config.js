@@ -21,6 +21,9 @@ export const CONFIG = {
   // Reference towns shown on the map
   places: [["Santiago", -70.67, -33.45], ["Rancagua", -70.74, -34.17], ["Curicó", -71.24, -34.98], ["Talca", -71.66, -35.43],
            ["Chillán", -72.10, -36.61], ["Concepción", -73.05, -36.83], ["Los Ángeles", -72.35, -37.47]],
+  // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
+  // (design council: one place to look during playback)
+  defaultLayers: ["hotspots", "fires"],
   // Shown in the caption
   areaName: "Chile–Argentina border, 33–38° S",
   // Fires stay visible this many hours after their detection, fading out

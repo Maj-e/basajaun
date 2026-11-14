@@ -13,6 +13,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import rasterio
+
 from config import BBOX, PROCESSED
 
 DATA_DIR = PROCESSED.parent  # web/data/ — manifest `file` paths are relative to it
@@ -44,7 +46,17 @@ LAYERS: list[dict] = [
         "type": "fill",
         "temporal": False,
         "active": True,
-        "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2"],
+        "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
+                  "dist_road_km", "dist_water_km", "dist_fire_station_km"],
+    },
+    {
+        "id": "spread",
+        "name": "6h spread estimate",
+        "file": "processed/spread.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "spread_km", "area_km2"],
     },
     {
         "id": "population",
@@ -90,6 +102,8 @@ LAYERS: list[dict] = [
         "type": "fill",
         "temporal": False,
         "active": False,
+        "popup": ["name", "kind"],
+        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs, rivers"}],
     },
     {
         "id": "roads",
@@ -98,6 +112,15 @@ LAYERS: list[dict] = [
         "type": "line",
         "temporal": False,
         "active": False,
+        "popup": ["name", "highway"],
+        # Colors match osm.ROAD_STYLE
+        "legend": [
+            {"color": "#f2a541", "text": "Primary"},
+            {"color": "#f6c667", "text": "Secondary"},
+            {"color": "#f9dfa0", "text": "Tertiary"},
+            {"color": "#b08968", "text": "Track"},
+            {"color": "#9c8b7a", "text": "Path"},
+        ],
     },
     {
         "id": "fire_stations",
@@ -106,6 +129,8 @@ LAYERS: list[dict] = [
         "type": "circle",
         "temporal": False,
         "active": False,
+        "popup": ["name"],
+        "legend": [{"color": "#2b8cbe", "text": "Fire station"}],
     },
 ]
 
@@ -127,12 +152,25 @@ def file_updated(path: Path) -> str:
     return mtime.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def image_corners(png: Path) -> list[list[float]] | None:
+    """Exact corners of an image layer from the GeoTIFF it was drawn from (same name, .tif), if present."""
+    tif = png.with_suffix(".tif")
+    if not tif.is_file():
+        return None
+    with rasterio.open(tif) as src:
+        w, s, e, n = src.bounds
+    return [[round(x, 6), round(y, 6)] for x, y in ((w, n), (e, n), (e, s), (w, s))]
+
+
 def build_manifest(data_dir: Path = DATA_DIR, layers: list[dict] = LAYERS) -> dict:
     present = []
     for layer in layers:
         path = data_dir / layer["file"]
         if path.is_file():
-            present.append({**layer, "updated_at": file_updated(path)})
+            entry = {**layer, "updated_at": file_updated(path)}
+            if layer["type"] == "image":
+                entry["corners"] = image_corners(path) or layer["corners"]
+            present.append(entry)
     return {"updated_at": utc_now(), "layers": present}
 
 

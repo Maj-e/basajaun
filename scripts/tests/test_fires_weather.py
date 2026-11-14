@@ -84,3 +84,64 @@ def test_fire_and_wind_styles() -> None:
     assert fire_style(10.0, 2) == ("#fb6a4a", 0.30)
     assert wind_style(50.0) == ("#d7301f", 1.35)
     assert wind_style(10.0) == ("#91cf60", 0.75)
+
+
+def test_spread_projection_generates_downwind_ellipse(tmp_path: Path) -> None:
+    from spread import generate_spread
+
+    fires_file = tmp_path / "fires.geojson"
+    weather_file = tmp_path / "weather.geojson"
+    spread_file = tmp_path / "spread.geojson"
+
+    fires_file.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "updated_at": "2026-02-14T12:00:00Z",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [[[-71.01, -35.01], [-71.00, -35.01], [-71.00, -35.00], [-71.01, -35.00], [-71.01, -35.01]]],
+                        },
+                        "properties": {
+                            "fire_id": 1,
+                            "start": "2026-02-14T06:00:00Z",
+                            "end": "2026-02-14T12:00:00Z",
+                            "n_hotspots": 4,
+                            "frp_max": 85.0,
+                            "area_km2": 1.0,
+                        },
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    weather_file.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "updated_at": "2026-02-14T12:00:00Z",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "geometry": {"type": "Point", "coordinates": [-71.0, -35.0]},
+                        "properties": {"t": 492000.0, "speed": 30.0, "direction": 180.0},
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    out = generate_spread(fires_file, weather_file, spread_file)
+    assert "updated_at" in out
+    assert len(out["features"]) == 1
+    props = out["features"][0]["properties"]
+    assert props["fire_id"] == 1
+    assert props["horizon_hours"] == 6
+    assert props["wind_to_deg"] == 0.0
+    assert props["spread_km"] > 2.0
+    assert props["area_km2"] > 1.0
