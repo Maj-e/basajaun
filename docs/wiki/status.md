@@ -26,8 +26,7 @@ _Last updated: 2026-11-14._
 Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 
 ## Open questions
-- **Caption "Central Chile" is misleading:** the spark (1,111 MW) and 110 of the 151 peak-day fires are in **Argentina** (Mendoza), just east of the border; 679 of 825 fires overall are in Chile. Proposal: "Chile–Argentina border, 33–38° S".
-- **Demo area:** keep south-central Chile, 1–14 Feb 2026? Activity peaks on 12–14 Feb; extending `END_DATE` may show the end of the episode.
+- **Demo area:** keep the Chile–Argentina border, 33–38° S episode, 1–14 Feb 2026? Activity peaks on 12–14 Feb; extending `END_DATE` may show the end of the episode.
 - **FIRMS `type` column:** recommended to exclude `type 2` (250 of 1,075 detections, two industrial-looking cells) — B1 to confirm in W1-B1/W1-B3.
 - **Legend and popup:** add size / stroke entries to the legend and human labels + units to the popup (needs a small contract change).
 
@@ -50,5 +49,8 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 | 2026-11-14 | Contract field names follow B1's implementation: `updated_at`, `timestamp_utc`, `day_night`, `border`, `active`, legend `text`, `total_frp` | B1 owns the contract; doc, front end, `fires.py`, `weather.py` aligned |
 
 | 2026-11-14 | Figures follow the visible area; then isolate a fire, then regions; then **episodes** (any place on Earth, one episode at a time) | answers "how do we focus on one zone" and "can we show more than Chile" without drowning the story |
+
+| 2026-11-14 | Area named "Chile–Argentina border, 33–38° S" instead of "Central Chile" | the spark (1,111 MW) and 110 of the 151 peak-day fires are in Mendoza, Argentina; 679 of 825 fires overall are in Chile |
+| 2026-11-14 | MapLibre GL 4.7.1 self-hosted in `web/vendor/` | the demo no longer depends on the unpkg CDN (it failed once during testing) |
 
 Add a row whenever the team makes a decision that someone could later ask "why?" about.

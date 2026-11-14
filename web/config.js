@@ -22,7 +22,7 @@ export const CONFIG = {
   places: [["Santiago", -70.67, -33.45], ["Rancagua", -70.74, -34.17], ["Curicó", -71.24, -34.98], ["Talca", -71.66, -35.43],
            ["Chillán", -72.10, -36.61], ["Concepción", -73.05, -36.83], ["Los Ángeles", -72.35, -37.47]],
   // Shown in the caption
-  areaName: "Central Chile",
+  areaName: "Chile–Argentina border, 33–38° S",
   // Fires stay visible this many hours after their detection, fading out
   trailHours: 24,
 };

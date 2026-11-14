@@ -2,14 +2,14 @@
 
 The page is the support of a short story told to the jury. This script decides what the playback screen must show and what the backend must precompute. Validated by the design council (2026-11-14); figures come from the real FIRMS download (vegetation fires only, see below).
 
-**Episode:** central Chile, 1–14 Feb 2026 · **825 vegetation fires** detected by MODIS + VIIRS.
+**Episode:** Chile–Argentina border, 33–38° S (central Chile and Mendoza, Argentina), 1–14 Feb 2026 · **825 vegetation fires** detected by MODIS + VIIRS — 679 in Chile, 146 in Argentina.
 
 | # | Beat | Screen | Presenter says |
 |---|---|---|---|
-| 1 | **Open** | Dark map of central Chile. Caption always visible: *"Active fires detected by NASA satellites (MODIS + VIIRS) — Central Chile, 1–14 Feb 2026"*. Playback paused on **9 Feb**. | "Two NASA instruments, two formats — we merged them into one view." |
+| 1 | **Open** | Dark map of the Chile–Argentina border. Caption always visible: *"Active fires detected by NASA satellites — MODIS + VIIRS merged · Chile–Argentina border, 33–38° S · 1–14 Feb 2026"*. Playback paused on **9 Feb**. | "Two NASA instruments, two formats — we merged them into one view." |
 | 2 | **Calm** | `Space` starts playback 9 → 11 Feb. Big date ticking. Counter around **44–68 fires/day**. | "A normal summer week: a few dozen fires a day." |
-| 3 | **Spark** | Auto-pause on **11 Feb, 20:42 UTC**: one hotspot at **1,111 MW** fire intensity (FRP), near 35.94° S, 70.07° W — **31× the strongest fire of the previous 10 days** (36 MW). | "Here — one ignition 31 times more intense than anything we saw before." |
-| 4 | **Peak** | Playback resumes into 12–13 Feb: **151 then 149 fires/day**, the activity curve spikes. *If population data is ready:* halo + "≈ N people within 5 km". | "In 24 hours the region goes from 68 to 151 active fires." |
+| 3 | **Spark** | Auto-pause on **11 Feb, 20:42 UTC**: one hotspot at **1,111 MW** fire intensity (FRP), near 35.94° S, 70.07° W, in **Mendoza, Argentina**, ~30 km east of the border — **31× the strongest fire of the previous 10 days** (36 MW). | "Here — one ignition 31 times more intense than anything we saw before." |
+| 4 | **Peak** | Playback resumes into 12–13 Feb: **151 then 149 fires/day** (on 12 Feb: 110 in Argentina, 41 in Chile), the activity curve spikes. *If population data is ready:* halo + "≈ N people within 5 km". | "In 24 hours the region goes from 68 to 151 active fires." |
 | 5 | **Close** | Pause on the peak, 14-day activity curve visible. | "This works for any region and period — the same pipeline, fresh from FIRMS every few hours." |
 
 ## Controls (presenter)
