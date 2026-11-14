@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:58:39Z",
+  "updated_at": "2026-11-14T22:14:49Z",
   "layers": [
     {
       "id": "hotspots",
@@ -65,7 +65,7 @@
       "file": "episodes/sierra-bermeja-2021-09/spread.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "fire_id",
         "horizon_hours",
@@ -101,7 +101,7 @@
         ]
       ],
       "temporal": false,
-      "active": false,
+      "active": true,
       "legend": [
         {
           "color": "#fee5d9",
@@ -112,7 +112,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T20:41:36Z"
+      "updated_at": "2026-11-14T20:49:13Z"
     },
     {
       "id": "wind",
@@ -120,7 +120,7 @@
       "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": false,
+      "active": true,
       "popup": [
         "timestamp_utc",
         "speed",
@@ -168,7 +168,7 @@
       "file": "episodes/sierra-bermeja-2021-09/water.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "kind"
@@ -187,7 +187,7 @@
       "file": "episodes/sierra-bermeja-2021-09/roads.geojson",
       "type": "line",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "highway"
@@ -222,7 +222,7 @@
       "file": "episodes/sierra-bermeja-2021-09/fire_stations.geojson",
       "type": "circle",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name"
       ],
@@ -240,7 +240,7 @@
       "file": "episodes/sierra-bermeja-2021-09/water_points.geojson",
       "type": "circle",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "kind"
@@ -279,7 +279,7 @@
       "file": "episodes/sierra-bermeja-2021-09/groundwater.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "vulnerability",

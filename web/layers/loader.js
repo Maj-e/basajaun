@@ -75,37 +75,61 @@ export async function loadData() {
   const response = await fetch(CONFIG.manifest);
   if (!response.ok) throw new Error(`Manifest unavailable (${response.status})`);
   manifest = await response.json();
-  // Every layer file is requested at the same time, then kept in manifest order
+  // Layers shown at start are downloaded now, all at once; the others only when their box is ticked
   const active = manifest.layers.filter((l) => l.active);
   const files = await Promise.all(active.map(async (layer) => {
-    if (layer.type === "image") return { layer, data: null };
-    try {
-      const r = await fetch(dataUrl(layer.file));
-      if (!r.ok) throw new Error(r.status);
-      return { layer, data: await r.json() };
-    } catch {
-      console.warn(`Layer file unavailable: ${layer.file}`);
-      return null;
-    }
+    if (!isDefaultVisible(layer)) return { layer, data: null, lazy: true };
+    const data = await fetchLayer(layer);
+    return data === undefined ? null : { layer, data };
   }));
-  files.filter(Boolean).forEach(({ layer, data }) => layers.set(layer.id, { layer, data, mapLayerIds: [] }));
+  files.filter(Boolean).forEach(({ layer, data, lazy }) => layers.set(layer.id, { layer, data, lazy: !!lazy, mapLayerIds: [] }));
   return manifest;
+}
+
+// null for an image (MapLibre fetches it), undefined when the file is missing
+async function fetchLayer(layer) {
+  if (layer.type === "image") return null;
+  try {
+    const r = await fetch(dataUrl(layer.file));
+    if (!r.ok) throw new Error(r.status);
+    return await r.json();
+  } catch {
+    console.warn(`Layer file unavailable: ${layer.file}`);
+    return undefined;
+  }
 }
 
 // Add every loaded layer to the map.
 export function addToMap() {
   if (!map) return;
-  for (const entry of layers.values()) {
-    const { layer, data } = entry;
-    const build = BUILDERS[layer.type];
-    if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); continue; }
-    map.addSource(layer.id, layer.type === "image"
-      ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
-      : { type: "geojson", data });
-    entry.mapLayerIds = build(layer);
-    if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
-    if (!isDefaultVisible(layer)) setLayerVisible(layer.id, false);
+  for (const entry of layers.values()) if (!entry.lazy) addEntry(entry);
+}
+
+function addEntry(entry) {
+  const { layer, data } = entry;
+  const build = BUILDERS[layer.type];
+  if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); return false; }
+  map.addSource(layer.id, layer.type === "image"
+    ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
+    : { type: "geojson", data });
+  entry.mapLayerIds = build(layer);
+  if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
+  return true;
+}
+
+// Tick a box: download and build the layer the first time, then show or hide it
+async function toggleLayer(id, visible) {
+  const entry = layers.get(id);
+  if (!entry || !map) return;
+  if (visible && entry.lazy) {
+    const data = await fetchLayer(entry.layer);
+    if (data === undefined) return;
+    entry.data = data;
+    entry.lazy = false;
+    if (!addEntry(entry)) return;
+    if (currentHour !== null) setHour(currentHour);
   }
+  if (!entry.lazy) setLayerVisible(id, visible);
 }
 
 export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
@@ -198,5 +222,5 @@ export function renderLegend(el) {
 export function renderLayerList(el, onToggle) {
   el.innerHTML = [...layers.values()].map(({ layer }) =>
     `<label><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> ${layer.name}</label>`).join("");
-  el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => onToggle(box.dataset.layer, box.checked)));
+  el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => toggleLayer(box.dataset.layer, box.checked)));
 }
