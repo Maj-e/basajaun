@@ -6,40 +6,40 @@ from pathlib import Path
 try:
     from config import BBOX, SAMPLE
 except ImportError:
-    BBOX = (-72.0, -38.0, -70.0, -33.0)  # oeste, sur, este, norte
-    SAMPLE = Path("../web/data/sample")
+    BBOX = (-72.0, -38.0, -70.0, -33.0)  # west, south, east, north
+    SAMPLE = Path("web/data/sample")
 
-COLOR_CONFIANZA = {
-    "alta": "#d7301f",
-    "media": "#fc8d59",
-    "baja": "#fdcc8a",
+CONFIDENCE_COLORS = {
+    "high": "#d7301f",
+    "medium": "#fc8d59",
+    "low": "#fdcc8a",
 }
 
-COLOR_RIESGO = {
-    "critico": "#d7301f",
-    "alto": "#fc8d59",
-    "medio": "#fdcc8a",
-    "bajo": "#fef0d9",
+RISK_COLORS = {
+    "critical": "#d7301f",
+    "high": "#fc8d59",
+    "medium": "#fdcc8a",
+    "low": "#fef0d9",
 }
 
 
-def calcular_radio(frp: float) -> float:
-    """Interpola radio entre 3 y 16 px según FRP (0 a 500 MW)."""
-    frp_c = max(0.0, min(500.0, frp))
-    if frp_c <= 50:
-        return round(3.0 + (frp_c / 50.0) * 5.0, 1)
-    return round(8.0 + ((frp_c - 50.0) / 450.0) * 8.0, 1)
+def calculate_radius(frp: float) -> float:
+    """Interpolate circle radius between 3 and 16 px based on FRP (0 to 500 MW)."""
+    clamped_frp = max(0.0, min(500.0, frp))
+    if clamped_frp <= 50:
+        return round(3.0 + (clamped_frp / 50.0) * 5.0, 1)
+    return round(8.0 + ((clamped_frp - 50.0) / 450.0) * 8.0, 1)
 
 
 def main():
     random.seed(42)
     SAMPLE.mkdir(parents=True, exist_ok=True)
-    ahora_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    oeste, sur, este, norte = BBOX
-    fechas_demo = ["2026-02-12", "2026-02-13", "2026-02-14"]
-    confianzas = ["baja", "media", "alta"]
-    sensores = [
+    west, south, east, north = BBOX
+    demo_dates = ["2026-02-12", "2026-02-13", "2026-02-14"]
+    confidence_levels = ["low", "medium", "high"]
+    sensors = [
         ("MODIS", "Terra", 1000, "#ffffff"),
         ("MODIS", "Aqua", 1000, "#ffffff"),
         ("VIIRS", "S-NPP", 375, "#222222"),
@@ -48,139 +48,139 @@ def main():
     ]
 
     features = []
-    resumen = {"actualizado": ahora_iso}
+    daily_summary = {"updated_at": now_iso}
 
-    for f in fechas_demo:
-        resumen[f] = {
-            "focos": 0,
-            "frp_total": 0.0,
+    for d in demo_dates:
+        daily_summary[d] = {
+            "hotspots": 0,
+            "total_frp": 0.0,
             "modis": 0,
             "viirs": 0,
-            "sin_datos": False,
+            "no_data": False,
         }
 
-    # Generar 50 focos repartidos en 3 días
+    # Generate 50 sample hotspots across 3 days
     for i in range(50):
-        fecha_str = fechas_demo[i % len(fechas_demo)]
-        hora = random.randint(0, 23)
-        minuto = random.randint(0, 59)
-        dt = datetime.strptime(f"{fecha_str} {hora:02d}:{minuto:02d}", "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
-        t_horas = round(dt.timestamp() / 3600.0, 1)
+        date_str = demo_dates[i % len(demo_dates)]
+        hour = random.randint(0, 23)
+        minute = random.randint(0, 59)
+        dt = datetime.strptime(f"{date_str} {hour:02d}:{minute:02d}", "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+        t_hours = round(dt.timestamp() / 3600.0, 1)
 
-        sensor, satelite, res_m, borde = random.choice(sensores)
-        confianza = confianzas[i % 3]
+        sensor, satellite, res_m, border = random.choice(sensors)
+        confidence = confidence_levels[i % 3]
         frp = round(random.uniform(5.0, 320.0), 1)
-        brillo_k = round(random.uniform(310.0, 395.0), 1)
-        dia_noche = "D" if 8 <= hora <= 20 else "N"
+        brightness_k = round(random.uniform(310.0, 395.0), 1)
+        day_night = "D" if 8 <= hour <= 20 else "N"
 
-        lon = round(random.uniform(oeste + 0.3, este - 0.3), 4)
-        lat = round(random.uniform(sur + 0.3, norte - 0.3), 4)
+        lon = round(random.uniform(west + 0.3, east - 0.3), 4)
+        lat = round(random.uniform(south + 0.3, north - 0.3), 4)
 
-        cod_sat = {"S-NPP": "N", "NOAA-20": "N20", "NOAA-21": "N21", "Terra": "T", "Aqua": "A"}[satelite]
-        foco_id = f"{sensor}_{cod_sat}_{fecha_str.replace('-', '')}_{hora:02d}{minuto:02d}_{lat}_{lon}"
+        sat_code = {"S-NPP": "N", "NOAA-20": "N20", "NOAA-21": "N21", "Terra": "T", "Aqua": "A"}[satellite]
+        hotspot_id = f"{sensor}_{sat_code}_{date_str.replace('-', '')}_{hour:02d}{minute:02d}_{lat}_{lon}"
 
         features.append({
             "type": "Feature",
             "geometry": {"type": "Point", "coordinates": [lon, lat]},
             "properties": {
-                "id": foco_id,
+                "id": hotspot_id,
                 "sensor": sensor,
-                "satelite": satelite,
-                "fecha_hora_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "fecha": fecha_str,
-                "t": t_horas,
-                "confianza": confianza,
+                "satellite": satellite,
+                "timestamp_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "date": date_str,
+                "t": t_hours,
+                "confidence": confidence,
                 "frp": frp,
-                "brillo_k": brillo_k,
-                "dia_noche": dia_noche,
-                "resolucion_m": res_m,
-                "detectado_por": [sensor],
-                "incendio_id": None,
-                "color": COLOR_CONFIANZA[confianza],
-                "radio": calcular_radio(frp),
-                "borde": borde,
+                "brightness_k": brightness_k,
+                "day_night": day_night,
+                "resolution_m": res_m,
+                "detected_by": [sensor],
+                "fire_id": None,
+                "color": CONFIDENCE_COLORS[confidence],
+                "radius": calculate_radius(frp),
+                "border": border,
             },
         })
 
-        d = resumen[fecha_str]
-        d["focos"] += 1
-        d["frp_total"] = round(d["frp_total"] + frp, 1)
+        day_stats = daily_summary[date_str]
+        day_stats["hotspots"] += 1
+        day_stats["total_frp"] = round(day_stats["total_frp"] + frp, 1)
         if sensor == "MODIS":
-            d["modis"] += 1
+            day_stats["modis"] += 1
         else:
-            d["viirs"] += 1
+            day_stats["viirs"] += 1
 
-    # Día sin datos para probar el calendario rayado
-    resumen["2026-02-11"] = {
-        "focos": 0,
-        "frp_total": 0.0,
+    # Add a no-data day to test striped calendar cells in the UI
+    daily_summary["2026-02-11"] = {
+        "hotspots": 0,
+        "total_frp": 0.0,
         "modis": 0,
         "viirs": 0,
-        "sin_datos": True,
+        "no_data": True,
     }
 
-    # 1. focos.geojson
-    focos_geojson = {
+    # 1. hotspots.geojson
+    hotspots_geojson = {
         "type": "FeatureCollection",
-        "actualizado": ahora_iso,
+        "updated_at": now_iso,
         "features": features,
     }
-    (SAMPLE / "focos.geojson").write_text(json.dumps(focos_geojson, indent=2), encoding="utf-8")
+    (SAMPLE / "hotspots.geojson").write_text(json.dumps(hotspots_geojson, indent=2), encoding="utf-8")
 
-    # 2. resumen_diario.json
-    (SAMPLE / "resumen_diario.json").write_text(json.dumps(resumen, indent=2), encoding="utf-8")
+    # 2. daily_summary.json
+    (SAMPLE / "daily_summary.json").write_text(json.dumps(daily_summary, indent=2), encoding="utf-8")
 
-    # 3. alertas.json (array raíz según contrato)
-    centro_lon = round((oeste + este) / 2, 2)
-    centro_lat = round((sur + norte) / 2, 2)
-    alertas = [
+    # 3. alerts.json (root array per contract)
+    center_lon = round((west + east) / 2, 2)
+    center_lat = round((south + north) / 2, 2)
+    alerts = [
         {
-            "incendio_id": 12,
-            "riesgo": "critico",
-            "color": COLOR_RIESGO["critico"],
-            "desde": "2026-02-12T07:42:00Z",
-            "pob_1km": 1200,
-            "pob_5km": 23400,
-            "pob_10km": 51000,
-            "viento_hacia_poblacion": True,
-            "centro": [centro_lon, centro_lat],
+            "fire_id": 12,
+            "risk": "critical",
+            "color": RISK_COLORS["critical"],
+            "since": "2026-02-12T07:42:00Z",
+            "pop_1km": 1200,
+            "pop_5km": 23400,
+            "pop_10km": 51000,
+            "wind_toward_population": True,
+            "center": [center_lon, center_lat],
         },
         {
-            "incendio_id": 15,
-            "riesgo": "alto",
-            "color": COLOR_RIESGO["alto"],
-            "desde": "2026-02-13T14:15:00Z",
-            "pob_1km": 80,
-            "pob_5km": 2400,
-            "pob_10km": 9500,
-            "viento_hacia_poblacion": False,
-            "centro": [round(centro_lon + 0.25, 2), round(centro_lat - 0.25, 2)],
+            "fire_id": 15,
+            "risk": "high",
+            "color": RISK_COLORS["high"],
+            "since": "2026-02-13T14:15:00Z",
+            "pop_1km": 80,
+            "pop_5km": 2400,
+            "pop_10km": 9500,
+            "wind_toward_population": False,
+            "center": [round(center_lon + 0.25, 2), round(center_lat - 0.25, 2)],
         },
     ]
-    (SAMPLE / "alertas.json").write_text(json.dumps(alertas, indent=2), encoding="utf-8")
+    (SAMPLE / "alerts.json").write_text(json.dumps(alerts, indent=2), encoding="utf-8")
 
-    # 4. manifest.json (con "archivo": "sample/...", "popup" y "texto")
+    # 4. manifest.json
     manifest = {
-        "actualizado": ahora_iso,
-        "capas": [
+        "updated_at": now_iso,
+        "layers": [
             {
-                "id": "focos",
-                "nombre": "Focos de calor",
-                "archivo": "sample/focos.geojson",
-                "tipo": "circle",
+                "id": "hotspots",
+                "name": "Thermal Hotspots",
+                "file": "sample/hotspots.geojson",
+                "type": "circle",
                 "temporal": True,
-                "activa": True,
-                "popup": ["sensor", "satelite", "fecha_hora_utc", "confianza", "frp"],
-                "leyenda": [
-                    {"color": "#d7301f", "texto": "Confianza alta"},
-                    {"color": "#fc8d59", "texto": "Confianza media"},
-                    {"color": "#fdcc8a", "texto": "Confianza baja"},
+                "active": True,
+                "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp"],
+                "legend": [
+                    {"color": "#d7301f", "text": "High confidence"},
+                    {"color": "#fc8d59", "text": "Medium confidence"},
+                    {"color": "#fdcc8a", "text": "Low confidence"},
                 ],
             }
         ],
     }
     (SAMPLE / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    print(f"✅ Sample generado según contrato en {SAMPLE}/")
+    print(f"✅ English sample files generated in {SAMPLE}/")
 
 
 if __name__ == "__main__":
