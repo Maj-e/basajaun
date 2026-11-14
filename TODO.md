@@ -24,7 +24,7 @@ Data contract (file formats, layer manifest, MODIS / VIIRS field mapping): [`doc
 | Wave | B1 — Harmonization | B2 — Ingestion & fires | B3 — Aggregates & population | B4 — Data platform | F — Front end / DevOps |
 |---|---|---|---|---|---|
 | **0 · Base** | **W0-B1** Frozen contract + sample data | **W0-B2** FIRMS key + area + `config.py` | **W0-B3** FIRMS volume measurement | **W0-B4** Repo, environment, Makefile, CI | **W0-F1** Web skeleton + deployment |
-| **1 · MVP** | **W1-B1** MODIS / VIIRS normalization + tests | **W1-B2** Full FIRMS download | **W1-B3** Hotspot export + daily summary | **W1-B4** Contract validator + manifest | **W1-F1** Layer loader + hotspot layer<br>**W1-F2** Filters + "no data" status |
+| **1 · MVP** | **W1-B1** MODIS / VIIRS normalization + tests | **W1-B2** Full FIRMS download | **W1-B3** Hotspot export + daily summary | **W1-B4** Contract validator + manifest | **W1-F0** Playback screen mockup<br>**W1-F1** Layer loader + hotspot layer<br>**W1-F2** Filters + "no data" status |
 | **2 · Calendar + playback** | **W2-B1** MODIS / VIIRS deduplication | **W2-B2** Fires (grouping) | **W2-B3** Time series (counter, chart) | **W2-B4** End-to-end check on the URL | **W2-F1** Calendar<br>**W2-F2** Timeline + animation |
 | **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts | **W3-B2** Wind + weather | **W3-B3** Population (WorldPop) | **W3-B4** OSM: water, roads, fire stations + accessibility | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel |
 | **4 · Live** | **W4-B1** Alerts on recent data | — | — | **W4-B4** Automatic refresh with validation | **W4-F1** "Live" button |
@@ -150,6 +150,12 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - `scripts/make_manifest.py`: generates `web/data/manifest.json` listing **only layers whose file exists** (name, file, type, temporal, legend, `active`, `updated_at`)
   - **Done when:** breaking a field in a PR fails CI, and the manifest reflects the files present
   - Depends on: W0-B1, W0-B4
+
+- [x] **W1-F0** · Playback screen mockup · **F**
+  - Design decisions from the design council: the page is the support of the demo story (`docs/demo-script.md`), dark "night thermal pass" world, full-screen map, dominant timeline strip with spark and peak computed from data, two readouts, legend on the map, alerts off until population exists, no "Live" label until wired
+  - Files: `docs/mockup/index.html` (+ `hotspots.json`: 825 real vegetation fires, `land.geojson`: offline land outline); open with `cd docs/mockup && python3 -m http.server`
+  - **Done when:** the team has reviewed the mockup; W1-F2, W2-F1, W2-F2 build from it
+  - Depends on: —
 
 - [ ] **W1-F1** · Layer loader + hotspot layer · **F** — *code done on `feature/W1-F1-layer-loader`, with provisional sample data*
   - `web/layers/loader.js`: reads `manifest.json` and, for each `active` layer, creates source + layer by `type` (`circle`, `fill`, `line`, `image`) using **the style properties from the file**:
