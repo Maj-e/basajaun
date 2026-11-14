@@ -41,7 +41,7 @@ All outputs go to **`web/data/processed/`** (published with the site). Raw downl
 
 ## Configuration
 `scripts/config.py`:
-- `BBOX = (-72.0, -38.0, -70.0, -33.0)` — west, south, east, north (south-central Chile)
+- `BBOX = (-72.0, -38.0, -70.0, -33.0)` — west, south, east, north (Chile–Argentina border, 33–38° S)
 - `START_DATE`, `END_DATE` = `2026-02-01` → `2026-02-14`
 - paths `RAW`, `SAMPLE`, `PROCESSED`
 - reads `FIRMS_MAP_KEY` from `.env` or the environment
