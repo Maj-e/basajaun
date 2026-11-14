@@ -9,6 +9,7 @@ _Last updated: 2026-11-14._
 | W0-F1 | Web skeleton + GitHub Pages deploy | ✅ merged, published |
 | W0-B2 / W1-B2 | FIRMS config + downloader | ✅ merged in `dev`; first real download done (1,075 detections) |
 | W1-F1 | Generic layer loader + hotspot layer | ✅ merged in `dev` (provisional sample data); not yet on `main` |
+| W1-F0 | Playback screen mockup + demo script | ✅ `docs/mockup/`, `docs/demo-script.md` |
 | W0-B1 | Frozen contract + generated sample data | ⏳ in progress (B1) |
 | W0-B3 | Volume measurement | ✅ answered by the first download: one file is enough |
 | W1-B1, W1-B3, W1-B4, W1-F2 | Harmonization, export, validator, filters | next → MVP |
@@ -17,7 +18,7 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 
 ## Open questions
 - **Demo area:** keep south-central Chile, 1–14 Feb 2026? Activity peaks on 12–14 Feb; extending `END_DATE` may show the end of the episode.
-- **FIRMS `type` column:** filter out static sources (industry, volcanoes, offshore)?
+- **FIRMS `type` column:** recommended to exclude `type 2` (250 of 1,075 detections, two industrial-looking cells) — B1 to confirm in W1-B1/W1-B3.
 - **Legend and popup:** add size / stroke entries to the legend and human labels + units to the popup (needs a small contract change).
 
 ## Decisions log
@@ -32,5 +33,9 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 | 2026-11-14 | Repository made public | GitHub Pages on a free account requires it |
 | 2026-11-14 | FIRMS download in 5-day chunks, `_NRT` / `_SP` chosen by data age | as implemented by B2 |
 | 2026-11-14 | FIRMS key in `.env` locally and in the `FIRMS_MAP_KEY` repository secret | the published site never needs it |
+
+| 2026-11-14 | Demo script: open 9 Feb → spark (11 Feb 20:42 UTC, 1,111 MW, 31× previous max) → peak (12 Feb, 151 fires) | the data tells this story; see `docs/demo-script.md` |
+| 2026-11-14 | Design (council verdict): story-led playback screen, dark theme, full-screen map, dominant timeline, 2 computed readouts, legend on the map, alerts only when computed, no "Live" label until wired, presenter keys + `?demo=1` | jury-first but credible for professionals; never show uncomputed numbers |
+| 2026-11-14 | Exclude FIRMS `type 2` from the hotspots (proposal) | static sources are not wildfires; pending B1 |
 
 Add a row whenever the team makes a decision that someone could later ask "why?" about.
