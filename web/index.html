@@ -20,10 +20,8 @@
   <link rel="modulepreload" href="readouts.js">
   <link rel="modulepreload" href="alerts.js">
   <script type="module" src="app.js"></script>
-  <!-- Data the first screen needs, fetched while MapLibre downloads (same paths as config.js) -->
-  <link rel="preload" href="data/manifest.json" as="fetch" crossorigin>
-  <link rel="preload" href="data/processed/daily_summary.json" as="fetch" crossorigin>
-  <link rel="preload" href="data/processed/hotspots.geojson" as="fetch" crossorigin>
+  <!-- Episode list, fetched while MapLibre downloads (config.js picks the episode from it) -->
+  <link rel="preload" href="data/episodes.json" as="fetch" crossorigin>
 </head>
 <body>
   <!-- Design reference: docs/mockup/index.html (validated) and docs/demo-script.md -->
@@ -37,6 +35,7 @@
         Ulinautas
       </h1>
       <p class="caption"><strong>Active fires detected by NASA satellites</strong><br><span id="caption-scope">MODIS + VIIRS merged</span></p>
+      <label class="episode-pick">Episode <select id="episode-select" aria-label="Fire episode"></select></label>
       <p class="scope" id="scope"><span id="scope-text">Figures for the whole area</span> <button type="button" id="scope-reset" hidden>Show whole area</button></p>
     </div>
     <dl class="readouts">

@@ -149,6 +149,12 @@ body {
   font: 12px var(--font-ui); color: var(--ink); white-space: nowrap;
 }
 
+/* ---------- Episode selector ---------- */
+.episode-pick { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font: 600 11px var(--font-ui);
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); pointer-events: auto; }
+.episode-pick select { font: 500 13px var(--font-ui); letter-spacing: 0; text-transform: none; color: var(--ink);
+  background: #172236; border: 1px solid var(--land-edge); border-radius: 6px; padding: 4px 8px; }
+
 /* ---------- Scope: whole area or visible area ---------- */
 .scope { margin: 8px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); pointer-events: auto; }
 .scope.visible-area #scope-text { color: var(--frp-4); }
