@@ -87,6 +87,7 @@ def row_to_feature(row: pd.Series) -> dict:
         "color": row["color"],
         "radius": float(row["radius"]),
         "border": row["border"],
+        "ring": row["sensor"] == "MODIS",  # MODIS (1 km pixel) drawn as a ring, VIIRS (375 m) as a dot
     }
     return {
         "type": "Feature",

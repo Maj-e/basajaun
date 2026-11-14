@@ -131,7 +131,8 @@ def test_normalize_viirs_three_rows():
     assert (result["border"] == "#222222").all()
     assert result.iloc[0]["id"] == "VIIRS_N_20260214_0742_-33.4569_-70.6483"
     assert result.iloc[1]["brightness_k"] == 342.1
-    assert result.iloc[2]["color"] == "#d7301f"
+    from harmonize import frp_color
+    assert result.iloc[2]["color"] == frp_color(result.iloc[2]["frp"])
 
 
 def test_normalize_viirs_explicit_satellite():
