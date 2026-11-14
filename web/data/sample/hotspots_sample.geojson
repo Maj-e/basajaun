@@ -1,0 +1,366 @@
+{
+ "type": "FeatureCollection",
+ "updated": "2026-02-14T08:00:00Z",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.7585,
+     -37.2103
+    ]
+   },
+   "properties": {
+    "id": "MODIS_20260212_0936_-37.2103_-70.7585",
+    "sensor": "MODIS",
+    "satellite": "Terra",
+    "datetime_utc": "2026-02-12T09:36:00Z",
+    "date": "2026-02-12",
+    "t": 491913.6,
+    "confidence": "high",
+    "frp": 98.5,
+    "brightness_k": 350.8,
+    "daynight": "N",
+    "resolution_m": 1000,
+    "detected_by": [
+     "MODIS"
+    ],
+    "fire_id": null,
+    "color": "#d7301f",
+    "radius": 5.6,
+    "stroke": "#ffffff"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.6625,
+     -35.8273
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260212_1300_-35.8273_-71.6625",
+    "sensor": "VIIRS",
+    "satellite": "S-NPP",
+    "datetime_utc": "2026-02-12T13:00:00Z",
+    "date": "2026-02-12",
+    "t": 491917.0,
+    "confidence": "medium",
+    "frp": 273.1,
+    "brightness_k": 348.6,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fc8d59",
+    "radius": 10.1,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.2841,
+     -34.9775
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260213_1200_-34.9775_-70.2841",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-21",
+    "datetime_utc": "2026-02-13T12:00:00Z",
+    "date": "2026-02-13",
+    "t": 491940.0,
+    "confidence": "low",
+    "frp": 19.6,
+    "brightness_k": 351.0,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fdcc8a",
+    "radius": 3.5,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.9093,
+     -36.9673
+    ]
+   },
+   "properties": {
+    "id": "MODIS_20260212_1400_-36.9673_-70.9093",
+    "sensor": "MODIS",
+    "satellite": "Aqua",
+    "datetime_utc": "2026-02-12T14:00:00Z",
+    "date": "2026-02-12",
+    "t": 491918.0,
+    "confidence": "high",
+    "frp": 16.8,
+    "brightness_k": 347.8,
+    "daynight": "D",
+    "resolution_m": 1000,
+    "detected_by": [
+     "MODIS"
+    ],
+    "fire_id": null,
+    "color": "#d7301f",
+    "radius": 3.4,
+    "stroke": "#ffffff"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.6351,
+     -35.2152
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260213_1112_-35.2152_-71.6351",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-20",
+    "datetime_utc": "2026-02-13T11:12:00Z",
+    "date": "2026-02-13",
+    "t": 491939.2,
+    "confidence": "medium",
+    "frp": 172.1,
+    "brightness_k": 316.8,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fc8d59",
+    "radius": 7.5,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.8096,
+     -35.5143
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260213_1200_-35.5143_-70.8096",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-20",
+    "datetime_utc": "2026-02-13T12:00:00Z",
+    "date": "2026-02-13",
+    "t": 491940.0,
+    "confidence": "low",
+    "frp": 214.2,
+    "brightness_k": 342.6,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fdcc8a",
+    "radius": 8.6,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.4025,
+     -36.7809
+    ]
+   },
+   "properties": {
+    "id": "MODIS_20260212_2324_-36.7809_-71.4025",
+    "sensor": "MODIS",
+    "satellite": "Terra",
+    "datetime_utc": "2026-02-12T23:24:00Z",
+    "date": "2026-02-12",
+    "t": 491927.4,
+    "confidence": "high",
+    "frp": 277.2,
+    "brightness_k": 350.2,
+    "daynight": "N",
+    "resolution_m": 1000,
+    "detected_by": [
+     "MODIS"
+    ],
+    "fire_id": null,
+    "color": "#d7301f",
+    "radius": 10.2,
+    "stroke": "#ffffff"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.6329,
+     -36.3482
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260214_0824_-36.3482_-70.6329",
+    "sensor": "VIIRS",
+    "satellite": "S-NPP",
+    "datetime_utc": "2026-02-14T08:24:00Z",
+    "date": "2026-02-14",
+    "t": 491960.4,
+    "confidence": "medium",
+    "frp": 158.5,
+    "brightness_k": 345.8,
+    "daynight": "N",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fc8d59",
+    "radius": 7.1,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.3068,
+     -35.8132
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260212_2112_-35.8132_-70.3068",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-21",
+    "datetime_utc": "2026-02-12T21:12:00Z",
+    "date": "2026-02-12",
+    "t": 491925.2,
+    "confidence": "low",
+    "frp": 51.2,
+    "brightness_k": 350.1,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fdcc8a",
+    "radius": 4.3,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.6875,
+     -35.1225
+    ]
+   },
+   "properties": {
+    "id": "MODIS_20260212_2024_-35.1225_-70.6875",
+    "sensor": "MODIS",
+    "satellite": "Aqua",
+    "datetime_utc": "2026-02-12T20:24:00Z",
+    "date": "2026-02-12",
+    "t": 491924.4,
+    "confidence": "high",
+    "frp": 262.9,
+    "brightness_k": 368.8,
+    "daynight": "D",
+    "resolution_m": 1000,
+    "detected_by": [
+     "MODIS"
+    ],
+    "fire_id": null,
+    "color": "#d7301f",
+    "radius": 9.8,
+    "stroke": "#ffffff"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -71.7029,
+     -34.694
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260213_0600_-34.694_-71.7029",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-20",
+    "datetime_utc": "2026-02-13T06:00:00Z",
+    "date": "2026-02-13",
+    "t": 491934.0,
+    "confidence": "medium",
+    "frp": 283.5,
+    "brightness_k": 360.2,
+    "daynight": "N",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fc8d59",
+    "radius": 10.4,
+    "stroke": "#222222"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -70.295,
+     -36.0781
+    ]
+   },
+   "properties": {
+    "id": "VIIRS_20260212_2200_-36.0781_-70.295",
+    "sensor": "VIIRS",
+    "satellite": "NOAA-20",
+    "datetime_utc": "2026-02-12T22:00:00Z",
+    "date": "2026-02-12",
+    "t": 491926.0,
+    "confidence": "low",
+    "frp": 266.3,
+    "brightness_k": 314.1,
+    "daynight": "D",
+    "resolution_m": 375,
+    "detected_by": [
+     "VIIRS"
+    ],
+    "fire_id": null,
+    "color": "#fdcc8a",
+    "radius": 9.9,
+    "stroke": "#222222"
+   }
+  }
+ ]
+}

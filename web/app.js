@@ -1,14 +1,24 @@
-// Punto de entrada: conecta los módulos. Cada wave agrega aquí su import (loader, filtros, calendario…).
-import { map, mapaListo } from "./map.js";
+// Entry point: wires the modules together. Each wave adds its import here (filters, calendar…).
+import { map, mapReady } from "./map.js";
 import { CONFIG } from "./config.js";
+import { layers, loadLayers } from "./layers/loader.js";
 
-const estado = document.getElementById("estado");
+const status = document.getElementById("status");
 
-mapaListo.then(() => {
-  estado.textContent = CONFIG.dataBase.includes("sample") ? "Datos de ejemplo" : "Datos reales";
-});
+mapReady
+  .then(loadLayers)
+  .then(() => {
+    status.textContent = CONFIG.manifest.includes("sample") ? "Sample data" : "Live data";
+  })
+  .catch((err) => {
+    console.error(err);
+    status.textContent = "Data unavailable";
+  });
 
+// Only report errors from our own layers (not from a basemap tile).
 map.on("error", (e) => {
-  console.error(e.error);
-  estado.textContent = "Error al cargar el mapa";
+  if (e.sourceId && layers.has(e.sourceId)) {
+    console.error(e.error);
+    status.textContent = `Layer unavailable: ${layers.get(e.sourceId).layer.name}`;
+  }
 });
