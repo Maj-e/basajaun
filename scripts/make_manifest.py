@@ -13,6 +13,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+import rasterio
+
 from config import BBOX, PROCESSED
 
 DATA_DIR = PROCESSED.parent  # web/data/ — manifest `file` paths are relative to it
@@ -150,12 +152,25 @@ def file_updated(path: Path) -> str:
     return mtime.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def image_corners(png: Path) -> list[list[float]] | None:
+    """Exact corners of an image layer from the GeoTIFF it was drawn from (same name, .tif), if present."""
+    tif = png.with_suffix(".tif")
+    if not tif.is_file():
+        return None
+    with rasterio.open(tif) as src:
+        w, s, e, n = src.bounds
+    return [[round(x, 6), round(y, 6)] for x, y in ((w, n), (e, n), (e, s), (w, s))]
+
+
 def build_manifest(data_dir: Path = DATA_DIR, layers: list[dict] = LAYERS) -> dict:
     present = []
     for layer in layers:
         path = data_dir / layer["file"]
         if path.is_file():
-            present.append({**layer, "updated_at": file_updated(path)})
+            entry = {**layer, "updated_at": file_updated(path)}
+            if layer["type"] == "image":
+                entry["corners"] = image_corners(path) or layer["corners"]
+            present.append(entry)
     return {"updated_at": utc_now(), "layers": present}
 
 
