@@ -10,6 +10,7 @@ _Last updated: 2026-11-14._
 | W0-B2 / W1-B2 | FIRMS config + downloader | ✅ merged in `dev`; first real download done (1,075 detections) |
 | W1-F1 | Generic layer loader + hotspot layer | ✅ merged in `dev` (provisional sample data); not yet on `main` |
 | W1-F0 | Playback screen mockup + demo script | ✅ `docs/mockup/`, `docs/demo-script.md` |
+| W2-F2 | Playback screen implemented in `web/` | ✅ on `feature/W2-F2-playback-screen` (B1 sample data); waits for the real export (W1-B3) |
 | W0-B1 | Frozen contract + generated sample data | ✅ merged (`make sample`); contract names follow B1's code |
 | W1-B1 | MODIS / VIIRS normalization + tests | ✅ merged (`harmonize.py`) — FIRMS `type 2` filter still to add |
 | W2-B2 | Fires (DBSCAN grouping) | ✅ merged (`fires.py`) |
