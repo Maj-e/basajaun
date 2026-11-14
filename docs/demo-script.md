@@ -12,6 +12,7 @@ Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer c
 | 2 | **Ignition** | `Space`: the first detections appear on the evening of **8 Sep** (12 detections). At **22:19 UTC** the first alert fires: **critical, ≈59,000 people within 5 km**. | "Within hours of the first detection, we know who is threatened: almost 60,000 people within 5 km." |
 | 3 | **Peak** | Auto-pause on **9 Sep**: **625 detections** in one day, strongest fire **970 MW** (FRP, fire intensity) at 02:07 UTC. Open the alert panel: 1 critical + high alerts. | "Day two: 625 detections in 24 hours — this is the peak." |
 | 4 | **Second front** | Playback into **12 Sep**: a second surge (**490 detections**) and two new high alerts. Optional: tick *Satellite image of the day* (NASA VIIRS) to show the burn scar. | "And on day five it flares up again — the alerts follow, fire by fire." |
+| 4b | **Rain** | Tick **Rain** in the Map panel, play into **13–15 Sep**: blue rain patches cover the area and the detections fall to **zero** from 13 Sep. | "And then the rain arrives — the satellites stop seeing fire." |
 | 5 | **Anywhere** | Episode selector → **Los Angeles, Jan 2025** (or Chile, Feb 2026): same screen, same pipeline. | "Any fire, anywhere on Earth: the same pipeline, fresh from NASA FIRMS." |
 
 **Zoom tip:** at beat 3, zoom on the fire or click its outline: every figure and alert is recomputed for that fire only (*Show whole area* returns).
