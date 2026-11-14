@@ -7,8 +7,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Martian+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="vendor/maplibre-gl-4.7.1/maplibre-gl.css">
   <link rel="stylesheet" href="style.css">
+  <!-- Everything starts downloading at once: MapLibre is deferred (runs before app.js, in order), modules are preloaded -->
+  <script src="vendor/maplibre-gl-4.7.1/maplibre-gl.js" defer></script>
+  <link rel="modulepreload" href="config.js">
+  <link rel="modulepreload" href="state.js">
+  <link rel="modulepreload" href="map.js">
+  <link rel="modulepreload" href="layers/loader.js">
+  <link rel="modulepreload" href="timeline.js">
+  <link rel="modulepreload" href="story.js">
+  <link rel="modulepreload" href="readouts.js">
+  <script type="module" src="app.js"></script>
+  <!-- Data the first screen needs, fetched while MapLibre downloads (same paths as config.js) -->
+  <link rel="preload" href="data/manifest.json" as="fetch" crossorigin>
+  <link rel="preload" href="data/processed/daily_summary.json" as="fetch" crossorigin>
+  <link rel="preload" href="data/processed/hotspots.geojson" as="fetch" crossorigin>
 </head>
 <body>
   <!-- Design reference: docs/mockup/index.html (validated) and docs/demo-script.md -->
@@ -22,6 +36,7 @@
         Ulinautas
       </h1>
       <p class="caption"><strong>Active fires detected by NASA satellites</strong><br><span id="caption-scope">MODIS + VIIRS merged</span></p>
+      <p class="scope" id="scope"><span id="scope-text">Figures for the whole area</span> <button type="button" id="scope-reset" hidden>Show whole area</button></p>
     </div>
     <dl class="readouts">
       <div class="readout">
@@ -84,7 +99,5 @@
     </div>
   </section>
 
-  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-  <script type="module" src="app.js"></script>
 </body>
 </html>

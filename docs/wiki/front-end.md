@@ -1,6 +1,6 @@
 # Using the data in the front end
 
-The page is plain HTML + JavaScript with **MapLibre GL 4.7.1**; no framework, no build. It only reads static files.
+The page is plain HTML + JavaScript with **MapLibre GL 4.7.1**, self-hosted in `web/vendor/` (BSD-3 license included); no framework, no build. It only reads static files.
 
 The screen follows the validated mockup (`docs/mockup/`) and the demo script (`docs/demo-script.md`): full-screen dark map, timeline strip along the bottom, two readouts, legend on the map.
 
