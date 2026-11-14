@@ -11,4 +11,6 @@ What we are building, where our data comes from, and how it flows to the map. Ke
 | [Operations](operations.md) | handle the API key, quotas, deployment and branches |
 | [Status and decisions](status.md) | see what is done, what is next, and why we chose what we chose |
 
+Design: [demo script](../demo-script.md) · [playback mockup](../mockup/index.html) (open with `cd docs/mockup && python3 -m http.server`).
+
 Reference documents: [`README.md`](../../README.md) (stack and layout) · [`TODO.md`](../../TODO.md) (tasks) · [`docs/data_contract.md`](../data_contract.md) (file formats).

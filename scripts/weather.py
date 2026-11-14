@@ -20,7 +20,6 @@ def main() -> None:
     PROCESSED.mkdir(parents=True, exist_ok=True)
     west, south, east, north = BBOX
 
-    # 5x5 grid inside BBOX with a 10% inner margin
     lons = np.linspace(west + (east - west) * 0.1, east - (east - west) * 0.1, 5)
     lats = np.linspace(south + (north - south) * 0.1, north - (north - south) * 0.1, 5)
 
@@ -65,7 +64,6 @@ def main() -> None:
 
             dt = datetime.strptime(ts_str, "%Y-%m-%dT%H:%M").replace(tzinfo=timezone.utc)
             t_hours = round((dt - epoch).total_seconds() / 3600.0, 2)
-            # Meteorological wind direction is where wind blows FROM; add 180 for arrow heading
             rotation = round((float(direction) + 180.0) % 360.0, 1)
             color, size = wind_style(float(speed))
 
@@ -73,11 +71,11 @@ def main() -> None:
                 "type": "Feature",
                 "geometry": {"type": "Point", "coordinates": [lon_c, lat_c]},
                 "properties": {
-                    "datetime_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "timestamp_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "t": t_hours,
-                    "dir": round(float(direction), 1),
-                    "vel": round(float(speed), 1),
-                    "temp": round(float(temp), 1) if temp is not None else None,
+                    "direction": round(float(direction), 1),
+                    "speed": round(float(speed), 1),
+                    "temperature": round(float(temp), 1) if temp is not None else None,
                     "humidity": round(float(humidity), 1) if humidity is not None else None,
                     "rain": round(float(rain), 1) if rain is not None else 0.0,
                     "rotation": rotation,
@@ -90,11 +88,11 @@ def main() -> None:
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     fc = {
         "type": "FeatureCollection",
-        "updated": updated,
+        "updated_at": updated,
         "features": features,
     }
 
-    output_path = PROCESSED / "meteo.geojson"
+    output_path = PROCESSED / "weather.geojson"
     output_path.write_text(json.dumps(fc, separators=(",", ":")))
     size_kb = output_path.stat().st_size / 1024
     print(f"[SAVED] {output_path} ({len(features)} hourly records, {size_kb:.1f} KB)")
