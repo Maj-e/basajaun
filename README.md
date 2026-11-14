@@ -139,7 +139,7 @@ ulinautas/
 
 - **Scripts write only to `web/data/`**: the local site and the published site read the same relative paths.
 - **Front-end paths are always relative** (`data/processed/hotspots.geojson`, never `/data/...`), so the site works on the custom domain and on `github.io/ulinautas/`.
-- **One layer = one already-styled data file + one entry in `web/data/manifest.json`.** The generic front-end loader (`web/layers/loader.js`) displays it with no new code; the `enabled` field is the feature toggle.
+- **One layer = one already-styled data file + one entry in `web/data/manifest.json`.** The generic front-end loader (`web/layers/loader.js`) displays it with no new code; the `active` field is the feature toggle.
 - **One shared state** in `web/state.js`: modules read `state`, change it with `setState()` and react with `subscribe()`.
 - **`data/raw/` is not versioned** (size); `web/data/processed/` is (the demo works without re-running anything).
 
@@ -168,7 +168,7 @@ Detailed schema of each file and MODIS / VIIRS field mapping: see [`docs/data_co
 | Resolution | ~1 km | ~375 m | `resolution_m` |
 | Confidence | 0–100 | `low` / `nominal` / `high` | `low` / `medium` / `high` |
 | Brightness | `brightness` | `bright_ti4` | `brightness_k` |
-| Date | `acq_date` + `acq_time` | same | `datetime_utc` (ISO 8601) |
+| Date | `acq_date` + `acq_time` | same | `timestamp_utc` (ISO 8601) |
 | Double detection | — | — | a single hotspot, `detected_by: ["MODIS","VIIRS"]` |
 
 ---

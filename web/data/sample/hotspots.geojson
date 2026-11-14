@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "actualizado": "2026-11-14T16:42:54Z",
+  "updated_at": "2026-11-14T17:18:49Z",
   "features": [
     {
       "type": "Feature",
@@ -14,22 +14,22 @@
       "properties": {
         "id": "MODIS_T_20260212_2007_-37.249_-71.5046",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T20:07:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T20:07:00Z",
+        "date": "2026-02-12",
         "t": 491924.1,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 238.6,
-        "brillo_k": 330.8,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 330.8,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 11.4,
-        "borde": "#ffffff"
+        "radius": 11.4,
+        "border": "#ffffff"
       }
     },
     {
@@ -44,22 +44,22 @@
       "properties": {
         "id": "VIIRS_N21_20260213_2357_-36.738_-71.6583",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-13T23:57:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-13T23:57:00Z",
+        "date": "2026-02-13",
         "t": 491952.0,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 32.4,
-        "brillo_k": 345.9,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 345.9,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 6.2,
-        "borde": "#222222"
+        "radius": 6.2,
+        "border": "#222222"
       }
     },
     {
@@ -74,22 +74,22 @@
       "properties": {
         "id": "MODIS_T_20260214_1638_-35.8541_-70.7181",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-14T16:38:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-14T16:38:00Z",
+        "date": "2026-02-14",
         "t": 491968.6,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 181.8,
-        "brillo_k": 370.9,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 370.9,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 10.3,
-        "borde": "#ffffff"
+        "radius": 10.3,
+        "border": "#ffffff"
       }
     },
     {
@@ -104,22 +104,22 @@
       "properties": {
         "id": "VIIRS_N_20260212_1437_-34.6282_-70.5719",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-12T14:37:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-12T14:37:00Z",
+        "date": "2026-02-12",
         "t": 491918.6,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 260.0,
-        "brillo_k": 310.6,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 310.6,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 11.7,
-        "borde": "#222222"
+        "radius": 11.7,
+        "border": "#222222"
       }
     },
     {
@@ -134,22 +134,22 @@
       "properties": {
         "id": "MODIS_A_20260213_1017_-36.0283_-71.5569",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-13T10:17:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-13T10:17:00Z",
+        "date": "2026-02-13",
         "t": 491938.3,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 72.8,
-        "brillo_k": 374.9,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 374.9,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.4,
-        "borde": "#ffffff"
+        "radius": 8.4,
+        "border": "#ffffff"
       }
     },
     {
@@ -164,22 +164,22 @@
       "properties": {
         "id": "VIIRS_N_20260214_1154_-35.3406_-70.6784",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-14T11:54:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-14T11:54:00Z",
+        "date": "2026-02-14",
         "t": 491963.9,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 195.2,
-        "brillo_k": 378.6,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 378.6,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 10.6,
-        "borde": "#222222"
+        "radius": 10.6,
+        "border": "#222222"
       }
     },
     {
@@ -194,22 +194,22 @@
       "properties": {
         "id": "VIIRS_N21_20260212_1205_-36.1088_-70.4604",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-12T12:05:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-12T12:05:00Z",
+        "date": "2026-02-12",
         "t": 491916.1,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 97.4,
-        "brillo_k": 363.4,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 363.4,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 8.8,
-        "borde": "#222222"
+        "radius": 8.8,
+        "border": "#222222"
       }
     },
     {
@@ -224,22 +224,22 @@
       "properties": {
         "id": "MODIS_T_20260213_0645_-37.3489_-71.2949",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-13T06:45:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-13T06:45:00Z",
+        "date": "2026-02-13",
         "t": 491934.8,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 19.4,
-        "brillo_k": 329.4,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 329.4,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 4.9,
-        "borde": "#ffffff"
+        "radius": 4.9,
+        "border": "#ffffff"
       }
     },
     {
@@ -254,22 +254,22 @@
       "properties": {
         "id": "MODIS_T_20260214_0755_-36.9843_-70.5322",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-14T07:55:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-14T07:55:00Z",
+        "date": "2026-02-14",
         "t": 491959.9,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 124.7,
-        "brillo_k": 348.5,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 348.5,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 9.3,
-        "borde": "#ffffff"
+        "radius": 9.3,
+        "border": "#ffffff"
       }
     },
     {
@@ -284,22 +284,22 @@
       "properties": {
         "id": "VIIRS_N_20260212_1113_-34.9061_-71.6",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-12T11:13:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-12T11:13:00Z",
+        "date": "2026-02-12",
         "t": 491915.2,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 226.1,
-        "brillo_k": 368.1,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 368.1,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 11.1,
-        "borde": "#222222"
+        "radius": 11.1,
+        "border": "#222222"
       }
     },
     {
@@ -314,22 +314,22 @@
       "properties": {
         "id": "MODIS_A_20260213_1746_-34.884_-70.3147",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-13T17:46:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-13T17:46:00Z",
+        "date": "2026-02-13",
         "t": 491945.8,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 56.5,
-        "brillo_k": 342.3,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 342.3,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.1,
-        "borde": "#ffffff"
+        "radius": 8.1,
+        "border": "#ffffff"
       }
     },
     {
@@ -344,22 +344,22 @@
       "properties": {
         "id": "VIIRS_N_20260214_1714_-37.5588_-71.3793",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-14T17:14:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-14T17:14:00Z",
+        "date": "2026-02-14",
         "t": 491969.2,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 270.5,
-        "brillo_k": 376.0,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 376.0,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 11.9,
-        "borde": "#222222"
+        "radius": 11.9,
+        "border": "#222222"
       }
     },
     {
@@ -374,22 +374,22 @@
       "properties": {
         "id": "VIIRS_N_20260212_1025_-34.5412_-70.9059",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-12T10:25:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-12T10:25:00Z",
+        "date": "2026-02-12",
         "t": 491914.4,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 25.8,
-        "brillo_k": 387.6,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 387.6,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 5.6,
-        "borde": "#222222"
+        "radius": 5.6,
+        "border": "#222222"
       }
     },
     {
@@ -404,22 +404,22 @@
       "properties": {
         "id": "VIIRS_N20_20260213_0641_-36.5345_-71.0576",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-13T06:41:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-13T06:41:00Z",
+        "date": "2026-02-13",
         "t": 491934.7,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 129.6,
-        "brillo_k": 387.7,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 387.7,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 9.4,
-        "borde": "#222222"
+        "radius": 9.4,
+        "border": "#222222"
       }
     },
     {
@@ -434,22 +434,22 @@
       "properties": {
         "id": "VIIRS_N21_20260214_0747_-35.1325_-71.1002",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-14T07:47:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-14T07:47:00Z",
+        "date": "2026-02-14",
         "t": 491959.8,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 174.8,
-        "brillo_k": 373.5,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 373.5,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 10.2,
-        "borde": "#222222"
+        "radius": 10.2,
+        "border": "#222222"
       }
     },
     {
@@ -464,22 +464,22 @@
       "properties": {
         "id": "MODIS_A_20260212_1114_-37.2175_-71.634",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-12T11:14:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-12T11:14:00Z",
+        "date": "2026-02-12",
         "t": 491915.2,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 165.5,
-        "brillo_k": 317.7,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 317.7,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 10.1,
-        "borde": "#ffffff"
+        "radius": 10.1,
+        "border": "#ffffff"
       }
     },
     {
@@ -494,22 +494,22 @@
       "properties": {
         "id": "VIIRS_N20_20260213_2010_-35.6406_-70.8658",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-13T20:10:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-13T20:10:00Z",
+        "date": "2026-02-13",
         "t": 491948.2,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 192.9,
-        "brillo_k": 342.7,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 342.7,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 10.5,
-        "borde": "#222222"
+        "radius": 10.5,
+        "border": "#222222"
       }
     },
     {
@@ -524,22 +524,22 @@
       "properties": {
         "id": "MODIS_T_20260214_0835_-34.3961_-70.4613",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-14T08:35:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-14T08:35:00Z",
+        "date": "2026-02-14",
         "t": 491960.6,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 219.3,
-        "brillo_k": 319.7,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 319.7,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 11.0,
-        "borde": "#ffffff"
+        "radius": 11.0,
+        "border": "#ffffff"
       }
     },
     {
@@ -554,22 +554,22 @@
       "properties": {
         "id": "MODIS_T_20260212_2021_-34.5228_-71.6955",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T20:21:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T20:21:00Z",
+        "date": "2026-02-12",
         "t": 491924.3,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 97.5,
-        "brillo_k": 323.4,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 323.4,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 8.8,
-        "borde": "#ffffff"
+        "radius": 8.8,
+        "border": "#ffffff"
       }
     },
     {
@@ -584,22 +584,22 @@
       "properties": {
         "id": "VIIRS_N21_20260213_2316_-34.9487_-71.551",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-13T23:16:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-13T23:16:00Z",
+        "date": "2026-02-13",
         "t": 491951.3,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 245.0,
-        "brillo_k": 353.2,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 353.2,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 11.5,
-        "borde": "#222222"
+        "radius": 11.5,
+        "border": "#222222"
       }
     },
     {
@@ -614,22 +614,22 @@
       "properties": {
         "id": "VIIRS_N21_20260214_2032_-33.5046_-71.4738",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-14T20:32:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-14T20:32:00Z",
+        "date": "2026-02-14",
         "t": 491972.5,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 67.7,
-        "brillo_k": 341.8,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 341.8,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 8.3,
-        "borde": "#222222"
+        "radius": 8.3,
+        "border": "#222222"
       }
     },
     {
@@ -644,22 +644,22 @@
       "properties": {
         "id": "MODIS_T_20260212_1658_-36.1029_-71.5434",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T16:58:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T16:58:00Z",
+        "date": "2026-02-12",
         "t": 491921.0,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 193.7,
-        "brillo_k": 351.5,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 351.5,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 10.6,
-        "borde": "#ffffff"
+        "radius": 10.6,
+        "border": "#ffffff"
       }
     },
     {
@@ -674,22 +674,22 @@
       "properties": {
         "id": "MODIS_T_20260213_0915_-34.4796_-71.5897",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-13T09:15:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-13T09:15:00Z",
+        "date": "2026-02-13",
         "t": 491937.2,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 80.9,
-        "brillo_k": 358.2,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 358.2,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.5,
-        "borde": "#ffffff"
+        "radius": 8.5,
+        "border": "#ffffff"
       }
     },
     {
@@ -704,22 +704,22 @@
       "properties": {
         "id": "VIIRS_N21_20260214_0248_-35.2809_-71.0346",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-14T02:48:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-14T02:48:00Z",
+        "date": "2026-02-14",
         "t": 491954.8,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 246.2,
-        "brillo_k": 320.9,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 320.9,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 11.5,
-        "borde": "#222222"
+        "radius": 11.5,
+        "border": "#222222"
       }
     },
     {
@@ -734,22 +734,22 @@
       "properties": {
         "id": "VIIRS_N21_20260212_0833_-34.4883_-70.945",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-12T08:33:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-12T08:33:00Z",
+        "date": "2026-02-12",
         "t": 491912.5,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 138.3,
-        "brillo_k": 328.0,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 328.0,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 9.6,
-        "borde": "#222222"
+        "radius": 9.6,
+        "border": "#222222"
       }
     },
     {
@@ -764,22 +764,22 @@
       "properties": {
         "id": "VIIRS_N_20260213_0645_-33.7417_-71.1772",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-13T06:45:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-13T06:45:00Z",
+        "date": "2026-02-13",
         "t": 491934.8,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 130.7,
-        "brillo_k": 367.1,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 367.1,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 9.4,
-        "borde": "#222222"
+        "radius": 9.4,
+        "border": "#222222"
       }
     },
     {
@@ -794,22 +794,22 @@
       "properties": {
         "id": "MODIS_A_20260214_1407_-36.6875_-70.8764",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-14T14:07:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-14T14:07:00Z",
+        "date": "2026-02-14",
         "t": 491966.1,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 75.8,
-        "brillo_k": 338.7,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 338.7,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 8.5,
-        "borde": "#ffffff"
+        "radius": 8.5,
+        "border": "#ffffff"
       }
     },
     {
@@ -824,22 +824,22 @@
       "properties": {
         "id": "MODIS_T_20260212_0700_-37.5618_-71.6056",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T07:00:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T07:00:00Z",
+        "date": "2026-02-12",
         "t": 491911.0,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 228.0,
-        "brillo_k": 315.0,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 315.0,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 11.2,
-        "borde": "#ffffff"
+        "radius": 11.2,
+        "border": "#ffffff"
       }
     },
     {
@@ -854,22 +854,22 @@
       "properties": {
         "id": "VIIRS_N21_20260213_1004_-37.1178_-71.4001",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-13T10:04:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-13T10:04:00Z",
+        "date": "2026-02-13",
         "t": 491938.1,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 80.0,
-        "brillo_k": 366.9,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 366.9,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.5,
-        "borde": "#222222"
+        "radius": 8.5,
+        "border": "#222222"
       }
     },
     {
@@ -884,22 +884,22 @@
       "properties": {
         "id": "VIIRS_N20_20260214_1836_-37.285_-71.1301",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-14T18:36:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-14T18:36:00Z",
+        "date": "2026-02-14",
         "t": 491970.6,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 81.5,
-        "brillo_k": 350.2,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 350.2,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 8.6,
-        "borde": "#222222"
+        "radius": 8.6,
+        "border": "#222222"
       }
     },
     {
@@ -914,22 +914,22 @@
       "properties": {
         "id": "VIIRS_N_20260212_2127_-34.7372_-70.6793",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-12T21:27:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-12T21:27:00Z",
+        "date": "2026-02-12",
         "t": 491925.5,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 138.4,
-        "brillo_k": 349.7,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 349.7,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 9.6,
-        "borde": "#222222"
+        "radius": 9.6,
+        "border": "#222222"
       }
     },
     {
@@ -944,22 +944,22 @@
       "properties": {
         "id": "MODIS_T_20260213_2006_-36.6059_-70.4937",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-13T20:06:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-13T20:06:00Z",
+        "date": "2026-02-13",
         "t": 491948.1,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 131.8,
-        "brillo_k": 338.8,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 338.8,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 9.5,
-        "borde": "#ffffff"
+        "radius": 9.5,
+        "border": "#ffffff"
       }
     },
     {
@@ -974,22 +974,22 @@
       "properties": {
         "id": "VIIRS_N20_20260214_0634_-33.8523_-71.0523",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-14T06:34:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-14T06:34:00Z",
+        "date": "2026-02-14",
         "t": 491958.6,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 49.2,
-        "brillo_k": 325.6,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 325.6,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 7.9,
-        "borde": "#222222"
+        "radius": 7.9,
+        "border": "#222222"
       }
     },
     {
@@ -1004,22 +1004,22 @@
       "properties": {
         "id": "VIIRS_N21_20260212_0228_-37.6351_-70.9432",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-12T02:28:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-12T02:28:00Z",
+        "date": "2026-02-12",
         "t": 491906.5,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 35.8,
-        "brillo_k": 365.4,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 365.4,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 6.6,
-        "borde": "#222222"
+        "radius": 6.6,
+        "border": "#222222"
       }
     },
     {
@@ -1034,22 +1034,22 @@
       "properties": {
         "id": "MODIS_A_20260213_0259_-35.9354_-71.4008",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-13T02:59:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-13T02:59:00Z",
+        "date": "2026-02-13",
         "t": 491931.0,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 57.4,
-        "brillo_k": 351.3,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 351.3,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.1,
-        "borde": "#ffffff"
+        "radius": 8.1,
+        "border": "#ffffff"
       }
     },
     {
@@ -1064,22 +1064,22 @@
       "properties": {
         "id": "VIIRS_N20_20260214_0110_-34.2454_-70.4029",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-14T01:10:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-14T01:10:00Z",
+        "date": "2026-02-14",
         "t": 491953.2,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 5.7,
-        "brillo_k": 343.2,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 343.2,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 3.6,
-        "borde": "#222222"
+        "radius": 3.6,
+        "border": "#222222"
       }
     },
     {
@@ -1094,22 +1094,22 @@
       "properties": {
         "id": "VIIRS_N21_20260212_0927_-36.7421_-71.4341",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-12T09:27:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-12T09:27:00Z",
+        "date": "2026-02-12",
         "t": 491913.5,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 213.5,
-        "brillo_k": 351.4,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 351.4,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 10.9,
-        "borde": "#222222"
+        "radius": 10.9,
+        "border": "#222222"
       }
     },
     {
@@ -1124,22 +1124,22 @@
       "properties": {
         "id": "VIIRS_N21_20260213_0137_-35.6021_-71.6298",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-13T01:37:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-13T01:37:00Z",
+        "date": "2026-02-13",
         "t": 491929.6,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 24.2,
-        "brillo_k": 336.7,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 336.7,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 5.4,
-        "borde": "#222222"
+        "radius": 5.4,
+        "border": "#222222"
       }
     },
     {
@@ -1154,22 +1154,22 @@
       "properties": {
         "id": "MODIS_T_20260214_1610_-35.0818_-71.4398",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-14T16:10:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-14T16:10:00Z",
+        "date": "2026-02-14",
         "t": 491968.2,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 307.6,
-        "brillo_k": 316.8,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 316.8,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 12.6,
-        "borde": "#ffffff"
+        "radius": 12.6,
+        "border": "#ffffff"
       }
     },
     {
@@ -1184,22 +1184,22 @@
       "properties": {
         "id": "MODIS_A_20260212_2155_-35.1528_-70.9025",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-12T21:55:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-12T21:55:00Z",
+        "date": "2026-02-12",
         "t": 491925.9,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 132.2,
-        "brillo_k": 390.0,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 390.0,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 9.5,
-        "borde": "#ffffff"
+        "radius": 9.5,
+        "border": "#ffffff"
       }
     },
     {
@@ -1214,22 +1214,22 @@
       "properties": {
         "id": "MODIS_T_20260213_0139_-33.5873_-70.9681",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-13T01:39:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-13T01:39:00Z",
+        "date": "2026-02-13",
         "t": 491929.7,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 137.1,
-        "brillo_k": 359.6,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 359.6,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 9.5,
-        "borde": "#ffffff"
+        "radius": 9.5,
+        "border": "#ffffff"
       }
     },
     {
@@ -1244,22 +1244,22 @@
       "properties": {
         "id": "VIIRS_N_20260214_0642_-36.38_-70.7596",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-14T06:42:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-14T06:42:00Z",
+        "date": "2026-02-14",
         "t": 491958.7,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 80.2,
-        "brillo_k": 343.6,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 343.6,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 8.5,
-        "borde": "#222222"
+        "radius": 8.5,
+        "border": "#222222"
       }
     },
     {
@@ -1274,22 +1274,22 @@
       "properties": {
         "id": "MODIS_T_20260212_1059_-37.2601_-70.9118",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T10:59:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T10:59:00Z",
+        "date": "2026-02-12",
         "t": 491915.0,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 7.9,
-        "brillo_k": 362.8,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 362.8,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 3.8,
-        "borde": "#ffffff"
+        "radius": 3.8,
+        "border": "#ffffff"
       }
     },
     {
@@ -1304,22 +1304,22 @@
       "properties": {
         "id": "VIIRS_N21_20260213_1713_-33.8312_-70.4668",
         "sensor": "VIIRS",
-        "satelite": "NOAA-21",
-        "fecha_hora_utc": "2026-02-13T17:13:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-21",
+        "timestamp_utc": "2026-02-13T17:13:00Z",
+        "date": "2026-02-13",
         "t": 491945.2,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 88.5,
-        "brillo_k": 389.3,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 389.3,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 8.7,
-        "borde": "#222222"
+        "radius": 8.7,
+        "border": "#222222"
       }
     },
     {
@@ -1334,22 +1334,22 @@
       "properties": {
         "id": "MODIS_A_20260214_1118_-33.371_-71.2765",
         "sensor": "MODIS",
-        "satelite": "Aqua",
-        "fecha_hora_utc": "2026-02-14T11:18:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "Aqua",
+        "timestamp_utc": "2026-02-14T11:18:00Z",
+        "date": "2026-02-14",
         "t": 491963.3,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 143.0,
-        "brillo_k": 356.2,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 356.2,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 9.7,
-        "borde": "#ffffff"
+        "radius": 9.7,
+        "border": "#ffffff"
       }
     },
     {
@@ -1364,22 +1364,22 @@
       "properties": {
         "id": "MODIS_T_20260212_2033_-37.2442_-70.3955",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-12T20:33:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-12T20:33:00Z",
+        "date": "2026-02-12",
         "t": 491924.5,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 215.4,
-        "brillo_k": 357.1,
-        "dia_noche": "D",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 357.1,
+        "day_night": "D",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 10.9,
-        "borde": "#ffffff"
+        "radius": 10.9,
+        "border": "#ffffff"
       }
     },
     {
@@ -1394,22 +1394,22 @@
       "properties": {
         "id": "MODIS_T_20260213_0416_-36.4603_-71.4824",
         "sensor": "MODIS",
-        "satelite": "Terra",
-        "fecha_hora_utc": "2026-02-13T04:16:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "Terra",
+        "timestamp_utc": "2026-02-13T04:16:00Z",
+        "date": "2026-02-13",
         "t": 491932.3,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 285.3,
-        "brillo_k": 373.1,
-        "dia_noche": "N",
-        "resolucion_m": 1000,
-        "detectado_por": [
+        "brightness_k": 373.1,
+        "day_night": "N",
+        "resolution_m": 1000,
+        "detected_by": [
           "MODIS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 12.2,
-        "borde": "#ffffff"
+        "radius": 12.2,
+        "border": "#ffffff"
       }
     },
     {
@@ -1424,22 +1424,22 @@
       "properties": {
         "id": "VIIRS_N_20260214_0645_-35.5505_-71.3304",
         "sensor": "VIIRS",
-        "satelite": "S-NPP",
-        "fecha_hora_utc": "2026-02-14T06:45:00Z",
-        "fecha": "2026-02-14",
+        "satellite": "S-NPP",
+        "timestamp_utc": "2026-02-14T06:45:00Z",
+        "date": "2026-02-14",
         "t": 491958.8,
-        "confianza": "alta",
+        "confidence": "high",
         "frp": 69.1,
-        "brillo_k": 363.9,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 363.9,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#d7301f",
-        "radio": 8.3,
-        "borde": "#222222"
+        "radius": 8.3,
+        "border": "#222222"
       }
     },
     {
@@ -1454,22 +1454,22 @@
       "properties": {
         "id": "VIIRS_N20_20260212_0105_-37.1244_-71.233",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-12T01:05:00Z",
-        "fecha": "2026-02-12",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-12T01:05:00Z",
+        "date": "2026-02-12",
         "t": 491905.1,
-        "confianza": "baja",
+        "confidence": "low",
         "frp": 266.2,
-        "brillo_k": 313.7,
-        "dia_noche": "N",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 313.7,
+        "day_night": "N",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fdcc8a",
-        "radio": 11.8,
-        "borde": "#222222"
+        "radius": 11.8,
+        "border": "#222222"
       }
     },
     {
@@ -1484,22 +1484,22 @@
       "properties": {
         "id": "VIIRS_N20_20260213_0810_-37.3689_-71.6865",
         "sensor": "VIIRS",
-        "satelite": "NOAA-20",
-        "fecha_hora_utc": "2026-02-13T08:10:00Z",
-        "fecha": "2026-02-13",
+        "satellite": "NOAA-20",
+        "timestamp_utc": "2026-02-13T08:10:00Z",
+        "date": "2026-02-13",
         "t": 491936.2,
-        "confianza": "media",
+        "confidence": "medium",
         "frp": 178.8,
-        "brillo_k": 346.4,
-        "dia_noche": "D",
-        "resolucion_m": 375,
-        "detectado_por": [
+        "brightness_k": 346.4,
+        "day_night": "D",
+        "resolution_m": 375,
+        "detected_by": [
           "VIIRS"
         ],
-        "incendio_id": null,
+        "fire_id": null,
         "color": "#fc8d59",
-        "radio": 10.3,
-        "borde": "#222222"
+        "radius": 10.3,
+        "border": "#222222"
       }
     }
   ]
