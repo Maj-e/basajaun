@@ -162,7 +162,8 @@ def _extract_wind_at_fire(
 ) -> tuple[float, float] | None:
     """
     Find nearest meteo grid point around the fire's start hour.
-    Supports both English ('wind_speed', 'wind_direction') and Spanish ('vel', 'dir') keys.
+    Reads weather.py's 'speed' / 'direction' keys; older names ('wind_speed' / 'wind_direction',
+    'vel' / 'dir') are still accepted.
     """
     if not meteo_features:
         return None
@@ -179,8 +180,8 @@ def _extract_wind_at_fire(
         if len(coords) < 2:
             continue
 
-        vel = props.get("wind_speed", props.get("vel"))
-        direction = props.get("wind_direction", props.get("dir"))
+        vel = next((props[k] for k in ("speed", "wind_speed", "vel") if props.get(k) is not None), None)
+        direction = next((props[k] for k in ("direction", "wind_direction", "dir") if props.get(k) is not None), None)
         if vel is None or direction is None:
             continue
 
@@ -315,17 +316,21 @@ def compute_alerts(
     }
 
 
-def run_exposure(data_dir: Path = PROCESSED) -> Path:
-    """Load fires, population raster, and optional meteo data from data_dir and write alerts.json."""
+def run_exposure(data_dir: Path = PROCESSED) -> Path | None:
+    """Load fires, population raster, and optional weather data from data_dir and write alerts.json.
+
+    Returns None (and writes nothing) while an input from an earlier step is still missing,
+    so `make data` keeps going.
+    """
     fires_path = data_dir / "fires.geojson"
     pop_path = data_dir / "population.tif"
-    meteo_path = data_dir / "meteo.geojson"
+    meteo_path = data_dir / "weather.geojson"  # W3-B2
     alerts_path = data_dir / "alerts.json"
 
-    if not fires_path.exists():
-        raise FileNotFoundError(f"Missing {fires_path} (produced by W2-B2).")
-    if not pop_path.exists():
-        raise FileNotFoundError(f"Missing {pop_path} (produced by W3-B3).")
+    for path, task in ((fires_path, "W2-B2"), (pop_path, "W3-B3")):
+        if not path.exists():
+            print(f"[SKIP] {path} not found yet (waiting for {task}): no alerts generated.")
+            return None
 
     fires_data = json.loads(fires_path.read_text(encoding="utf-8"))
     meteo_data = (
