@@ -128,7 +128,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 - [ ] **W1-B2** · Full FIRMS download · **B2**
   - `https://firms.modaps.eosdis.nasa.gov/api/area/csv/{MAP_KEY}/{SOURCE}/{west},{south},{east},{north}/{DAYS}/{DATE}`
-  - Sources `MODIS_NRT`, `VIIRS_SNPP_NRT`, `VIIRS_NOAA20_NRT`, `VIIRS_NOAA21_NRT` (`_SP` for older dates); chunks of max. 10 days; don't download again if the file exists
+  - Sources `MODIS_NRT`, `VIIRS_SNPP_NRT`, `VIIRS_NOAA20_NRT`, `VIIRS_NOAA21_NRT` (`_SP` for older dates); 5-day chunks; don't download again if the file exists
   - Check the real codes of the `satellite` column and tell B1 if they differ from the contract
   - Files: `scripts/download_firms.py` → `data/raw/*.csv`
   - **Done when:** the 4 CSVs for the period are in `data/raw/`
