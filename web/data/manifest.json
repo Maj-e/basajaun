@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:58:38Z",
+  "updated_at": "2026-11-14T22:21:09Z",
   "layers": [
     {
       "id": "hotspots",
@@ -157,7 +157,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T22:21:08Z"
     },
     {
       "id": "weather",
@@ -173,7 +173,23 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T22:21:08Z"
+    },
+    {
+      "id": "wind_particles",
+      "name": "Wind (particles)",
+      "file": "processed/weather.geojson",
+      "type": "particles",
+      "temporal": true,
+      "active": false,
+      "color": "#bae6fd",
+      "legend": [
+        {
+          "color": "#bae6fd",
+          "text": "Surface wind (10 m), faster = brighter"
+        }
+      ],
+      "updated_at": "2026-11-14T22:21:08Z"
     },
     {
       "id": "water",

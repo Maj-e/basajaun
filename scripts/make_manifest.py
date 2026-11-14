@@ -111,6 +111,17 @@ LAYERS: list[dict] = [
         "popup": ["timestamp_utc", "temperature", "humidity", "rain", "speed"],
     },
     {
+        "id": "wind_particles",
+        "name": "Wind (particles)",
+        "file": "processed/weather.geojson",
+        "type": "particles",
+        "temporal": True,
+        "active": False,
+        # Surface wind at 10 m: the front end reads u / v (m/s) per grid point and hour
+        "color": "#bae6fd",
+        "legend": [{"color": "#bae6fd", "text": "Surface wind (10 m), faster = brighter"}],
+    },
+    {
         "id": "water",
         "name": "Water",
         "file": "processed/water.geojson",

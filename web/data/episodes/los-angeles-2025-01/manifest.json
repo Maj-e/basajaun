@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:58:39Z",
+  "updated_at": "2026-11-14T22:21:11Z",
   "layers": [
     {
       "id": "hotspots",
@@ -107,7 +107,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T20:19:26Z"
+      "updated_at": "2026-11-14T22:21:10Z"
     },
     {
       "id": "weather",
@@ -123,7 +123,23 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T20:19:26Z"
+      "updated_at": "2026-11-14T22:21:10Z"
+    },
+    {
+      "id": "wind_particles",
+      "name": "Wind (particles)",
+      "file": "episodes/los-angeles-2025-01/weather.geojson",
+      "type": "particles",
+      "temporal": true,
+      "active": false,
+      "color": "#bae6fd",
+      "legend": [
+        {
+          "color": "#bae6fd",
+          "text": "Surface wind (10 m), faster = brighter"
+        }
+      ],
+      "updated_at": "2026-11-14T22:21:10Z"
     }
   ]
 }
