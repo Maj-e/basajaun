@@ -45,6 +45,9 @@ def read_hotspots(paths: list[Path]) -> pd.DataFrame:
     frames = []
     for path in paths:
         raw = pd.read_csv(path)
+        # Keep vegetation fires only: FIRMS type 2 = static land sources (industrial sites...)
+        if "type" in raw.columns:
+            raw = raw[raw["type"] == 0]
         if raw.empty:
             continue
         if path.name.startswith("MODIS"):
@@ -71,19 +74,19 @@ def row_to_feature(row: pd.Series) -> dict:
         "id": row["id"],
         "sensor": row["sensor"],
         "satellite": row["satellite"],
-        "datetime_utc": row["timestamp_utc"],
+        "timestamp_utc": row["timestamp_utc"],
         "date": row["date"],
         "t": float(row["t"]),
         "confidence": row["confidence"],
         "frp": None if pd.isna(row["frp"]) else float(row["frp"]),
         "brightness_k": float(row["brightness_k"]),
-        "daynight": row["day_night"],
+        "day_night": row["day_night"],
         "resolution_m": int(row["resolution_m"]),
         "detected_by": list(row["detected_by"]),
         "fire_id": None if pd.isna(row["fire_id"]) else row["fire_id"],
         "color": row["color"],
         "radius": float(row["radius"]),
-        "stroke": row["border"],
+        "border": row["border"],
     }
     return {
         "type": "Feature",
@@ -99,21 +102,21 @@ def write_hotspots(df: pd.DataFrame, destination: Path, updated: str) -> None:
     features = [row_to_feature(row) for _, row in df.iterrows()]
     collection = {
         "type": "FeatureCollection",
-        "updated": updated,
+        "updated_at": updated,
         "features": features,
     }
     destination.write_text(json.dumps(collection), encoding="utf-8")
 
 
 def daily_summary(df: pd.DataFrame, days: list[str], updated: str) -> dict:
-    summary = {"updated": updated}
+    summary = {"updated_at": updated}
     for day in days:
         group = df[df["date"] == day] if not df.empty else df
         hotspots = int(len(group))
         if hotspots == 0:
             summary[day] = {
                 "hotspots": 0,
-                "frp_total": 0.0,
+                "total_frp": 0.0,
                 "modis": 0,
                 "viirs": 0,
                 "no_data": True,
@@ -121,7 +124,7 @@ def daily_summary(df: pd.DataFrame, days: list[str], updated: str) -> dict:
             continue
         summary[day] = {
             "hotspots": hotspots,
-            "frp_total": round(float(group["frp"].fillna(0).sum()), 1),
+            "total_frp": round(float(group["frp"].fillna(0).sum()), 1),
             "modis": int((group["sensor"] == "MODIS").sum()),
             "viirs": int((group["sensor"] == "VIIRS").sum()),
             "no_data": False,
