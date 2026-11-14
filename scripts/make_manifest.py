@@ -47,6 +47,7 @@ LAYERS: list[dict] = [
         "temporal": False,
         "active": True,
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
+                  "slope_deg", "landcover",
                   "dist_road_km", "dist_water_km", "dist_fire_station_km"],
     },
     {
@@ -56,7 +57,8 @@ LAYERS: list[dict] = [
         "type": "fill",
         "temporal": False,
         "active": False,
-        "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "spread_km", "area_km2"],
+        "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "slope_deg",
+                  "spread_km", "area_km2"],
     },
     {
         "id": "population",

@@ -14,6 +14,7 @@ PIPELINE := \
 	series \
 	population \
 	weather \
+	terrain \
 	spread \
 	exposure \
 	osm \
