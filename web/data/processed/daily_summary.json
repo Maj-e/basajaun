@@ -1,0 +1,101 @@
+{
+  "updated": "2026-11-14T17:31:56Z",
+  "2026-02-01": {
+    "hotspots": 38,
+    "frp_total": 286.8,
+    "modis": 1,
+    "viirs": 37,
+    "no_data": false
+  },
+  "2026-02-02": {
+    "hotspots": 108,
+    "frp_total": 419.2,
+    "modis": 2,
+    "viirs": 106,
+    "no_data": false
+  },
+  "2026-02-03": {
+    "hotspots": 25,
+    "frp_total": 150.8,
+    "modis": 1,
+    "viirs": 24,
+    "no_data": false
+  },
+  "2026-02-04": {
+    "hotspots": 24,
+    "frp_total": 101.1,
+    "modis": 2,
+    "viirs": 22,
+    "no_data": false
+  },
+  "2026-02-05": {
+    "hotspots": 41,
+    "frp_total": 203.8,
+    "modis": 1,
+    "viirs": 40,
+    "no_data": false
+  },
+  "2026-02-06": {
+    "hotspots": 64,
+    "frp_total": 485.7,
+    "modis": 7,
+    "viirs": 57,
+    "no_data": false
+  },
+  "2026-02-07": {
+    "hotspots": 40,
+    "frp_total": 225.0,
+    "modis": 3,
+    "viirs": 37,
+    "no_data": false
+  },
+  "2026-02-08": {
+    "hotspots": 52,
+    "frp_total": 403.2,
+    "modis": 5,
+    "viirs": 47,
+    "no_data": false
+  },
+  "2026-02-09": {
+    "hotspots": 55,
+    "frp_total": 352.9,
+    "modis": 3,
+    "viirs": 52,
+    "no_data": false
+  },
+  "2026-02-10": {
+    "hotspots": 78,
+    "frp_total": 502.1,
+    "modis": 8,
+    "viirs": 70,
+    "no_data": false
+  },
+  "2026-02-11": {
+    "hotspots": 86,
+    "frp_total": 9880.5,
+    "modis": 12,
+    "viirs": 74,
+    "no_data": false
+  },
+  "2026-02-12": {
+    "hotspots": 177,
+    "frp_total": 2822.4,
+    "modis": 25,
+    "viirs": 152,
+    "no_data": false
+  },
+  "2026-02-13": {
+    "hotspots": 164,
+    "frp_total": 3335.9,
+    "modis": 24,
+    "viirs": 140,
+    "no_data": false
+  },
+  "2026-02-14": {
+    "hotspots": 123,
+    "frp_total": 881.6,
+    "modis": 3,
+    "viirs": 120,
+    "no_data": false
+  }
+}
