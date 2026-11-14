@@ -210,7 +210,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** calendar and date filter always stay in sync, on the published URL
   - Depends on: W1-F2
 
-- [ ] **W2-F2** · Timeline + animation · **F** · P1
+- [x] **W2-F2** · Timeline + animation · **F** · P1 — *implemented from the mockup: strip chart, playback engine, spark / peak beats computed from data, presenter keys, readouts, NASA daily satellite toggle, WebGL fallback*
   - Slider in hours + ▶/⏸ + x1 / x4 / x16; `requestAnimationFrame` advances `state.hour`
   - The loader applies to every `temporal: true` layer: filter `t ≤ hour` and `t > hour − 6`, decreasing opacity (6-hour trail)
   - Counter and small chart from `hourly_series.json`
