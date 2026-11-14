@@ -28,7 +28,7 @@ Data contract (file formats, layer manifest, MODIS / VIIRS field mapping): [`doc
 | **2 · Calendar + playback** | **W2-B1** MODIS / VIIRS deduplication | **W2-B2** Fires (grouping) | **W2-B3** Time series (counter, chart) | **W2-B4** End-to-end check on the URL | **W2-F1** Calendar<br>**W2-F2** Timeline + animation<br>**W2-F3** Figures follow the visible area |
 | **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts<br>**W3-B8** Typed alerts: wind, smoke, water contamination<br>**W3-B9** Group alerts into relevant incidents | **W3-B2** Wind + weather<br>**W3-B5** Dedup + fires in `make data` | **W3-B3** Population (WorldPop)<br>**W3-B6** Regions per hotspot | **W3-B4** OSM: water, roads, fire stations + accessibility | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel<br>**W3-F3** Isolate a fire<br>**W3-F4** Region selector<br>**W3-F5** Alert types in the panel<br>**W3-F6** Grouped alerts in the panel |
 | **4 · Live + episodes** | **W4-B1** Alerts on recent data | — | — | **W4-B4** Automatic refresh with validation<br>**W4-B5** Pipeline per episode | **W4-F1** "Live" button<br>**W4-F2** Episode selector + world basemap |
-| **5 · Later** | **W5-B1** Notifications | **W5-B2** Spread projection | **W5-B3** Slope and land cover | **W5-B4** FastAPI API + hosting | **W5-F1** Mobile, i18n, animation export<br>**W5-F2** Demo disclaimer banner |
+| **5 · Later** | **W5-B1** Notifications | **W5-B2** Spread projection | **W5-B3** Slope and land cover | **W5-B4** Scalability (API, hosting) | **W5-F1** Mobile, i18n, animation export<br>**W5-F2** Demo disclaimer banner |
 
 A **—** cell: the role helps the others (testing, PR review, data for the front end).
 
@@ -375,7 +375,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 - [ ] **W5-B1** · Notifications · **B1** — new `critical` alert in `live/` → webhook message (Telegram / Discord / email)
 - [x] **W5-B2** · Spread projection · **B2** — 6-hour ellipse from wind and slope, "estimate" layer in the manifest
 - [ ] **W5-B3** · Slope and land cover · **B3** — mean slope per fire (Copernicus DEM), vegetation (ESA WorldCover)
-- [ ] **W5-B4** · FastAPI API + hosting · **B4** — `GET /hotspots?from=&to=&bbox=`, `/fires`, `/alerts` on `api.<domain>` (Render / Railway / Fly.io), with fallback: if the API doesn't answer, the front end reads the static files
+- [ ] **W5-B4** · Scalability (after the hackathon) · **B4** — what to add when the static site stops being enough: an API (FastAPI: same Python as the pipeline, OpenAPI docs) for `GET /hotspots?from=&to=&bbox=`, `/fires`, `/alerts` once episodes get too big to download whole or other consumers appear (notifications W5-B1, civil protection apps); hosting (Render / Railway / Fly.io) with fallback to the static files; a database (PostGIS) only for history beyond the episodes. Not needed for the demo: static files + the 30 min live refresh cover it
 - [ ] **W5-F2** · Demo disclaimer banner · **F**
   - A short, dismissable banner on first visit: *"Demo — past fire episodes replayed from NASA FIRMS data. Some layers may take a few seconds to load."*; remembered per visitor (localStorage, with try/catch) and never shown in presenter mode (`?demo=1`)
   - **Done when:** it shows once on the published URL, can be closed, and stays hidden in presenter mode

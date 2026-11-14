@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T23:14:58Z",
+  "updated_at": "2026-11-14T23:43:36Z",
   "layers": [
     {
       "id": "hotspots",
@@ -93,7 +93,7 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T20:19:26Z"
+      "updated_at": "2026-11-14T23:21:47Z"
     },
     {
       "id": "wind",
@@ -149,7 +149,7 @@
       "file": "episodes/los-angeles-2025-01/weather.geojson",
       "type": "particles",
       "temporal": true,
-      "active": false,
+      "active": true,
       "color": "#bae6fd",
       "legend": [
         {
