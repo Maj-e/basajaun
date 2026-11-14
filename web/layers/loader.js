@@ -62,15 +62,20 @@ export async function loadData() {
   const response = await fetch(CONFIG.manifest);
   if (!response.ok) throw new Error(`Manifest unavailable (${response.status})`);
   manifest = await response.json();
-  for (const layer of manifest.layers.filter((l) => l.active)) {
-    let data = null;
-    if (layer.type !== "image") {
+  // Every layer file is requested at the same time, then kept in manifest order
+  const active = manifest.layers.filter((l) => l.active);
+  const files = await Promise.all(active.map(async (layer) => {
+    if (layer.type === "image") return { layer, data: null };
+    try {
       const r = await fetch(dataUrl(layer.file));
-      if (!r.ok) { console.warn(`Layer file unavailable: ${layer.file}`); continue; }
-      data = await r.json();
+      if (!r.ok) throw new Error(r.status);
+      return { layer, data: await r.json() };
+    } catch {
+      console.warn(`Layer file unavailable: ${layer.file}`);
+      return null;
     }
-    layers.set(layer.id, { layer, data, mapLayerIds: [] });
-  }
+  }));
+  files.filter(Boolean).forEach(({ layer, data }) => layers.set(layer.id, { layer, data, mapLayerIds: [] }));
   return manifest;
 }
 
@@ -86,8 +91,14 @@ export function addToMap() {
       : { type: "geojson", data });
     entry.mapLayerIds = build(layer);
     if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
+    if (!isDefaultVisible(layer)) setLayerVisible(layer.id, false);
   }
 }
+
+export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
+
+// A layer follows the playback if the manifest says so, or if its features carry a start time (fires: t_start)
+const followsTime = ({ layer, data }) => layer.temporal || data?.features?.[0]?.properties?.t_start !== undefined;
 
 // Temporal layers: show features detected before `hour`, fading over the trail.
 export function setHour(hour) {
@@ -97,14 +108,16 @@ export function setHour(hour) {
   const visible = ["all", ["<=", ["get", "t"], hour], [">", ["get", "t"], hour - trail]];
   const fade = ["case", visible, ["interpolate", ["linear"], age, 0, 1, trail, 0.35], 0];
   const glowFade = ["case", visible, ["interpolate", ["linear"], age, 0, 0.8, 6, 0.3, trail, 0.05], 0];
-  for (const { layer, mapLayerIds } of layers.values()) {
-    if (!layer.temporal) continue;
+  for (const entry of layers.values()) {
+    const { mapLayerIds } = entry;
+    if (!followsTime(entry)) continue;
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
       if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
       else if (id.endsWith("-ring")) map.setPaintProperty(id, "circle-stroke-opacity", fade);
       else if (type === "circle") { map.setPaintProperty(id, "circle-opacity", fade); map.setPaintProperty(id, "circle-stroke-opacity", fade); }
-      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", ["<=", ["get", "t_start"], hour], 0.35, 0]);
+      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", ["<=", ["get", "t_start"], hour], ["coalesce", ["get", "opacity"], 0.35], 0]);
+      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", ["<=", ["get", "t_start"], hour], 1, 0]);
     }
   }
 }
@@ -142,7 +155,7 @@ function enablePopup(layer, mapLayerIds) {
 
 // Legend built from the manifest, in the #legend aside.
 export function renderLegend(el) {
-  const withLegend = [...layers.values()].map((l) => l.layer).filter((l) => l.legend?.length);
+  const withLegend = [...layers.values()].map((l) => l.layer).filter((l) => l.legend?.length && isDefaultVisible(l));
   el.hidden = !withLegend.length;
   el.innerHTML = withLegend.map((l) =>
     `<h2>${l.name}</h2>` +
@@ -153,6 +166,6 @@ export function renderLegend(el) {
 // Checkbox per loaded layer, in the layers panel.
 export function renderLayerList(el, onToggle) {
   el.innerHTML = [...layers.values()].map(({ layer }) =>
-    `<label><input type="checkbox" data-layer="${layer.id}" checked> ${layer.name}</label>`).join("");
+    `<label><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> ${layer.name}</label>`).join("");
   el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => onToggle(box.dataset.layer, box.checked)));
 }

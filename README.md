@@ -16,7 +16,7 @@ Wildfire hotspot visualization from the **MODIS** and **VIIRS** satellites (NASA
 | Python environment | **[uv](https://docs.astral.sh/uv/)** (`pyproject.toml` + `uv.lock`) | Installs in seconds, pinned versions |
 | Data exchange | Static **GeoJSON / JSON** files | Contract between the scripts and the front end |
 | Front end | **HTML + JavaScript** (ES modules, no framework, no build) | User interface |
-| Map | **MapLibre GL JS 4.7.1** (CDN) | Vector map, filters, animation, layers |
+| Map | **MapLibre GL JS 4.7.1** (self-hosted in `web/vendor/`) | Vector map, filters, animation, layers |
 | Hosting | **GitHub Pages** + custom domain | Published automatically on every push to `main`, free HTTPS |
 | CI/CD | **GitHub Actions** | Tests and validation on every PR, deploy of `web/`, automatic data refresh |
 
