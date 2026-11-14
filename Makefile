@@ -23,6 +23,7 @@ PIPELINE := \
 	terrain \
 	spread \
 	osm \
+	natural_earth_water \
 	groundwater \
 	exposure \
 	make_manifest \

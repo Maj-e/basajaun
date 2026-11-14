@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T22:26:52Z",
+  "updated_at": "2026-11-14T22:54:50Z",
   "layers": [
     {
       "id": "hotspots",
@@ -19,16 +19,29 @@
       ],
       "legend": [
         {
-          "color": "#d7301f",
-          "text": "High confidence"
+          "color": "#ffd9a8",
+          "text": "FRP ≥ 300 MW (fire intensity)"
         },
         {
-          "color": "#fc8d59",
-          "text": "Medium confidence"
+          "color": "#f9a957",
+          "text": "100–300 MW"
         },
         {
-          "color": "#fdcc8a",
-          "text": "Low confidence"
+          "color": "#ec8128",
+          "text": "30–100 MW"
+        },
+        {
+          "color": "#c95b17",
+          "text": "10–30 MW"
+        },
+        {
+          "color": "#9a3d12",
+          "text": "< 10 MW"
+        },
+        {
+          "color": "#ec8128",
+          "text": "MODIS · 1 km pixel",
+          "shape": "ring"
         }
       ],
       "updated_at": "2026-11-14T20:19:24Z"
