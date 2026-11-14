@@ -6,6 +6,75 @@ Leer, armonizar y visualizar los focos de calor de MODIS y VIIRS en una sola app
 
 ---
 
+## Resumen
+
+| ID | Tarea | Feature | Prio | Hora | Rol | Depende de | Estado |
+|---|---|---|---|---|---|---|---|
+| **Wave 0 — Base · 09:00–10:00** | | | | | | | |
+| **W0-D1** | Configuración + clave FIRMS + zona de demo | Base | P0 | 09:00 | D1 | — | ⬜ |
+| **W0-D2** | Datos de ejemplo del contrato | Base | P0 | 09:00 | D2 | — | ⬜ |
+| **W0-F1** | Esqueleto web: mapa + paneles + estado | Mapa | P0 | 09:00 | F1 | — | ⬜ |
+| **W0-F2** | Publicar el sitio en el dominio | Base | P0 | 09:00 | F2 | — | ⬜ |
+| **Wave 1 — MVP: mapa de focos · 10:00–13:00** | | | | | | | |
+| **W1-D1** | Descarga FIRMS (MODIS + VIIRS) | Armonización | P0 | 10:00 | D1 | W0-D1 | ⬜ |
+| **W1-D2** | Normalización MODIS + VIIRS + tests | Armonización | P0 | 10:00 | D2 | W0-D2 | ⬜ |
+| **W1-D3** | Export `focos.geojson` + `resumen_diario.json` | Armonización | P0 | 11:30 | D1 | W1-D1, W1-D2 | ⬜ |
+| **W1-F1** | Capa de focos: estilo, leyenda, popup | Mapa | P0 | 10:00 | F1 | W0-F1, W0-D2 | ⬜ |
+| **W1-F2** | Filtros fecha / sensor / confianza + datos reales | Mapa | P0 | 10:00 | F2 | W0-F1, W1-D3 | ⬜ |
+| **✅ 13:00 — MVP en `main` y en el dominio** | | | | | | | |
+| **Wave 2 — Calendario + reproducción · 13:30–15:30** | | | | | | | |
+| **W2-D1** | Deduplicación MODIS/VIIRS + agrupación en incendios | Simulación | P1 | 13:30 | D1 | W1-D3 | ⬜ |
+| **W2-F1** | Calendario conectado al mapa | Calendario | P0 | 13:30 | F2 | W0-F1 | ⬜ |
+| **W2-F2** | Línea de tiempo + animación + contador | Simulación | P1 | 13:30 | F1 | W1-F2 | ⬜ |
+| **W2-F3** | Capa de incendios + ficha | Mapa | P1 | 14:30 | F2 | W2-D1 | ⬜ |
+| **Wave 3 — Alerta por población · 13:30–17:30** | | | | | | | |
+| **W3-D1** | Capa de población (WorldPop) | Alerta | P1 | 13:30 | D2 | W0-D1 | ⬜ |
+| **W3-D2** | Población expuesta + riesgo + `alertas.json` | Alerta | P1 | 15:30 | D1 | W3-D1, W2-D1 | ⬜ |
+| **W3-F1** | Panel de capas + capa población + panel de alertas | Alerta | P1 | 15:30 | F2 | W0-F1 | ⬜ |
+| **Wave 4 — Viento y meteorología · 15:30–17:30** | | | | | | | |
+| **W4-D1** | Meteo por hora + riesgo ajustado por el viento | Mapa | P1 | 15:30 | D2 | W0-D1, W3-D2 | ⬜ |
+| **W4-F1** | Capas viento + meteorología | Mapa | P1 | 15:30 | F1 | W4-D1, W3-F1, W2-F2 | ⬜ |
+| **Wave 5 — Agua, rutas, accesibilidad, terreno · 17:30–19:00** | | | | | | | |
+| **W5-D1** | OSM: agua, rutas, bomberos + distancias | Mapa | P2 | 17:30 | D1 | W2-D1 | ⬜ |
+| **W5-F1** | Capas agua, rutas, bomberos + relieve | Mapa | P2 | 17:30 | F1 | W5-D1, W3-F1 | ⬜ |
+| **🔒 19:00 — congelar `main`: solo correcciones** | | | | | | | |
+
+- **ID**: `W` = ola · `D` = datos (Python) · `F` = front (web). El detalle de cada tarea está más abajo, con el mismo ID.
+- **Prio**: P0 = MVP indispensable · P1 = mejora fuerte · P2 = si sobra tiempo.
+- **Rol**: quién hace la tarea (ver [Roles](#roles) justo abajo).
+- **Estado**: ⬜ por hacer · 🟨 en curso · ✅ hecho.
+
+---
+
+## Roles
+
+| Rol | Persona | Responsable de | Tareas |
+|---|---|---|---|
+| **D1 — Datos: armonización** | ___ | Descarga FIRMS, export de los datos armonizados, deduplicación, incendios, riesgo y alertas, datos OSM | W0-D1 · W1-D1 · W1-D3 · W2-D1 · W3-D2 · W5-D1 |
+| **D2 — Datos: contexto** | ___ | Datos de ejemplo (contrato), normalización MODIS / VIIRS y tests, población, meteorología y viento | W0-D2 · W1-D2 · W3-D1 · W4-D1 |
+| **F1 — Front: mapa y animación** | ___ | Esqueleto web y estado, capa de focos, línea de tiempo y animación, capas viento / meteo, capas OSM y relieve | W0-F1 · W1-F1 · W2-F2 · W4-F1 · W5-F1 |
+| **F2 — Front: interfaz y despliegue** | ___ | Dominio y despliegue, filtros, calendario, capa de incendios, panel de capas, población y alertas | W0-F2 · W1-F2 · W2-F1 · W2-F3 · W3-F1 |
+
+### Qué más le toca a cada rol
+- **D1** es el **dueño del contrato de datos**: si un campo cambia, lo actualiza en esta TODO y avisa a F1 y F2.
+- **D2** termina antes (desde las 17:30): pasa a **probar los datos en el mapa** y ayudar a D1 con la Wave 5.
+- **F1** es el **dueño de `app.js` y `state.js`**: los demás proponen cambios por PR, no los editan directo.
+- **F2** es el **dueño de `main` y del dominio**: revisa que el sitio publicado funcione después de cada merge y desde las 17:30 se dedica a **bugs e integración**.
+
+### Parejas de trabajo
+- **D1 ↔ D2**: comparten `harmonize.py` en la Wave 1 (D2 escribe las funciones, D1 el `main()` y el export).
+- **F1 ↔ F2**: comparten el diseño de la página en la Wave 0 (F1 el mapa, F2 los paneles y el despliegue).
+- **D1 ↔ F2** y **D2 ↔ F1**: cada dato nuevo tiene un "cliente" en el front que lo integra:
+  | Dato | Lo produce | Lo integra |
+  |---|---|---|
+  | `focos.geojson`, `resumen_diario.json` | D1 | F1 (capa), F2 (filtros, calendario) |
+  | `incendios.geojson`, `alertas.json` | D1 | F2 |
+  | `poblacion.png` | D2 | F2 |
+  | `meteo.json` | D2 | F1 |
+  | `agua`, `rutas`, `bomberos` | D1 | F1 |
+
+---
+
 ## Reglas de trabajo
 
 - **Olas por prioridad.** Cada ola deja la app funcionando en `main`. Si se acaba el tiempo, presentamos la última ola cerrada.
