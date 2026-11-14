@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ulinautas — Focos de incendio</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="cabecera">
+    <h1>Ulinautas <span>Focos de incendio MODIS + VIIRS</span></h1>
+    <p id="estado" class="estado">Cargando…</p>
+  </header>
+
+  <!-- Cada zona tiene un id estable: los módulos de las waves siguientes se montan aquí sin tocar el HTML -->
+  <aside class="panel panel-izq">
+    <section id="panel-filtros"><h2>Filtros</h2><p class="vacio">Próximamente</p></section>
+    <section id="panel-calendario"><h2>Calendario</h2><p class="vacio">Próximamente</p></section>
+    <section id="panel-capas"><h2>Capas</h2><p class="vacio">Próximamente</p></section>
+  </aside>
+
+  <main id="mapa" class="mapa" aria-label="Mapa de focos de incendio"></main>
+
+  <aside class="panel panel-der">
+    <section id="panel-alertas"><h2>Alertas</h2><p class="vacio">Próximamente</p></section>
+  </aside>
+
+  <footer id="timeline" class="timeline"><p class="vacio">Línea de tiempo — próximamente</p></footer>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
