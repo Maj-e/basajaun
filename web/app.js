@@ -1,5 +1,5 @@
 // Entry point: loads the data, wires the modules, handles controls and presenter keys.
-import { mapReady, mapError, updateSatellite } from "./map.js";
+import { map, mapReady, mapError, updateSatellite } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
 import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, renderLegend, renderLayerList } from "./layers/loader.js";
@@ -48,7 +48,8 @@ async function main() {
   const main = [...layers.values()].find((l) => l.layer.temporal && l.data?.features?.length);
   const features = main ? main.data.features : [];
   const { days, counts } = await dailyCounts(features);
-  const story = computeStory(features, days, counts);
+  let story = computeStory(features, days, counts);
+  let scoped = features; // the hotspots the figures are computed on (whole area or visible area)
   const start = Date.parse(`${days[0]}T00:00:00Z`) / H;
   const end = Date.parse(`${days.at(-1)}T00:00:00Z`) / H + 24;
   // Open three days before the peak (demo script), or at the start
@@ -64,13 +65,38 @@ async function main() {
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
   subscribe((s) => {
     timeline.render(s.hour);
-    renderReadouts(features, s.hour, fmtDay(days[0]));
+    renderReadouts(scoped, s.hour, fmtDay(days[0]));
     renderStory(story, s.hour);
     setHour(s.hour);
     updateSatellite(s.satellite, dayOf(s.hour));
   });
 
-  mapReady.then(() => { addToMap(); setHour(state.hour); }).catch(() => {
+  // Figures follow the visible area: zoom on a zone and the readouts, timeline, spark and peak are recomputed for it
+  function applyScope() {
+    const bounds = map.getBounds();
+    const visible = features.filter((f) => bounds.contains(f.geometry.coordinates));
+    const whole = visible.length === features.length;
+    scoped = whole ? features : visible;
+    const c = whole ? counts : Object.fromEntries(days.map((d) => [d, 0]));
+    if (!whole) visible.forEach((f) => { const d = dayOf(f.properties.t); if (d in c) c[d] += 1; });
+    story = computeStory(scoped, days, c);
+    timeline.setData(c, story);
+    fillPeakBanner(story);
+    $("scope").classList.toggle("visible-area", !whole);
+    $("scope-text").textContent = whole ? "Figures for the whole area"
+      : `Figures for the visible area · ${visible.length.toLocaleString("en")} of ${features.length.toLocaleString("en")} fires`;
+    $("scope-reset").hidden = whole;
+    setState({}); // re-render readouts and story for the new scope
+  }
+  let scopeTimer = null;
+  const scheduleScope = () => { clearTimeout(scopeTimer); scopeTimer = setTimeout(applyScope, 150); };
+  $("scope-reset").onclick = () => map?.fitBounds(CONFIG.view, { padding: { top: 130, bottom: 200, left: 60, right: 60 } });
+
+  mapReady.then(() => {
+    addToMap();
+    setHour(state.hour);
+    map.on("moveend", scheduleScope);
+  }).catch(() => {
     const el = $("map-error");
     el.hidden = false;
     el.innerHTML = `<b>Map unavailable</b>This browser could not start the map (WebGL is disabled or unsupported). The timeline and figures still work. Try another browser or enable hardware acceleration.`;

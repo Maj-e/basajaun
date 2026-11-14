@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T18:41:03Z",
+  "updated_at": "2026-11-14T18:37:54Z",
   "layers": [
     {
       "id": "hotspots",
@@ -29,7 +29,7 @@
           "text": "Low confidence"
         }
       ],
-      "updated_at": "2026-11-14T18:27:15Z"
+      "updated_at": "2026-11-14T18:37:53Z"
     },
     {
       "id": "fires",
@@ -37,7 +37,7 @@
       "file": "processed/fires.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "fire_id",
         "start",
@@ -46,7 +46,7 @@
         "frp_max",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T18:27:15Z"
+      "updated_at": "2026-11-14T18:37:53Z"
     },
     {
       "id": "wind",
@@ -78,7 +78,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T18:27:24Z"
+      "updated_at": "2026-11-14T18:37:53Z"
     },
     {
       "id": "weather",
@@ -86,7 +86,7 @@
       "file": "processed/weather.geojson",
       "type": "circle",
       "temporal": true,
-      "active": false,
+      "active": true,
       "popup": [
         "timestamp_utc",
         "temperature",
@@ -94,7 +94,7 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T18:27:24Z"
+      "updated_at": "2026-11-14T18:37:53Z"
     }
   ]
 }
