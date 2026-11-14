@@ -1,3 +1,6 @@
+import math
+
+import pytest
 import json
 import sys
 from pathlib import Path
@@ -145,3 +148,23 @@ def test_spread_projection_generates_downwind_ellipse(tmp_path: Path) -> None:
     assert props["wind_to_deg"] == 0.0
     assert props["spread_km"] > 2.0
     assert props["area_km2"] > 1.0
+
+
+def test_surface_wind_uv_points_where_the_wind_blows() -> None:
+    from weather import wind_uv
+
+    # 36 km/h = 10 m/s. Meteorological direction = where it comes FROM.
+    assert wind_uv(36.0, 270.0) == pytest.approx((10.0, 0.0), abs=0.01)   # west wind blows east
+    assert wind_uv(36.0, 0.0) == pytest.approx((0.0, -10.0), abs=0.01)    # north wind blows south
+    assert wind_uv(36.0, 90.0) == pytest.approx((-10.0, 0.0), abs=0.01)   # east wind blows west
+    u, v = wind_uv(36.0, 225.0)                                           # south-west wind blows north-east
+    assert u > 0 and v > 0 and math.hypot(u, v) == pytest.approx(10.0, abs=0.02)
+    assert wind_uv(0.0, 123.0) == (0.0, 0.0) or wind_uv(0.0, 123.0) == (-0.0, -0.0)
+
+
+def test_wind_particles_layer_reads_weather_and_is_off() -> None:
+    import make_manifest
+
+    [layer] = [l for l in make_manifest.LAYERS if l["id"] == "wind_particles"]
+    assert layer["type"] == "particles" and layer["temporal"] and not layer["active"]
+    assert layer["file"].endswith("weather.geojson")

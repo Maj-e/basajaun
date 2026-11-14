@@ -23,7 +23,8 @@
           "pattern": "^[^/].*\\.(geojson|json|png)$",
           "description": "Path relative to web/data/ (never absolute)"
         },
-        "type": { "enum": ["circle", "fill", "line", "image", "arrows"] },
+        "type": { "enum": ["circle", "fill", "line", "image", "arrows", "particles"] },
+        "color": { "$ref": "common.schema.json#/$defs/hexColor", "description": "Layer-level colour (particles)" },
         "temporal": { "type": "boolean" },
         "active": { "type": "boolean" },
         "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },

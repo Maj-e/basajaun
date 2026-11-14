@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T21:58:39Z",
+  "updated_at": "2026-11-14T22:21:10Z",
   "layers": [
     {
       "id": "hotspots",
@@ -144,7 +144,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T20:34:59Z"
+      "updated_at": "2026-11-14T22:21:09Z"
     },
     {
       "id": "weather",
@@ -160,7 +160,23 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T20:34:59Z"
+      "updated_at": "2026-11-14T22:21:09Z"
+    },
+    {
+      "id": "wind_particles",
+      "name": "Wind (particles)",
+      "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
+      "type": "particles",
+      "temporal": true,
+      "active": false,
+      "color": "#bae6fd",
+      "legend": [
+        {
+          "color": "#bae6fd",
+          "text": "Surface wind (10 m), faster = brighter"
+        }
+      ],
+      "updated_at": "2026-11-14T22:21:09Z"
     },
     {
       "id": "water",
