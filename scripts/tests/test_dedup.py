@@ -68,3 +68,10 @@ def test_keeps_modis_when_outside_time_or_distance_threshold():
     assert merged == 0
     assert len(result["features"]) == 3
     assert result["features"][0]["properties"]["detected_by"] == ["VIIRS"]
+
+def test_main_skips_when_hotspots_missing(tmp_path, monkeypatch, capsys):
+    import dedup
+
+    monkeypatch.setattr(dedup, "PROCESSED", tmp_path)
+    dedup.main()  # must not raise: `make data` keeps going before W1-B3 exists
+    assert "[SKIP]" in capsys.readouterr().out

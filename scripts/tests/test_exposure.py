@@ -129,3 +129,63 @@ def test_compute_alerts_with_wind_upgrade_and_contract_shape(tmp_path: Path):
     assert second_alert["fire_id"] == 20
     assert second_alert["risk"] == "low"
     assert second_alert["wind_toward_population"] is False
+
+# --- weather.py keys + skip when inputs are missing ---------------------------------
+
+import json  # noqa: E402
+
+import exposure  # noqa: E402
+import validate  # noqa: E402
+
+FIRE_NEAR_TOWN = {
+    "type": "FeatureCollection",
+    "features": [{
+        "type": "Feature",
+        "geometry": mapping(Point(-70.645, -33.465).buffer(0.002)),
+        "properties": {"fire_id": 10, "start": "2026-02-14T07:42:00Z", "frp_max": 60.0},
+    }],
+}
+
+# Same wind as above, written the way weather.py writes it (speed / direction)
+WEATHER = {
+    "type": "FeatureCollection",
+    "updated_at": "2026-02-14T08:00:00Z",
+    "features": [{
+        "type": "Feature",
+        "geometry": {"type": "Point", "coordinates": [-70.65, -33.46]},
+        "properties": {"t": 493927.7, "speed": 28.0, "direction": 185.0},
+    }],
+}
+
+
+def test_wind_from_weather_py_keys_escalates_risk(tmp_path: Path):
+    tif_path = tmp_path / "population.tif"
+    _create_synthetic_population_tif(tif_path)
+    [alert] = compute_alerts(FIRE_NEAR_TOWN, tif_path, WEATHER)["alerts"]
+    assert alert["wind_toward_population"] is True
+    assert alert["risk"] == "critical"
+
+
+def test_run_exposure_reads_weather_geojson_and_writes_valid_alerts(tmp_path: Path):
+    _create_synthetic_population_tif(tmp_path / "population.tif")
+    (tmp_path / "fires.geojson").write_text(json.dumps(FIRE_NEAR_TOWN))
+    (tmp_path / "weather.geojson").write_text(json.dumps(WEATHER))
+
+    alerts_path = exposure.run_exposure(tmp_path)
+
+    [alert] = json.loads(alerts_path.read_text())["alerts"]
+    assert alert["wind_toward_population"] is True
+    assert validate.validate_file(alerts_path, validate.load_registry(), tmp_path) == []
+
+
+def test_run_exposure_skips_without_population(tmp_path: Path, capsys):
+    (tmp_path / "fires.geojson").write_text(json.dumps(FIRE_NEAR_TOWN))
+    assert exposure.run_exposure(tmp_path) is None
+    assert "[SKIP]" in capsys.readouterr().out
+    assert not (tmp_path / "alerts.json").exists()
+
+
+def test_run_exposure_skips_without_fires(tmp_path: Path, capsys):
+    _create_synthetic_population_tif(tmp_path / "population.tif")
+    assert exposure.run_exposure(tmp_path) is None
+    assert "W2-B2" in capsys.readouterr().out
