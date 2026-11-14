@@ -60,8 +60,8 @@ def cluster_fires(hotspots_path: Path, fires_output_path: Path, update_hotspots:
 
         n_hotspots = int(len(cluster))
         frp_max = round(float(cluster["frp"].astype(float).max()), 1)
-        start_dt = str(cluster["datetime_utc"].min())
-        end_dt = str(cluster["datetime_utc"].max())
+        start_dt = str(cluster["timestamp_utc"].min())
+        end_dt = str(cluster["timestamp_utc"].max())
         t_start = round(float(cluster["t"].astype(float).min()), 2)
         t_end = round(float(cluster["t"].astype(float).max()), 2)
         color, opacity = fire_style(frp_max, n_hotspots)
