@@ -1,5 +1,5 @@
 // Entry point: loads the data, wires the modules, handles controls and presenter keys.
-import { map, mapReady, mapError, updateSatellite } from "./map.js";
+import { map, mapReady, mapError, updateSatellite, onSatelliteDate } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
 import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, renderLegend, renderLayerList } from "./layers/loader.js";
@@ -118,7 +118,15 @@ async function main() {
     panel.hidden = !panel.hidden;
     $("layers-toggle").setAttribute("aria-expanded", String(!panel.hidden));
   };
-  $("satellite-toggle").onchange = (e) => setState({ satellite: e.target.checked });
+  $("satellite-toggle").onchange = (e) => {
+    setState({ satellite: e.target.checked });
+    if (!e.target.checked) $("sat-badge").hidden = true;
+  };
+  // Honest about which day the image shows (it keeps the last fully loaded day while the next one loads)
+  onSatelliteDate((date) => {
+    $("sat-badge").hidden = !state.satellite;
+    $("sat-badge").textContent = `Satellite image · ${fmtDay(date)} · NASA VIIRS`;
+  });
 
   // Presenter keys (docs/demo-script.md)
   window.addEventListener("keydown", (e) => {
