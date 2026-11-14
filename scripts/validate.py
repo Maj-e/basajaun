@@ -11,6 +11,7 @@ Which schema applies is decided by the file name:
     hotspots*.geojson    -> hotspots.schema.json  (one file or one per day)
     daily_summary.json   -> daily_summary.schema.json
     alerts.json          -> alerts.schema.json
+    hourly_series.json   -> hourly_series.schema.json
     any other *.geojson  -> geojson_layer.schema.json (generic styled layer)
     any other *.json     -> error: not part of the contract
 
@@ -36,6 +37,7 @@ SCHEMA_BY_NAME = [
     ("hotspots*.geojson", "hotspots.schema.json"),
     ("daily_summary.json", "daily_summary.schema.json"),
     ("alerts.json", "alerts.schema.json"),
+    ("hourly_series.json", "hourly_series.schema.json"),
     ("*.geojson", "geojson_layer.schema.json"),
 ]
 DATA_SUFFIXES = {".json", ".geojson"}

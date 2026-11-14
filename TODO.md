@@ -175,14 +175,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
 
 ### Wave 2 — Calendar + playback (P0 / P1)
 
-- [ ] **W2-B1** · MODIS / VIIRS deduplication · **B1** · P1
+- [x] **W2-B1** · MODIS / VIIRS deduplication · **B1** · P1
   - Project to meters (UTM); distance < 1 km **and** |Δt| < 60 min → a single hotspot (keep the VIIRS one), `detected_by: ["MODIS","VIIRS"]`
   - Print how many hotspots were merged
   - Files: `scripts/dedup.py`
   - **Done when:** the validator accepts the output and the number of duplicates is documented
   - Depends on: W1-B3
 
-- [ ] **W2-B2** · Fires (grouping) · **B2** · P1
+- [x] **W2-B2** · Fires (grouping) · **B2** · P1
   - `DBSCAN(eps=1.0, min_samples=2)` on `[x_km, y_km, t / 12]` → `fire_id` on each hotspot
   - One polygon per fire (convex hull + 500 m buffer), **already styled** (`color`, `opacity`), with `start`, `end`, `n_hotspots`, `frp_max`, `area_km2`
   - Manifest entry with `active: false` until checked
@@ -190,13 +190,13 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** known fires in the area come out as 1 group and the layer shows on the map with no new front-end code
   - Depends on: W2-B1
 
-- [ ] **W2-B3** · Time series · **B3** · P1
+- [x] **W2-B3** · Time series · **B3** · P1
   - Per hour: active hotspots and total FRP (for the counter and a small timeline chart)
   - Files: `scripts/series.py` → `web/data/processed/hourly_series.json`
   - **Done when:** the file covers the whole period, hour by hour, and passes the validator
   - Depends on: W1-B3
 
-- [ ] **W2-B4** · End-to-end check on the URL · **B4**
+- [x] **W2-B4** · End-to-end check on the URL · **B4**
   - Job after each deployment: downloads `manifest.json` and every listed file from the published URL, validates them against the contract, fails if any is missing
   - Simple load check: download time of the files used by the first page load
   - Files: `.github/workflows/e2e.yml`, `scripts/check_site.py`
@@ -235,7 +235,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the validator accepts `alerts.json` and not everything is `critical`
   - Depends on: W3-B3, W2-B2 (wind optional: W3-B2)
 
-- [ ] **W3-B2** · Wind + weather · **B2**
+- [x] **W3-B2** · Wind + weather · **B2**
   - 5×5 grid over the `BBOX`, one Open-Meteo call:
     `https://archive-api.open-meteo.com/v1/archive?latitude=..&longitude=..&start_date=..&end_date=..&hourly=wind_speed_10m,wind_direction_10m,temperature_2m,relative_humidity_2m,precipitation`
   - **Temporal** GeoJSON output: one point per cell and per hour with `t`, `direction`, `speed`, `temperature`, `humidity`, `rain` + style (`rotation`, `size`, `color`)
@@ -267,7 +267,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** every manifest layer can be toggled from the panel and the wind arrows turn during playback
   - Depends on: W2-F2
 
-- [ ] **W3-B5** · Dedup + fires in `make data` · **B2**
+- [x] **W3-B5** · Dedup + fires in `make data` · **B2**
   - Add `dedup.py` (W2-B1) and `fires.py` (W2-B2) to the `make data` pipeline after the export, so `processed/hotspots.geojson` is deduplicated and carries `fire_id`, and `processed/fires.geojson` exists
   - **Done when:** `make data && make validate` passes and `make manifest` lists the `fires` layer
   - Depends on: W1-B3, W2-B1, W2-B2
