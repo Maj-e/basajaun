@@ -1,4 +1,12 @@
+"""Hourly surface weather on a 5x5 grid over the BBOX (W3-B2) -> weather.geojson.
+
+Wind is the **surface wind at 10 m** above ground (Open-Meteo wind_speed_10m / wind_direction_10m):
+one level only, no profile. Each point and hour carries it twice:
+    speed (km/h) + direction (degrees, where the wind comes FROM)  -> popups, spread.py, exposure.py
+    u, v (m/s, where the wind blows TO; u = east, v = north)       -> wind particles, fire spread models
+"""
 import json
+import math
 from datetime import datetime, timezone
 import numpy as np
 import requests
@@ -14,6 +22,16 @@ def wind_style(speed_kmh: float) -> tuple[str, float]:
     if speed_kmh >= 15:
         return "#fee08b", 0.95
     return "#91cf60", 0.75
+
+
+def wind_uv(speed_kmh: float, direction_from_deg: float) -> tuple[float, float]:
+    """Surface wind as (u, v) in m/s pointing where it blows TO (u = east, v = north).
+
+    Meteorological direction is where the wind comes FROM: a west wind (270°) blows east (u > 0).
+    """
+    speed_ms = speed_kmh / 3.6
+    rad = math.radians(direction_from_deg)
+    return round(-speed_ms * math.sin(rad), 2), round(-speed_ms * math.cos(rad), 2)
 
 
 def main() -> None:
@@ -66,6 +84,7 @@ def main() -> None:
             t_hours = round((dt - epoch).total_seconds() / 3600.0, 2)
             rotation = round((float(direction) + 180.0) % 360.0, 1)
             color, size = wind_style(float(speed))
+            u, v = wind_uv(float(speed), float(direction))
 
             features.append({
                 "type": "Feature",
@@ -75,6 +94,8 @@ def main() -> None:
                     "t": t_hours,
                     "direction": round(float(direction), 1),
                     "speed": round(float(speed), 1),
+                    "u": u,
+                    "v": v,
                     "temperature": round(float(temp), 1) if temp is not None else None,
                     "humidity": round(float(humidity), 1) if humidity is not None else None,
                     "rain": round(float(rain), 1) if rain is not None else 0.0,

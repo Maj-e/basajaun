@@ -32,8 +32,9 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 |---|---|---|---|---|---|---|---|---|---|
 | `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp, country, region (Chile) | color, radius, border |
 | `fires` | fill | ✅ | | ✅ | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
-| `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius |
+| `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius; also `u`, `v` (see [surface wind](#surface-wind)) |
 | `wind` | **arrows** | | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color — **needs the `arrows` type in the loader (W3-F1)** |
+| `wind_particles` | **particles** | | ✅ `t` | ✅ | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — **needs the `particles` type in the loader** |
 | `spread` | fill | | | ✅ | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
 | `population` | image | | | ✅ | ✅ | — | — | — | PNG + `corners` in the manifest |
 | `water` | fill | | | ✅ | ✅ | — | — | name, kind (lake / reservoir / river) | color, opacity, width (rivers are lines) |
@@ -55,6 +56,16 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 | `gw_body`, `gw_vulnerability`, `gw_chemical_status` | aquifer under the fire and how vulnerable it is to **ash leachate** (`high` = karst or already poor / at risk) — Europe only |
 | `slope_deg`, `landcover` | terrain (W5-B3), only when `terrain.py` ran with its rasters |
 
+### Surface wind
+`weather.geojson` (read by `weather`, `wind` and `wind_particles`): one point per cell of a 5×5 grid over the episode bbox, **per hour** (`t`). The wind is the **surface wind at 10 m** above ground — one level, no profile:
+
+| Field | Meaning |
+|---|---|
+| `speed`, `direction` | km/h, and degrees where the wind comes **from** (meteorological) |
+| `u`, `v` | the same wind in **m/s, where it blows to**: `u` = east, `v` = north |
+
+For particles: take the points of the current hour (`Math.floor(state.hour)`), sort them south → north then west → east, and pass `{nx, ny, west, south, east, north, cells: [{u, v}]}` to the particle field. The same `u` / `v` will feed fire spread later.
+
 ## Other data files
 
 | File | Use | Shape |
@@ -69,6 +80,7 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 - **Layer panel**: the Map panel already lists the active layers; the inactive ones above are ready to be switched on once checked (`active: true` in `make_manifest.py`).
 - **`arrows` type (W3-F1)**: `wind` is ready (`rotation`, `size`, `color`, temporal).
 - **Fire sheet**: show the accessibility distances, the nearest water point and the aquifer risk (`gw_*`).
+- **Wind particles (`particles` type)**: data ready in every episode with weather (`wind_particles`, `active: false`). Particle engine: Miguel's `wind_particles.js` from TerraFlow (`ui/js/wind_particles.js`: bilinear u/v + light curl, own canvas, `pointer-events: none`) — expects exactly the field above; respect `prefers-reduced-motion`.
 - **Live button (W4-F1)**: `processed/live/manifest.json` is published and refreshed every 30 min.
 - **Episode selector (W4-F2)**: `episodes.json`, start with `default`.
 
@@ -76,6 +88,7 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 
 | Date | Change |
 |---|---|
+| 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
 | 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |
 | 2026-11-14 | New layers `water_points` (Chile, Sierra Bermeja) and `groundwater` (Sierra Bermeja); fire fields `dist_water_point_km`, `gw_body`, `gw_vulnerability`, `gw_chemical_status` (W3-B7) |
 | 2026-11-14 | Live mode published in `processed/live/` (W4-B4); episodes Sierra Bermeja (default) and Los Angeles (W4-B5); Chile `alerts.json` and `population` |

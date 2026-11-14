@@ -13,7 +13,7 @@ def test_only_existing_files_are_listed(tmp_path):
     manifest = make_manifest.build_manifest(tmp_path, subdir="processed")
 
     ids = [layer["id"] for layer in manifest["layers"]]
-    assert ids == ["wind", "weather"]  # both read weather.geojson; nothing else exists
+    assert ids == ["wind", "weather", "wind_particles"]  # all read weather.geojson; nothing else exists
     assert all(layer["updated_at"] == "2026-02-14T08:00:00Z" for layer in manifest["layers"])
 
 
