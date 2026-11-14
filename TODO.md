@@ -296,7 +296,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** picking a region updates the map and every figure
   - Depends on: W3-B6, W2-F3
 
-- [ ] **W3-B8** · Typed alerts: wind, smoke, water contamination · **B1**
+- [x] **W3-B8** · Typed alerts: wind, smoke, water contamination · **B1** — *done by B4*
   - Add `type` (`population` / `wind` / `smoke` / `contamination`) and a short `message` to every alert in `alerts.json` (contract update)
   - **Wind**: wind ≥ 30–45 km/h on an active fire → "strong wind feeding the fire" (weather + fires, every episode)
   - **Smoke**: populated area **downwind** of a fire (±30° sector along the wind) → "smoke toward ≈N people" (wind + population)

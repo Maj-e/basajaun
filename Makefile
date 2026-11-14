@@ -22,9 +22,9 @@ PIPELINE := \
 	weather \
 	terrain \
 	spread \
-	exposure \
 	osm \
 	groundwater \
+	exposure \
 	make_manifest \
 	validate
 

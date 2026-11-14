@@ -71,7 +71,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | File | Use | Shape |
 |---|---|---|
-| `…/alerts.json` | alert panel | `{updated_at, alerts: [{fire_id, risk, since, pop_1km, pop_5km, pop_10km, wind_toward_population, center, color}]}`, sorted most → least severe. Chile and Sierra Bermeja |
+| `…/alerts.json` | alert panel | `{updated_at, alerts: [{fire_id, type, risk, since, message, pop_1km, pop_5km, pop_10km, wind_toward_population, center, color, …}]}`, sorted most → least severe. **`type`**: `population` / `wind` (`wind_kmh`) / `smoke` (`smoke_people`, `wind_kmh`) / `contamination` (`gw_body`, `gw_vulnerability`); a fire can have one alert per type. Chile and Sierra Bermeja |
 | `…/daily_summary.json` | calendar, timeline strip | `{updated_at, "YYYY-MM-DD": {hotspots, total_frp, modis, viirs, no_data}}` |
 | `…/hourly_series.json` | counter, small chart | `{updated_at, series: [{t, count, total_frp}]}`, every whole hour |
 | `episodes.json` | episode selector | see above |
@@ -79,6 +79,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 ## Ready to implement (data side done)
 
 - **Fire sheet**: show the accessibility distances, the nearest water point and the aquifer risk (`gw_*`).
+- **Alert types (W3-F5)**: `type` + ready-to-show `message` on every alert; icon / chip per type, colour by `risk`. Every type keeps `pop_5km`, `center`, `since`, so the current panel already lists them (as population figures).
 - **Wind particles (`particles` type)**: data ready in every episode with weather (`wind_particles`, `active: false`). Particle engine: Miguel's `wind_particles.js` from TerraFlow (`ui/js/wind_particles.js`: bilinear u/v + light curl, own canvas, `pointer-events: none`) — expects exactly the field above; respect `prefers-reduced-motion`.
 - **Live button (W4-F1)**: `processed/live/manifest.json` is published and refreshed every 30 min.
 - **Episode selector (W4-F2)**: `episodes.json`, start with `default`.
@@ -87,6 +88,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | Typed alerts (W3-B8): `type` + `message` on every alert; new `wind`, `smoke`, `contamination` alerts (Chile 129 alerts, Sierra Bermeja 16) |
 | 2026-11-14 | Rivers moved out of `water` into their own `rivers` line layer (a fill layer closed each river into a bogus polygon); the validator now rejects a layer whose geometries don't match its type |
 | 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
 | 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |

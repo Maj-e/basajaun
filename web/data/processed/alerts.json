@@ -1,10 +1,12 @@
 {
-  "updated_at": "2026-11-14T21:31:34Z",
+  "updated_at": "2026-11-14T23:02:03Z",
   "alerts": [
     {
       "fire_id": 62,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-14T05:20:00Z",
+      "message": "≈640,817 people within 5 km",
       "pop_1km": 41412,
       "pop_5km": 640817,
       "pop_10km": 2227018,
@@ -17,8 +19,10 @@
     },
     {
       "fire_id": 68,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-05T17:40:00Z",
+      "message": "≈129,912 people within 5 km",
       "pop_1km": 25692,
       "pop_5km": 129912,
       "pop_10km": 288404,
@@ -30,9 +34,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 68,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-05T17:00:00Z",
+      "pop_1km": 25692,
+      "pop_5km": 129912,
+      "pop_10km": 288404,
+      "wind_toward_population": false,
+      "center": [
+        -70.8825,
+        -33.6159
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈1,813,882 people (wind 11 km/h from SW)",
+      "smoke_people": 1813882,
+      "wind_kmh": 10.8
+    },
+    {
       "fire_id": 56,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-09T19:16:00Z",
+      "message": "≈103,771 people within 5 km",
       "pop_1km": 20286,
       "pop_5km": 103771,
       "pop_10km": 166958,
@@ -44,9 +68,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 56,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-09T19:00:00Z",
+      "pop_1km": 20286,
+      "pop_5km": 103771,
+      "pop_10km": 166958,
+      "wind_toward_population": false,
+      "center": [
+        -71.2578,
+        -34.9876
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈110,731 people (wind 16 km/h from SW)",
+      "smoke_people": 110731,
+      "wind_kmh": 16.4
+    },
+    {
       "fire_id": 61,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-13T05:38:00Z",
+      "message": "≈267,619 people within 5 km",
       "pop_1km": 14250,
       "pop_5km": 267619,
       "pop_10km": 982583,
@@ -59,8 +103,10 @@
     },
     {
       "fire_id": 30,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-10T04:55:00Z",
+      "message": "≈99,362 people within 5 km",
       "pop_1km": 12591,
       "pop_5km": 99362,
       "pop_10km": 167569,
@@ -72,9 +118,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 30,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-10T04:00:00Z",
+      "pop_1km": 12591,
+      "pop_5km": 99362,
+      "pop_10km": 167569,
+      "wind_toward_population": false,
+      "center": [
+        -71.251,
+        -35.0037
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈108,018 people (wind 14 km/h from SW)",
+      "smoke_people": 108018,
+      "wind_kmh": 13.7
+    },
+    {
       "fire_id": 51,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-08T05:32:00Z",
+      "message": "≈178,614 people within 5 km",
       "pop_1km": 12541,
       "pop_5km": 178614,
       "pop_10km": 299230,
@@ -87,8 +153,10 @@
     },
     {
       "fire_id": 15,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-04T05:07:00Z",
+      "message": "≈251,544 people within 5 km",
       "pop_1km": 11466,
       "pop_5km": 251544,
       "pop_10km": 970135,
@@ -101,8 +169,10 @@
     },
     {
       "fire_id": 17,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-06T05:20:00Z",
+      "message": "≈117,816 people within 5 km",
       "pop_1km": 7046,
       "pop_5km": 117816,
       "pop_10km": 987349,
@@ -115,8 +185,10 @@
     },
     {
       "fire_id": 47,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-05T18:51:00Z",
+      "message": "≈169,767 people within 5 km",
       "pop_1km": 6707,
       "pop_5km": 169767,
       "pop_10km": 830274,
@@ -128,9 +200,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 47,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-05T19:00:00Z",
+      "pop_1km": 6707,
+      "pop_5km": 169767,
+      "pop_10km": 830274,
+      "wind_toward_population": false,
+      "center": [
+        -70.7981,
+        -33.352
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈565,412 people (wind 9 km/h from W)",
+      "smoke_people": 565412,
+      "wind_kmh": 9.4
+    },
+    {
       "fire_id": 24,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-08T05:32:00Z",
+      "message": "≈73,835 people within 5 km",
       "pop_1km": 6281,
       "pop_5km": 73835,
       "pop_10km": 258562,
@@ -143,8 +235,10 @@
     },
     {
       "fire_id": 67,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-04T05:37:00Z",
+      "message": "≈70,035 people within 5 km",
       "pop_1km": 4791,
       "pop_5km": 70035,
       "pop_10km": 971782,
@@ -157,8 +251,10 @@
     },
     {
       "fire_id": 57,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-09T19:16:00Z",
+      "message": "≈37,395 people within 5 km",
       "pop_1km": 4584,
       "pop_5km": 37395,
       "pop_10km": 101226,
@@ -170,9 +266,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 57,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-09T19:00:00Z",
+      "pop_1km": 4584,
+      "pop_5km": 37395,
+      "pop_10km": 101226,
+      "wind_toward_population": false,
+      "center": [
+        -71.0226,
+        -33.6786
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈288,872 people (wind 17 km/h from SW)",
+      "smoke_people": 288872,
+      "wind_kmh": 16.7
+    },
+    {
       "fire_id": 6,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-13T18:31:00Z",
+      "message": "≈26,210 people within 5 km",
       "pop_1km": 4208,
       "pop_5km": 26210,
       "pop_10km": 89812,
@@ -184,9 +300,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 6,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 4208,
+      "pop_5km": 26210,
+      "pop_10km": 89812,
+      "wind_toward_population": false,
+      "center": [
+        -70.939,
+        -34.5163
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈76,299 people (wind 14 km/h from SW)",
+      "smoke_people": 76299,
+      "wind_kmh": 13.5
+    },
+    {
       "fire_id": 66,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-01T18:56:00Z",
+      "message": "≈30,749 people within 5 km",
       "pop_1km": 3224,
       "pop_5km": 30749,
       "pop_10km": 157145,
@@ -199,8 +335,10 @@
     },
     {
       "fire_id": 35,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-12T17:29:00Z",
+      "message": "≈57,168 people within 5 km",
       "pop_1km": 2911,
       "pop_5km": 57168,
       "pop_10km": 154738,
@@ -213,8 +351,10 @@
     },
     {
       "fire_id": 34,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-12T05:08:00Z",
+      "message": "≈19,658 people within 5 km",
       "pop_1km": 2728,
       "pop_5km": 19658,
       "pop_10km": 83612,
@@ -226,9 +366,29 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 34,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-12T05:00:00Z",
+      "pop_1km": 2728,
+      "pop_5km": 19658,
+      "pop_10km": 83612,
+      "wind_toward_population": false,
+      "center": [
+        -70.9504,
+        -34.5285
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈72,234 people (wind 11 km/h from S)",
+      "smoke_people": 72234,
+      "wind_kmh": 11.3
+    },
+    {
       "fire_id": 52,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-08T19:35:00Z",
+      "message": "≈39,857 people within 5 km",
       "pop_1km": 2454,
       "pop_5km": 39857,
       "pop_10km": 364967,
@@ -240,9 +400,119 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 52,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-08T19:00:00Z",
+      "pop_1km": 2454,
+      "pop_5km": 39857,
+      "pop_10km": 364967,
+      "wind_toward_population": false,
+      "center": [
+        -70.6726,
+        -33.6986
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈436,108 people (wind 13 km/h from W)",
+      "smoke_people": 436108,
+      "wind_kmh": 12.8
+    },
+    {
+      "fire_id": 26,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-09T02:00:00Z",
+      "pop_1km": 701,
+      "pop_5km": 17479,
+      "pop_10km": 176079,
+      "wind_toward_population": false,
+      "center": [
+        -71.7142,
+        -35.4985
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈274,543 people (wind 12 km/h from SW)",
+      "smoke_people": 274543,
+      "wind_kmh": 11.8
+    },
+    {
+      "fire_id": 65,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-01T18:00:00Z",
+      "pop_1km": 226,
+      "pop_5km": 5064,
+      "pop_10km": 91591,
+      "wind_toward_population": false,
+      "center": [
+        -70.949,
+        -33.5335
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈1,871,900 people (wind 11 km/h from W)",
+      "smoke_people": 1871900,
+      "wind_kmh": 11.3
+    },
+    {
+      "fire_id": 38,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 225,
+      "pop_5km": 4879,
+      "pop_10km": 98501,
+      "wind_toward_population": false,
+      "center": [
+        -70.9517,
+        -33.5399
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈2,122,518 people (wind 13 km/h from SW)",
+      "smoke_people": 2122518,
+      "wind_kmh": 12.8
+    },
+    {
+      "fire_id": 46,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-05T18:00:00Z",
+      "pop_1km": 219,
+      "pop_5km": 5119,
+      "pop_10km": 100719,
+      "wind_toward_population": false,
+      "center": [
+        -70.9487,
+        -33.5358
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈2,304,566 people (wind 14 km/h from W)",
+      "smoke_people": 2304566,
+      "wind_kmh": 14.4
+    },
+    {
+      "fire_id": 27,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-09T05:00:00Z",
+      "pop_1km": 201,
+      "pop_5km": 1507,
+      "pop_10km": 11639,
+      "wind_toward_population": false,
+      "center": [
+        -71.3419,
+        -35.2349
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈52,280 people (wind 12 km/h from SW)",
+      "smoke_people": 52280,
+      "wind_kmh": 12.3
+    },
+    {
       "fire_id": 60,
+      "type": "population",
       "risk": "critical",
       "since": "2026-02-11T18:38:00Z",
+      "message": "≈3,200 people within 5 km · wind toward them",
       "pop_1km": 184,
       "pop_5km": 3200,
       "pop_10km": 17952,
@@ -254,9 +524,65 @@
       "color": "#a50f15"
     },
     {
+      "fire_id": 40,
+      "type": "smoke",
+      "risk": "critical",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 139,
+      "pop_5km": 12675,
+      "pop_10km": 32652,
+      "wind_toward_population": false,
+      "center": [
+        -70.9207,
+        -33.2635
+      ],
+      "color": "#a50f15",
+      "message": "Smoke toward ≈88,814 people (wind 13 km/h from SW)",
+      "smoke_people": 88814,
+      "wind_kmh": 12.8
+    },
+    {
+      "fire_id": 66,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-01T18:00:00Z",
+      "pop_1km": 3224,
+      "pop_5km": 30749,
+      "pop_10km": 157145,
+      "wind_toward_population": false,
+      "center": [
+        -71.2709,
+        -33.0342
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈13,515 people (wind 15 km/h from W)",
+      "smoke_people": 13515,
+      "wind_kmh": 14.8
+    },
+    {
+      "fire_id": 35,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-12T18:00:00Z",
+      "pop_1km": 2911,
+      "pop_5km": 57168,
+      "pop_10km": 154738,
+      "wind_toward_population": false,
+      "center": [
+        -71.2962,
+        -34.9718
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈21,744 people (wind 15 km/h from S)",
+      "smoke_people": 21744,
+      "wind_kmh": 14.7
+    },
+    {
       "fire_id": 13,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-02T18:58:00Z",
+      "message": "≈11,527 people within 5 km",
       "pop_1km": 719,
       "pop_5km": 11527,
       "pop_10km": 37940,
@@ -269,8 +595,10 @@
     },
     {
       "fire_id": 26,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-08T18:45:00Z",
+      "message": "≈17,479 people within 5 km",
       "pop_1km": 701,
       "pop_5km": 17479,
       "pop_10km": 176079,
@@ -283,8 +611,10 @@
     },
     {
       "fire_id": 14,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-02T18:58:00Z",
+      "message": "≈5,918 people within 5 km",
       "pop_1km": 590,
       "pop_5km": 5918,
       "pop_10km": 21099,
@@ -297,8 +627,10 @@
     },
     {
       "fire_id": 54,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-09T17:35:00Z",
+      "message": "≈2,790 people within 5 km",
       "pop_1km": 569,
       "pop_5km": 2790,
       "pop_10km": 11010,
@@ -311,8 +643,10 @@
     },
     {
       "fire_id": 69,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-06T19:02:00Z",
+      "message": "≈6,205 people within 5 km",
       "pop_1km": 557,
       "pop_5km": 6205,
       "pop_10km": 21154,
@@ -325,8 +659,10 @@
     },
     {
       "fire_id": 12,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-02T04:55:00Z",
+      "message": "≈3,830 people within 5 km",
       "pop_1km": 438,
       "pop_5km": 3830,
       "pop_10km": 23379,
@@ -339,8 +675,10 @@
     },
     {
       "fire_id": 16,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-05T18:01:00Z",
+      "message": "≈2,791 people within 5 km",
       "pop_1km": 388,
       "pop_5km": 2791,
       "pop_10km": 7485,
@@ -352,9 +690,29 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 16,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-05T18:00:00Z",
+      "pop_1km": 388,
+      "pop_5km": 2791,
+      "pop_10km": 7485,
+      "wind_toward_population": false,
+      "center": [
+        -70.93,
+        -33.1076
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈19,036 people (wind 14 km/h from W)",
+      "smoke_people": 19036,
+      "wind_kmh": 14.4
+    },
+    {
       "fire_id": 39,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-13T18:52:00Z",
+      "message": "≈13,081 people within 5 km",
       "pop_1km": 345,
       "pop_5km": 13081,
       "pop_10km": 25780,
@@ -366,9 +724,29 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 39,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 345,
+      "pop_5km": 13081,
+      "pop_10km": 25780,
+      "wind_toward_population": false,
+      "center": [
+        -71.4449,
+        -33.2973
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈11,874 people (wind 19 km/h from SW)",
+      "smoke_people": 11874,
+      "wind_kmh": 18.7
+    },
+    {
       "fire_id": 71,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-06T19:02:00Z",
+      "message": "≈10,138 people within 5 km",
       "pop_1km": 312,
       "pop_5km": 10138,
       "pop_10km": 36293,
@@ -381,8 +759,10 @@
     },
     {
       "fire_id": 64,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-14T19:22:00Z",
+      "message": "≈1,942 people within 5 km",
       "pop_1km": 281,
       "pop_5km": 1942,
       "pop_10km": 8249,
@@ -394,9 +774,29 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 64,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-14T19:00:00Z",
+      "pop_1km": 281,
+      "pop_5km": 1942,
+      "pop_10km": 8249,
+      "wind_toward_population": false,
+      "center": [
+        -71.3677,
+        -33.8326
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈21,231 people (wind 15 km/h from W)",
+      "smoke_people": 21231,
+      "wind_kmh": 14.6
+    },
+    {
       "fire_id": 65,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-01T18:56:00Z",
+      "message": "≈5,064 people within 5 km",
       "pop_1km": 226,
       "pop_5km": 5064,
       "pop_10km": 91591,
@@ -409,8 +809,10 @@
     },
     {
       "fire_id": 38,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-13T18:51:00Z",
+      "message": "≈4,879 people within 5 km",
       "pop_1km": 225,
       "pop_5km": 4879,
       "pop_10km": 98501,
@@ -423,8 +825,10 @@
     },
     {
       "fire_id": 70,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-06T19:02:00Z",
+      "message": "≈4,321 people within 5 km",
       "pop_1km": 224,
       "pop_5km": 4321,
       "pop_10km": 34237,
@@ -437,8 +841,10 @@
     },
     {
       "fire_id": 46,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-05T18:51:00Z",
+      "message": "≈5,119 people within 5 km",
       "pop_1km": 219,
       "pop_5km": 5119,
       "pop_10km": 100719,
@@ -451,8 +857,10 @@
     },
     {
       "fire_id": 20,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-06T19:02:00Z",
+      "message": "≈2,676 people within 5 km",
       "pop_1km": 203,
       "pop_5km": 2676,
       "pop_10km": 12131,
@@ -465,8 +873,10 @@
     },
     {
       "fire_id": 53,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-09T05:14:00Z",
+      "message": "≈2,982 people within 5 km",
       "pop_1km": 202,
       "pop_5km": 2982,
       "pop_10km": 21103,
@@ -478,9 +888,29 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 53,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-09T05:00:00Z",
+      "pop_1km": 202,
+      "pop_5km": 2982,
+      "pop_10km": 21103,
+      "wind_toward_population": false,
+      "center": [
+        -71.5114,
+        -35.7017
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈17,880 people (wind 12 km/h from SW)",
+      "smoke_people": 17880,
+      "wind_kmh": 12.3
+    },
+    {
       "fire_id": 27,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-09T05:14:00Z",
+      "message": "≈1,507 people within 5 km",
       "pop_1km": 201,
       "pop_5km": 1507,
       "pop_10km": 11639,
@@ -492,9 +922,29 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 60,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-11T18:00:00Z",
+      "pop_1km": 184,
+      "pop_5km": 3200,
+      "pop_10km": 17952,
+      "wind_toward_population": true,
+      "center": [
+        -71.5225,
+        -35.6946
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈18,337 people (wind 20 km/h from SW)",
+      "smoke_people": 18337,
+      "wind_kmh": 20.4
+    },
+    {
       "fire_id": 59,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-10T18:57:00Z",
+      "message": "≈3,425 people within 5 km",
       "pop_1km": 179,
       "pop_5km": 3425,
       "pop_10km": 33564,
@@ -507,8 +957,10 @@
     },
     {
       "fire_id": 48,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-05T18:51:00Z",
+      "message": "≈3,362 people within 5 km",
       "pop_1km": 179,
       "pop_5km": 3362,
       "pop_10km": 32170,
@@ -521,8 +973,10 @@
     },
     {
       "fire_id": 40,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-13T18:52:00Z",
+      "message": "≈12,675 people within 5 km",
       "pop_1km": 139,
       "pop_5km": 12675,
       "pop_10km": 32652,
@@ -535,8 +989,10 @@
     },
     {
       "fire_id": 4,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-11T17:48:00Z",
+      "message": "≈1,442 people within 5 km",
       "pop_1km": 105,
       "pop_5km": 1442,
       "pop_10km": 5152,
@@ -549,8 +1005,10 @@
     },
     {
       "fire_id": 11,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-02T04:55:00Z",
+      "message": "≈1,231 people within 5 km",
       "pop_1km": 95,
       "pop_5km": 1231,
       "pop_10km": 5524,
@@ -563,8 +1021,10 @@
     },
     {
       "fire_id": 18,
+      "type": "population",
       "risk": "high",
       "since": "2026-02-06T05:21:00Z",
+      "message": "≈2,256 people within 5 km",
       "pop_1km": 83,
       "pop_5km": 2256,
       "pop_10km": 5172,
@@ -576,9 +1036,137 @@
       "color": "#d7301f"
     },
     {
+      "fire_id": 73,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-10T19:00:00Z",
+      "pop_1km": 46,
+      "pop_5km": 647,
+      "pop_10km": 2574,
+      "wind_toward_population": false,
+      "center": [
+        -71.9257,
+        -36.0271
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈21,312 people (wind 24 km/h from W)",
+      "smoke_people": 21312,
+      "wind_kmh": 23.5
+    },
+    {
+      "fire_id": 55,
+      "type": "smoke",
+      "risk": "high",
+      "since": "2026-02-09T19:00:00Z",
+      "pop_1km": 45,
+      "pop_5km": 626,
+      "pop_10km": 2563,
+      "wind_toward_population": false,
+      "center": [
+        -71.9266,
+        -36.0283
+      ],
+      "color": "#d7301f",
+      "message": "Smoke toward ≈14,468 people (wind 14 km/h from SW)",
+      "smoke_people": 14468,
+      "wind_kmh": 13.7
+    },
+    {
+      "fire_id": 14,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-02T18:00:00Z",
+      "pop_1km": 590,
+      "pop_5km": 5918,
+      "pop_10km": 21099,
+      "wind_toward_population": false,
+      "center": [
+        -70.7878,
+        -33.1029
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈7,993 people (wind 11 km/h from W)",
+      "smoke_people": 7993,
+      "wind_kmh": 11.2
+    },
+    {
+      "fire_id": 54,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-09T17:00:00Z",
+      "pop_1km": 569,
+      "pop_5km": 2790,
+      "pop_10km": 11010,
+      "wind_toward_population": false,
+      "center": [
+        -71.3756,
+        -34.0902
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈1,851 people (wind 11 km/h from SW)",
+      "smoke_people": 1851,
+      "wind_kmh": 10.6
+    },
+    {
+      "fire_id": 69,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-06T19:00:00Z",
+      "pop_1km": 557,
+      "pop_5km": 6205,
+      "pop_10km": 21154,
+      "wind_toward_population": false,
+      "center": [
+        -70.789,
+        -33.0997
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈7,832 people (wind 10 km/h from W)",
+      "smoke_people": 7832,
+      "wind_kmh": 10.0
+    },
+    {
+      "fire_id": 12,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-02T05:00:00Z",
+      "pop_1km": 438,
+      "pop_5km": 3830,
+      "pop_10km": 23379,
+      "wind_toward_population": false,
+      "center": [
+        -71.481,
+        -35.6565
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈5,664 people (wind 8 km/h from NW)",
+      "smoke_people": 5664,
+      "wind_kmh": 8.1
+    },
+    {
+      "fire_id": 20,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-06T19:00:00Z",
+      "pop_1km": 203,
+      "pop_5km": 2676,
+      "pop_10km": 12131,
+      "wind_toward_population": false,
+      "center": [
+        -71.0087,
+        -34.9238
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈4,143 people (wind 10 km/h from SW)",
+      "smoke_people": 4143,
+      "wind_kmh": 9.8
+    },
+    {
       "fire_id": 19,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-06T19:02:00Z",
+      "message": "≈911 people within 5 km",
       "pop_1km": 121,
       "pop_5km": 911,
       "pop_10km": 3422,
@@ -590,9 +1178,29 @@
       "color": "#fc8d59"
     },
     {
+      "fire_id": 11,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-02T04:00:00Z",
+      "pop_1km": 95,
+      "pop_5km": 1231,
+      "pop_10km": 5524,
+      "wind_toward_population": false,
+      "center": [
+        -71.8016,
+        -35.8232
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈3,497 people (wind 8 km/h from NW)",
+      "smoke_people": 3497,
+      "wind_kmh": 8.3
+    },
+    {
       "fire_id": 45,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-03T19:28:00Z",
+      "message": "≈583 people within 5 km",
       "pop_1km": 59,
       "pop_5km": 583,
       "pop_10km": 4565,
@@ -604,9 +1212,29 @@
       "color": "#fc8d59"
     },
     {
+      "fire_id": 45,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-03T19:00:00Z",
+      "pop_1km": 59,
+      "pop_5km": 583,
+      "pop_10km": 4565,
+      "wind_toward_population": false,
+      "center": [
+        -71.5458,
+        -34.6723
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈1,799 people (wind 20 km/h from NW)",
+      "smoke_people": 1799,
+      "wind_kmh": 19.8
+    },
+    {
       "fire_id": 5,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-12T17:29:00Z",
+      "message": "≈274 people within 5 km",
       "pop_1km": 51,
       "pop_5km": 274,
       "pop_10km": 1078,
@@ -619,8 +1247,10 @@
     },
     {
       "fire_id": 63,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-14T19:22:00Z",
+      "message": "≈668 people within 5 km",
       "pop_1km": 48,
       "pop_5km": 668,
       "pop_10km": 2686,
@@ -632,9 +1262,29 @@
       "color": "#fc8d59"
     },
     {
+      "fire_id": 63,
+      "type": "smoke",
+      "risk": "medium",
+      "since": "2026-02-14T19:00:00Z",
+      "pop_1km": 48,
+      "pop_5km": 668,
+      "pop_10km": 2686,
+      "wind_toward_population": false,
+      "center": [
+        -71.926,
+        -36.03
+      ],
+      "color": "#fc8d59",
+      "message": "Smoke toward ≈9,000 people (wind 10 km/h from W)",
+      "smoke_people": 9000,
+      "wind_kmh": 10.5
+    },
+    {
       "fire_id": 73,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-10T19:26:00Z",
+      "message": "≈647 people within 5 km",
       "pop_1km": 46,
       "pop_5km": 647,
       "pop_10km": 2574,
@@ -647,8 +1297,10 @@
     },
     {
       "fire_id": 55,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-09T19:15:00Z",
+      "message": "≈626 people within 5 km",
       "pop_1km": 45,
       "pop_5km": 626,
       "pop_10km": 2563,
@@ -661,8 +1313,10 @@
     },
     {
       "fire_id": 43,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-14T18:11:00Z",
+      "message": "≈231 people within 5 km",
       "pop_1km": 37,
       "pop_5km": 231,
       "pop_10km": 935,
@@ -675,8 +1329,10 @@
     },
     {
       "fire_id": 49,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-07T05:52:00Z",
+      "message": "≈353 people within 5 km",
       "pop_1km": 34,
       "pop_5km": 353,
       "pop_10km": 2437,
@@ -689,8 +1345,10 @@
     },
     {
       "fire_id": 32,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-10T18:57:00Z",
+      "message": "≈215 people within 5 km",
       "pop_1km": 23,
       "pop_5km": 215,
       "pop_10km": 884,
@@ -703,8 +1361,10 @@
     },
     {
       "fire_id": 31,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-09T19:15:00Z",
+      "message": "≈215 people within 5 km",
       "pop_1km": 22,
       "pop_5km": 215,
       "pop_10km": 896,
@@ -717,8 +1377,10 @@
     },
     {
       "fire_id": 9,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-01T18:55:00Z",
+      "message": "≈341 people within 5 km",
       "pop_1km": 19,
       "pop_5km": 341,
       "pop_10km": 1841,
@@ -731,8 +1393,10 @@
     },
     {
       "fire_id": 44,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-14T18:11:00Z",
+      "message": "≈197 people within 5 km",
       "pop_1km": 17,
       "pop_5km": 197,
       "pop_10km": 846,
@@ -745,8 +1409,10 @@
     },
     {
       "fire_id": 10,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-01T06:04:00Z",
+      "message": "≈79 people within 5 km",
       "pop_1km": 13,
       "pop_5km": 79,
       "pop_10km": 302,
@@ -759,8 +1425,10 @@
     },
     {
       "fire_id": 3,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-11T17:48:00Z",
+      "message": "≈56 people within 5 km",
       "pop_1km": 13,
       "pop_5km": 56,
       "pop_10km": 128,
@@ -773,8 +1441,10 @@
     },
     {
       "fire_id": 29,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-09T06:05:00Z",
+      "message": "≈163 people within 5 km",
       "pop_1km": 12,
       "pop_5km": 163,
       "pop_10km": 727,
@@ -787,8 +1457,10 @@
     },
     {
       "fire_id": 23,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-08T06:03:00Z",
+      "message": "≈168 people within 5 km",
       "pop_1km": 10,
       "pop_5km": 168,
       "pop_10km": 737,
@@ -801,8 +1473,10 @@
     },
     {
       "fire_id": 33,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-12T05:08:00Z",
+      "message": "≈154 people within 5 km",
       "pop_1km": 10,
       "pop_5km": 154,
       "pop_10km": 731,
@@ -815,8 +1489,10 @@
     },
     {
       "fire_id": 8,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-01T17:35:00Z",
+      "message": "≈81 people within 5 km",
       "pop_1km": 10,
       "pop_5km": 81,
       "pop_10km": 346,
@@ -829,8 +1505,10 @@
     },
     {
       "fire_id": 1,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-09T18:25:00Z",
+      "message": "≈75 people within 5 km",
       "pop_1km": 9,
       "pop_5km": 75,
       "pop_10km": 328,
@@ -843,8 +1521,10 @@
     },
     {
       "fire_id": 37,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-13T18:00:00Z",
+      "message": "≈71 people within 5 km",
       "pop_1km": 8,
       "pop_5km": 71,
       "pop_10km": 322,
@@ -857,8 +1537,10 @@
     },
     {
       "fire_id": 21,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-07T18:43:00Z",
+      "message": "≈69 people within 5 km",
       "pop_1km": 8,
       "pop_5km": 69,
       "pop_10km": 299,
@@ -871,8 +1553,10 @@
     },
     {
       "fire_id": 2,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-10T13:19:00Z",
+      "message": "≈69 people within 5 km",
       "pop_1km": 7,
       "pop_5km": 69,
       "pop_10km": 302,
@@ -885,8 +1569,10 @@
     },
     {
       "fire_id": 25,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-08T18:44:00Z",
+      "message": "≈69 people within 5 km",
       "pop_1km": 7,
       "pop_5km": 69,
       "pop_10km": 302,
@@ -899,8 +1585,10 @@
     },
     {
       "fire_id": 42,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-14T18:32:00Z",
+      "message": "≈68 people within 5 km",
       "pop_1km": 7,
       "pop_5km": 68,
       "pop_10km": 311,
@@ -913,8 +1601,10 @@
     },
     {
       "fire_id": 22,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-07T18:13:00Z",
+      "message": "≈67 people within 5 km",
       "pop_1km": 7,
       "pop_5km": 67,
       "pop_10km": 271,
@@ -927,8 +1617,10 @@
     },
     {
       "fire_id": 7,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-01T05:14:00Z",
+      "message": "≈68 people within 5 km",
       "pop_1km": 6,
       "pop_5km": 68,
       "pop_10km": 306,
@@ -941,8 +1633,10 @@
     },
     {
       "fire_id": 36,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-12T18:49:00Z",
+      "message": "≈68 people within 5 km",
       "pop_1km": 6,
       "pop_5km": 68,
       "pop_10km": 309,
@@ -955,8 +1649,10 @@
     },
     {
       "fire_id": 50,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-07T05:52:00Z",
+      "message": "≈63 people within 5 km",
       "pop_1km": 6,
       "pop_5km": 63,
       "pop_10km": 262,
@@ -969,8 +1665,10 @@
     },
     {
       "fire_id": 41,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-14T05:20:00Z",
+      "message": "≈60 people within 5 km",
       "pop_1km": 5,
       "pop_5km": 60,
       "pop_10km": 248,
@@ -983,8 +1681,10 @@
     },
     {
       "fire_id": 28,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-09T05:44:00Z",
+      "message": "≈59 people within 5 km",
       "pop_1km": 5,
       "pop_5km": 59,
       "pop_10km": 246,
@@ -997,8 +1697,10 @@
     },
     {
       "fire_id": 58,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-10T18:57:00Z",
+      "message": "≈59 people within 5 km",
       "pop_1km": 5,
       "pop_5km": 59,
       "pop_10km": 256,
@@ -1011,8 +1713,10 @@
     },
     {
       "fire_id": 72,
+      "type": "population",
       "risk": "medium",
       "since": "2026-02-08T06:03:00Z",
+      "message": "≈59 people within 5 km",
       "pop_1km": 5,
       "pop_5km": 59,
       "pop_10km": 236,
@@ -1022,6 +1726,456 @@
         -36.4458
       ],
       "color": "#fc8d59"
+    },
+    {
+      "fire_id": 13,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-02T18:00:00Z",
+      "pop_1km": 719,
+      "pop_5km": 11527,
+      "pop_10km": 37940,
+      "wind_toward_population": false,
+      "center": [
+        -70.6567,
+        -33.1039
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈624 people (wind 11 km/h from W)",
+      "smoke_people": 624,
+      "wind_kmh": 11.2
+    },
+    {
+      "fire_id": 71,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-06T19:00:00Z",
+      "pop_1km": 312,
+      "pop_5km": 10138,
+      "pop_10km": 36293,
+      "wind_toward_population": false,
+      "center": [
+        -70.6798,
+        -33.1041
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈796 people (wind 10 km/h from W)",
+      "smoke_people": 796,
+      "wind_kmh": 10.0
+    },
+    {
+      "fire_id": 70,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-06T19:00:00Z",
+      "pop_1km": 224,
+      "pop_5km": 4321,
+      "pop_10km": 34237,
+      "wind_toward_population": false,
+      "center": [
+        -70.6452,
+        -33.1018
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈495 people (wind 10 km/h from W)",
+      "smoke_people": 495,
+      "wind_kmh": 10.0
+    },
+    {
+      "fire_id": 59,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-10T18:00:00Z",
+      "pop_1km": 179,
+      "pop_5km": 3425,
+      "pop_10km": 33564,
+      "wind_toward_population": false,
+      "center": [
+        -70.6407,
+        -33.1036
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈853 people (wind 12 km/h from W)",
+      "smoke_people": 853,
+      "wind_kmh": 12.3
+    },
+    {
+      "fire_id": 48,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-05T18:00:00Z",
+      "pop_1km": 179,
+      "pop_5km": 3362,
+      "pop_10km": 32170,
+      "wind_toward_population": false,
+      "center": [
+        -70.6431,
+        -33.1032
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈308 people (wind 8 km/h from W)",
+      "smoke_people": 308,
+      "wind_kmh": 8.0
+    },
+    {
+      "fire_id": 19,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-06T19:00:00Z",
+      "pop_1km": 121,
+      "pop_5km": 911,
+      "pop_10km": 3422,
+      "wind_toward_population": false,
+      "center": [
+        -70.9168,
+        -34.974
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈497 people (wind 10 km/h from SW)",
+      "smoke_people": 497,
+      "wind_kmh": 9.8
+    },
+    {
+      "fire_id": 4,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-11T18:00:00Z",
+      "pop_1km": 105,
+      "pop_5km": 1442,
+      "pop_10km": 5152,
+      "wind_toward_population": false,
+      "center": [
+        -70.4652,
+        -34.2283
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈583 people (wind 12 km/h from W)",
+      "smoke_people": 583,
+      "wind_kmh": 11.5
+    },
+    {
+      "fire_id": 5,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-12T20:00:00Z",
+      "pop_1km": 51,
+      "pop_5km": 274,
+      "pop_10km": 1078,
+      "wind_toward_population": false,
+      "center": [
+        -71.2539,
+        -36.0267
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈975 people (wind 12 km/h from SW)",
+      "smoke_people": 975,
+      "wind_kmh": 11.5
+    },
+    {
+      "fire_id": 43,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-14T18:00:00Z",
+      "pop_1km": 37,
+      "pop_5km": 231,
+      "pop_10km": 935,
+      "wind_toward_population": false,
+      "center": [
+        -71.2493,
+        -36.0344
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈528 people (wind 13 km/h from W)",
+      "smoke_people": 528,
+      "wind_kmh": 12.7
+    },
+    {
+      "fire_id": 32,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-10T20:00:00Z",
+      "pop_1km": 23,
+      "pop_5km": 215,
+      "pop_10km": 884,
+      "wind_toward_population": false,
+      "center": [
+        -71.2529,
+        -36.0274
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈564 people (wind 19 km/h from W)",
+      "smoke_people": 564,
+      "wind_kmh": 19.0
+    },
+    {
+      "fire_id": 31,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-09T21:00:00Z",
+      "pop_1km": 22,
+      "pop_5km": 215,
+      "pop_10km": 896,
+      "wind_toward_population": false,
+      "center": [
+        -71.2558,
+        -36.0235
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈773 people (wind 12 km/h from W)",
+      "smoke_people": 773,
+      "wind_kmh": 11.7
+    },
+    {
+      "fire_id": 9,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-01T19:00:00Z",
+      "pop_1km": 19,
+      "pop_5km": 341,
+      "pop_10km": 1841,
+      "wind_toward_population": false,
+      "center": [
+        -71.4753,
+        -36.5425
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈272 people (wind 11 km/h from W)",
+      "smoke_people": 272,
+      "wind_kmh": 11.0
+    },
+    {
+      "fire_id": 44,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-14T18:00:00Z",
+      "pop_1km": 17,
+      "pop_5km": 197,
+      "pop_10km": 846,
+      "wind_toward_population": false,
+      "center": [
+        -71.2591,
+        -36.019
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈600 people (wind 13 km/h from W)",
+      "smoke_people": 600,
+      "wind_kmh": 12.7
+    },
+    {
+      "fire_id": 10,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-01T19:00:00Z",
+      "pop_1km": 13,
+      "pop_5km": 79,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4186,
+        -36.4575
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈188 people (wind 11 km/h from W)",
+      "smoke_people": 188,
+      "wind_kmh": 11.0
+    },
+    {
+      "fire_id": 33,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-12T05:00:00Z",
+      "pop_1km": 10,
+      "pop_5km": 154,
+      "pop_10km": 731,
+      "wind_toward_population": false,
+      "center": [
+        -71.2587,
+        -36.0216
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈113 people (wind 5 km/h from SE)",
+      "smoke_people": 113,
+      "wind_kmh": 5.3
+    },
+    {
+      "fire_id": 8,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-01T19:00:00Z",
+      "pop_1km": 10,
+      "pop_5km": 81,
+      "pop_10km": 346,
+      "wind_toward_population": false,
+      "center": [
+        -71.4014,
+        -36.4914
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈189 people (wind 11 km/h from W)",
+      "smoke_people": 189,
+      "wind_kmh": 11.0
+    },
+    {
+      "fire_id": 1,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-09T19:00:00Z",
+      "pop_1km": 9,
+      "pop_5km": 75,
+      "pop_10km": 328,
+      "wind_toward_population": false,
+      "center": [
+        -71.4093,
+        -36.4865
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈221 people (wind 12 km/h from W)",
+      "smoke_people": 221,
+      "wind_kmh": 12.2
+    },
+    {
+      "fire_id": 37,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-13T18:00:00Z",
+      "pop_1km": 8,
+      "pop_5km": 71,
+      "pop_10km": 322,
+      "wind_toward_population": false,
+      "center": [
+        -71.4119,
+        -36.4889
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈198 people (wind 11 km/h from W)",
+      "smoke_people": 198,
+      "wind_kmh": 11.3
+    },
+    {
+      "fire_id": 21,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-07T18:00:00Z",
+      "pop_1km": 8,
+      "pop_5km": 69,
+      "pop_10km": 299,
+      "wind_toward_population": false,
+      "center": [
+        -71.4049,
+        -36.4837
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈223 people (wind 11 km/h from NW)",
+      "smoke_people": 223,
+      "wind_kmh": 11.0
+    },
+    {
+      "fire_id": 2,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-10T16:00:00Z",
+      "pop_1km": 7,
+      "pop_5km": 69,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4089,
+        -36.4882
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈259 people (wind 13 km/h from W)",
+      "smoke_people": 259,
+      "wind_kmh": 12.8
+    },
+    {
+      "fire_id": 25,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-08T20:00:00Z",
+      "pop_1km": 7,
+      "pop_5km": 69,
+      "pop_10km": 302,
+      "wind_toward_population": false,
+      "center": [
+        -71.4074,
+        -36.4853
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈233 people (wind 12 km/h from W)",
+      "smoke_people": 233,
+      "wind_kmh": 11.8
+    },
+    {
+      "fire_id": 42,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-14T18:00:00Z",
+      "pop_1km": 7,
+      "pop_5km": 68,
+      "pop_10km": 311,
+      "wind_toward_population": false,
+      "center": [
+        -71.4135,
+        -36.49
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈253 people (wind 13 km/h from W)",
+      "smoke_people": 253,
+      "wind_kmh": 12.7
+    },
+    {
+      "fire_id": 22,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-07T18:00:00Z",
+      "pop_1km": 7,
+      "pop_5km": 67,
+      "pop_10km": 271,
+      "wind_toward_population": false,
+      "center": [
+        -71.428,
+        -36.454
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈211 people (wind 11 km/h from NW)",
+      "smoke_people": 211,
+      "wind_kmh": 11.0
+    },
+    {
+      "fire_id": 36,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-12T20:00:00Z",
+      "pop_1km": 6,
+      "pop_5km": 68,
+      "pop_10km": 309,
+      "wind_toward_population": false,
+      "center": [
+        -71.4118,
+        -36.4886
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈254 people (wind 12 km/h from SW)",
+      "smoke_people": 254,
+      "wind_kmh": 11.5
+    },
+    {
+      "fire_id": 58,
+      "type": "smoke",
+      "risk": "low",
+      "since": "2026-02-10T18:00:00Z",
+      "pop_1km": 5,
+      "pop_5km": 59,
+      "pop_10km": 256,
+      "wind_toward_population": false,
+      "center": [
+        -71.4333,
+        -36.4527
+      ],
+      "color": "#fdcc8a",
+      "message": "Smoke toward ≈256 people (wind 18 km/h from W)",
+      "smoke_people": 256,
+      "wind_kmh": 17.5
     }
   ]
 }
