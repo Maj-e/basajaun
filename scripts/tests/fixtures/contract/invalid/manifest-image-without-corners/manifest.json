@@ -1,0 +1,13 @@
+{
+  "updated_at": "2026-02-14T08:00:00Z",
+  "layers": [
+    {
+      "id": "population",
+      "name": "Population",
+      "file": "../../valid/hotspots.geojson",
+      "type": "image",
+      "temporal": false,
+      "active": false
+    }
+  ]
+}

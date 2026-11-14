@@ -19,12 +19,15 @@ PIPELINE := \
 	make_manifest \
 	validate
 
-.PHONY: help install data sample test serve clean
+.PHONY: help install data sample manifest validate contract-test test serve clean
 
 help:
 	@echo "make install  - uv sync: create .venv and install uv.lock"
 	@echo "make data     - run every script in order -> web/data/processed/"
 	@echo "make sample   - generate sample data -> web/data/sample/"
+	@echo "make manifest - rebuild web/data/manifest.json from the files present"
+	@echo "make validate - check web/data/ against the contract (docs/schemas/)"
+	@echo "make contract-test - prove the validator accepts good files and rejects broken ones"
 	@echo "make test     - pytest"
 	@echo "make serve    - serve web/ at http://localhost:$(PORT)"
 
@@ -42,6 +45,15 @@ data:
 
 sample:
 	$(RUN) scripts/make_sample.py
+
+manifest:
+	$(RUN) scripts/make_manifest.py
+
+validate:
+	$(RUN) scripts/validate.py
+
+contract-test:
+	$(RUN) pytest scripts/tests/test_contract_fixtures.py -vv
 
 test:
 	$(RUN) pytest

@@ -34,7 +34,7 @@ Other columns in both: `latitude`, `longitude`, `scan`, `track`, `acq_date`, `ac
 - `acq_time` is an integer without leading zeros (`453` = 04:53 UTC) → pad with `zfill(4)`.
 - The two instruments use **different confidence scales** → mapped to `low` / `medium` / `high` (see [`docs/data_contract.md`](../data_contract.md#firms-field-mapping--contract)).
 - A fire seen by both instruments appears **twice** → deduplication step (W2-B1).
-- `type` distinguishes presumed vegetation fires from static sources (industrial sites, volcanoes, offshore). **Open question for B1:** filter out non-vegetation types so only real fires remain.
+- `type` distinguishes presumed vegetation fires (`0`) from static sources (`2`: industrial sites…). In the demo data, **250 detections are `type 2`**, 231 of them in two ~1 km cells that fire every day (around 34.1° S 70.5° W and 33.3° S 70.7° W). **Proposal:** keep `type 0` only → **825 vegetation fires** (B1 to confirm).
 - Detections are published roughly **3 hours after each satellite pass**; each satellite passes a few times a day.
 
 **Volume:** 1,075 detections for 14 days ≈ 90 KB of CSV → the hotspot GeoJSON will stay well under 1 MB, so **one file is enough** (no per-day split).

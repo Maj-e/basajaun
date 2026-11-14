@@ -60,6 +60,6 @@ Run a single step: `uv run scripts/download_firms.py`.
 
 ## Rules
 - A script writes **only** to `web/data/processed/` (or `data/raw/` for downloads).
-- Every output follows [`docs/data_contract.md`](../data_contract.md) and carries an `updated` timestamp.
+- Every output follows [`docs/data_contract.md`](../data_contract.md) and carries an `updated_at` timestamp.
 - Outputs are **already styled** (`color`, `radius`, …) and declared in the manifest.
 - Tests never call FIRMS: they use small hand-written CSVs.

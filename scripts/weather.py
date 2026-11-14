@@ -71,7 +71,7 @@ def main() -> None:
                 "type": "Feature",
                 "geometry": {"type": "Point", "coordinates": [lon_c, lat_c]},
                 "properties": {
-                    "datetime_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "timestamp_utc": dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "t": t_hours,
                     "direction": round(float(direction), 1),
                     "speed": round(float(speed), 1),
@@ -88,7 +88,7 @@ def main() -> None:
     updated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     fc = {
         "type": "FeatureCollection",
-        "updated": updated,
+        "updated_at": updated,
         "features": features,
     }
 

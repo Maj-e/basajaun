@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hotspots.schema.json",
+  "title": "hotspots.geojson — one Point Feature per hotspot (MODIS + VIIRS harmonized)",
+  "allOf": [{ "$ref": "common.schema.json#/$defs/featureCollection" }],
+  "properties": {
+    "features": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/hotspot" }
+    }
+  },
+  "$defs": {
+    "hotspot": {
+      "type": "object",
+      "required": ["type", "geometry", "properties"],
+      "properties": {
+        "type": { "const": "Feature" },
+        "geometry": {
+          "type": "object",
+          "required": ["type", "coordinates"],
+          "properties": {
+            "type": { "const": "Point" },
+            "coordinates": { "$ref": "common.schema.json#/$defs/lonLat" }
+          }
+        },
+        "properties": {
+          "type": "object",
+          "required": [
+            "id", "sensor", "satellite", "timestamp_utc", "date", "t", "confidence",
+            "frp", "brightness_k", "day_night", "resolution_m", "detected_by", "fire_id",
+            "color", "radius", "border"
+          ],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "sensor": { "enum": ["MODIS", "VIIRS"] },
+            "satellite": { "enum": ["Terra", "Aqua", "S-NPP", "NOAA-20", "NOAA-21"] },
+            "timestamp_utc": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
+            "date": { "$ref": "common.schema.json#/$defs/date" },
+            "t": { "$ref": "common.schema.json#/$defs/hoursSince1970" },
+            "confidence": { "enum": ["low", "medium", "high"] },
+            "frp": { "type": "number", "minimum": 0 },
+            "brightness_k": { "type": "number", "exclusiveMinimum": 0 },
+            "day_night": { "enum": ["D", "N"] },
+            "resolution_m": { "enum": [375, 1000] },
+            "detected_by": {
+              "type": "array",
+              "items": { "enum": ["MODIS", "VIIRS"] },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "fire_id": { "type": ["integer", "null"] },
+            "color": { "$ref": "common.schema.json#/$defs/hexColor" },
+            "radius": { "type": "number", "exclusiveMinimum": 0 },
+            "border": { "$ref": "common.schema.json#/$defs/hexColor" }
+          }
+        }
+      }
+    }
+  }
+}
