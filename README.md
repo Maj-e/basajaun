@@ -72,7 +72,9 @@ Visualización de focos de incendio a partir de los satélites **MODIS** y **VII
 ```
 ulinautas/
 ├── README.md
-├── TODO.md                         # plan de trabajo por olas
+├── TODO.md                         # roles, tareas por rol, waves
+├── docs/
+│   └── detalle_tareas.md           # especificación técnica de cada tarea
 ├── requirements.txt
 ├── .env.example                    # FIRMS_MAP_KEY=
 ├── .gitignore                      # .env, data/raw/, __pycache__/
@@ -143,7 +145,7 @@ ulinautas/
 | `meteo.json` | Viento, temperatura, humedad, lluvia por hora | `weather.py` |
 | `agua.geojson`, `rutas.geojson`, `bomberos.geojson` | Capas OpenStreetMap | `osm.py` |
 
-Esquema detallado de cada archivo y correspondencia de campos MODIS / VIIRS: ver [`TODO.md` → Contrato de datos](TODO.md#contrato-de-datos-se-fija-en-w0-d2-todos-lo-respetan).
+Esquema detallado de cada archivo y correspondencia de campos MODIS / VIIRS: ver [`docs/detalle_tareas.md` → Contrato de datos](docs/detalle_tareas.md#contrato-de-datos-se-fija-en-w0-d2-todos-lo-respetan).
 
 ### Armonización MODIS / VIIRS (resumen)
 
