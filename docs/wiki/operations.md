@@ -3,7 +3,7 @@
 ## FIRMS API key
 - Free key: https://firms.modaps.eosdis.nasa.gov/api/map_key/ (sent by email).
 - **Local:** `cp .env.example .env`, then set `FIRMS_MAP_KEY=…`. `.env` is git-ignored — never commit it, never paste the key in chats or issues.
-- **GitHub Actions:** stored as the repository secret `FIRMS_MAP_KEY` (set from `.env` with `gh secret set -f .env --repo Maj-e/ulinautas`). Workflows receive it as an environment variable; GitHub masks it in logs.
+- **GitHub Actions:** stored as the repository secret `FIRMS_MAP_KEY` (set from `.env` with `gh secret set -f .env --repo Maj-e/basajaun`). Workflows receive it as an environment variable; GitHub masks it in logs.
 - **The published site never needs the key**: it only reads static JSON files.
 - Recommended: one key for development, a separate one for CI, so a local mistake can't exhaust the key used by the live refresh.
 
@@ -22,8 +22,8 @@
 feature/<task-id>-<name> ──PR──► dev ──PR──► main ──► GitHub Pages
 ```
 - PRs target **`dev`**; CI (`make test`) must be green before merging.
-- `dev` is merged into **`main`** once checked; every push to `main` runs `.github/workflows/deploy.yml`, which publishes the `web/` folder.
-- Published site: **https://maj-e.github.io/ulinautas/** (custom domain later, via `web/CNAME` + DNS).
+- `dev` is merged into **`main`** once checked; every push to `main` runs `.github/workflows/deploy.yml`, which stamps the front end with a version (`scripts/version_assets.py`, so a deploy never mixes old and new modules) and publishes the `web/` folder.
+- Published site: **https://maj-e.github.io/basajaun/** (the repository was renamed from `ulinautas` to `basajaun`; custom domain later, via `web/CNAME` + DNS).
 - A task is done only when it works on the published URL.
 
 ## Live refresh (W4-B4)
