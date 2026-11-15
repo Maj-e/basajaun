@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T13:21:01Z",
+  "updated_at": "2026-11-15T14:18:48Z",
   "layers": [
     {
       "id": "hotspots",
@@ -44,7 +44,20 @@
           "shape": "ring"
         }
       ],
-      "updated_at": "2026-11-14T20:34:58Z"
+      "updated_at": "2026-11-15T14:18:28Z"
+    },
+    {
+      "id": "regions",
+      "name": "Regions",
+      "file": "episodes/sierra-bermeja-2021-09/regions.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "country",
+        "region"
+      ],
+      "updated_at": "2026-11-15T14:18:27Z"
     },
     {
       "id": "fires",
@@ -75,7 +88,7 @@
         "evacuate_people",
         "warn_people"
       ],
-      "updated_at": "2026-11-15T13:21:00Z"
+      "updated_at": "2026-11-15T14:18:47Z"
     },
     {
       "id": "fire_risk",
@@ -110,7 +123,7 @@
           "text": "Low"
         }
       ],
-      "updated_at": "2026-11-15T13:21:00Z"
+      "updated_at": "2026-11-15T14:18:47Z"
     },
     {
       "id": "evacuation",
@@ -130,7 +143,7 @@
           "text": "Evacuate: fire + 1 km + 6 h spread"
         }
       ],
-      "updated_at": "2026-11-15T13:21:00Z"
+      "updated_at": "2026-11-15T14:18:47Z"
     },
     {
       "id": "spread",
@@ -148,7 +161,7 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-15T13:20:58Z"
+      "updated_at": "2026-11-15T14:18:31Z"
     },
     {
       "id": "population",
@@ -185,7 +198,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T20:41:36Z"
+      "updated_at": "2026-11-15T14:18:29Z"
     },
     {
       "id": "wind",
@@ -217,7 +230,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T22:21:09Z"
+      "updated_at": "2026-11-15T14:18:30Z"
     },
     {
       "id": "weather",
@@ -233,7 +246,7 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T22:21:09Z"
+      "updated_at": "2026-11-15T14:18:30Z"
     },
     {
       "id": "wind_particles",
@@ -249,7 +262,7 @@
           "text": "Surface wind (10 m), faster = brighter"
         }
       ],
-      "updated_at": "2026-11-14T22:21:09Z"
+      "updated_at": "2026-11-15T14:18:30Z"
     },
     {
       "id": "water",
@@ -268,7 +281,7 @@
           "text": "Lakes, reservoirs"
         }
       ],
-      "updated_at": "2026-11-14T22:34:08Z"
+      "updated_at": "2026-11-15T14:18:33Z"
     },
     {
       "id": "rivers",
@@ -286,7 +299,7 @@
           "text": "Rivers"
         }
       ],
-      "updated_at": "2026-11-14T22:34:08Z"
+      "updated_at": "2026-11-15T14:18:33Z"
     },
     {
       "id": "roads",
@@ -321,7 +334,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T22:34:08Z"
+      "updated_at": "2026-11-15T14:18:33Z"
     },
     {
       "id": "fire_stations",
@@ -339,7 +352,7 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T22:34:08Z"
+      "updated_at": "2026-11-15T14:18:33Z"
     },
     {
       "id": "water_points",
@@ -378,7 +391,7 @@
           "text": "Water point"
         }
       ],
-      "updated_at": "2026-11-14T22:34:08Z"
+      "updated_at": "2026-11-15T14:18:33Z"
     },
     {
       "id": "groundwater",
@@ -408,7 +421,7 @@
           "text": "Low"
         }
       ],
-      "updated_at": "2026-11-14T21:48:29Z"
+      "updated_at": "2026-11-15T14:18:45Z"
     }
   ]
 }

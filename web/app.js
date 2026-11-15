@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate, setBasemap } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLayerList, prefetchLayers } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, setPlayback, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -143,7 +143,8 @@ async function main() {
   renderLayerList($("layer-list"), setLayerVisible);
 
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
-  subscribe((s) => {
+  subscribe((s, changes) => {
+    if ("playing" in changes) setPlayback(s.playing);
     timeline.render(s.hour);
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
     renderAlerts(s.hour, (a) => alertScope(a));
@@ -313,7 +314,7 @@ async function main() {
   });
 
   // Opens paused on the peak (the most telling frame; press Play to watch it build up, R to start over).
-  // Without a peak (no fires) it opens at the start and loops on its own, except in presenter mode.
+  // Without a peak (no fires) it opens at the start and plays on its own (stopping at the end), except in presenter mode.
   if (story.peak) timeline.seek(story.peak.end);
   else timeline.seek(playFrom);
   timeline.setPlaying(!story.peak && !presenter && !reduceMotion);

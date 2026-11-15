@@ -332,7 +332,7 @@ export function setHour(hour) {
     const startOf = linkedToFire(entry) ? fireStartExpr() : ["get", "t_start"];
     // Visible from t_start; snapshots of a fire's zones (spread, evacuation, risk) also end at t_until, when the next one starts
     // Fire perimeters stay once the fire stops growing, but fainter: what burned, no longer what is burning
-    const burnedOut = entry.layer.id === "fires" ? ["case", [">", hour, ["+", ["get", "t_end"], CONFIG.trailHours]], 0.3, 1] : 1;
+    const burnedOut = entry.layer.id === "fires" ? ["case", [">", hour, ["+", ["get", "t_end"], CONFIG.trailHours]], 0.6, 1] : 1;
     const live = ["all", ["<=", startOf, hour], ["<", hour, ["coalesce", ["get", "t_until"], 1e12]]];
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
@@ -344,6 +344,11 @@ export function setHour(hour) {
       else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", live, burnedOut, 0]);
     }
   }
+}
+
+// The player started or paused: the wind particles move only while it plays
+export function setPlayback(playing) {
+  for (const entry of layers.values()) entry.particles?.setPlaying(playing);
 }
 
 export function setLayerVisible(id, visible) {
