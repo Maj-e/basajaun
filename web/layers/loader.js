@@ -177,17 +177,17 @@ export async function loadData() {
   return manifest;
 }
 
-// null for an image (MapLibre fetches it), undefined when the file is missing
-async function fetchLayer(layer) {
-  if (layer.type === "image") return null;
-  try {
-    const r = await fetch(dataUrl(layer.file));
-    if (!r.ok) throw new Error(r.status);
-    return await r.json();
-  } catch {
-    console.warn(`Layer file unavailable: ${layer.file}`);
-    return undefined;
+// null for an image (MapLibre fetches it), undefined when the file is missing.
+// One download per file: wind, weather and rain share weather.geojson.
+const requests = new Map();
+function fetchLayer(layer, priority = "auto") {
+  if (layer.type === "image") return Promise.resolve(null);
+  if (!requests.has(layer.file)) {
+    requests.set(layer.file, fetch(dataUrl(layer.file), { priority })
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .catch(() => { console.warn(`Layer file unavailable: ${layer.file}`); return undefined; }));
   }
+  return requests.get(layer.file);
 }
 
 // Add every loaded layer to the map.
@@ -258,10 +258,13 @@ async function toggleLayer(id, visible) {
 }
 
 // Once the page is shown and idle, download the hidden layers quietly so ticking a box is near-instant
+// One file at a time and at low priority, so it never competes with the map tiles or a box the user ticks.
 export function prefetchLayers() {
-  const start = () => {
+  const start = async () => {
     for (const entry of layers.values()) {
-      if (entry.lazy && !entry.prefetch && entry.layer.type !== "image") entry.prefetch = fetchLayer(entry.layer);
+      if (!entry.lazy || entry.prefetch || entry.layer.type === "image") continue;
+      entry.prefetch = fetchLayer(entry.layer, "low");
+      await entry.prefetch;
     }
   };
   if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 3000 });

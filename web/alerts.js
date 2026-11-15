@@ -64,11 +64,13 @@ export function setAlertLabels(on) {
   document.body.classList.toggle("alert-labels", on);
 }
 
+// Requested as soon as the module loads, in parallel with the manifest and the layers
+const alertsRequest = fetch(CONFIG.alerts).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+
 export async function loadAlerts() {
   try {
-    const r = await fetch(CONFIG.alerts);
-    if (!r.ok) return [];
-    const data = await r.json();
+    const data = await alertsRequest;
+    if (!data) return [];
     alerts = (Array.isArray(data) ? data : data.alerts ?? [])
       .filter((a) => a.since && Array.isArray(a.center))
       .map((a) => ({ ...a, t: Date.parse(a.since) / H, kind: typeOf(a), key: `${a.fire_id}-${typeOf(a)}` }));
