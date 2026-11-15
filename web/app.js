@@ -4,9 +4,9 @@ import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
 import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
-import { computeStory, renderStory, fillPeakBanner, dayOf } from "./story.js";
+import { computeStory, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
-import { loadAlerts, renderAlerts, setAlertLabels } from "./alerts.js";
+import { loadAlerts, renderAlerts, setAlertLabels, setFirePlaces, setAlertHandlers, showAlertFire } from "./alerts.js";
 
 const $ = (id) => document.getElementById(id);
 const H = 3600 * 1000;
@@ -70,6 +70,7 @@ async function main() {
   let isolatedFireId = null; // set while a fire polygon is isolated; viewport scope stays paused
   let alertScope = () => true; // which alerts belong to the current scope
   await loadAlerts();
+  setFirePlaces(features);
   const start = Date.parse(`${days[0]}T00:00:00Z`) / H;
   const end = Date.parse(`${days.at(-1)}T00:00:00Z`) / H + 24;
   // Open three days before the peak (demo script), or at the start
@@ -87,7 +88,6 @@ async function main() {
   $("caption-scope").textContent = `MODIS + VIIRS merged · ${CONFIG.areaName} · ${fmtDay(days[0])} – ${fmtDay(days.at(-1), { year: "numeric" })}`;
   const generated = manifest.updated_at ? ` · generated ${new Date(manifest.updated_at).toLocaleString("en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC` : "";
   $("status").textContent = (CONFIG.manifest.includes("sample") ? "Sample data" : "Data") + generated;
-  fillPeakBanner(story);
   renderLegend($("legend"));
   renderLayerList($("layer-list"), setLayerVisible);
 
@@ -96,7 +96,6 @@ async function main() {
     timeline.render(s.hour);
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
     renderAlerts(s.hour, (a) => alertScope(a));
-    renderStory(story, s.hour);
     setHour(s.hour);
     updateSatellite(s.satellite, dayOf(s.hour));
   });
@@ -114,14 +113,13 @@ async function main() {
     const c = countsFor(list, !narrowed);
     story = computeStory(scoped, days, c);
     timeline.setData(c, story);
-    fillPeakBanner(story);
-    $("scope").classList.toggle("visible-area", narrowed);
+      $("scope").classList.toggle("visible-area", narrowed);
     $("scope-text").textContent = text;
     $("scope-reset").hidden = !narrowed;
     setState({}); // re-render readouts and story for the new scope
   }
 
-  // Figures follow the visible area: zoom on a zone and the readouts, timeline, spark and peak are recomputed for it.
+  // Figures follow the visible area: zoom on a zone and the readouts, timeline and peak are recomputed for it.
   // A selected fire owns the figures until it is cleared; the camera move from fitBounds must not replace them.
   function applyScope() {
     if (isolatedFireId != null) return;
@@ -138,6 +136,7 @@ async function main() {
     isolatedFireId = null;
     alertScope = () => true;
     setHotspotFire(null);
+    showAlertFire(null);
     publishScope(features, false, "Figures for the whole area");
     map?.fitBounds(CONFIG.view, { padding: PADDING });
   }
@@ -147,6 +146,7 @@ async function main() {
     isolatedFireId = id;
     alertScope = (a) => Number(a.fire_id) === id;
     setHotspotFire(id);
+    showAlertFire(id);
     const list = features.filter((f) => Number(f.properties.fire_id) === id);
     publishScope(list, true, `Figures for fire ${id} · ${list.length.toLocaleString("en")} hotspots`);
     const bounds = geometry && boundsOf(geometry);
@@ -156,6 +156,15 @@ async function main() {
   let scopeTimer = null;
   const scheduleScope = () => { clearTimeout(scopeTimer); scopeTimer = setTimeout(applyScope, 150); };
   $("scope-reset").onclick = () => showWholeArea();
+  // Alert panel: picking a fire isolates it on the map (and opens its detail); Back returns to the whole area
+  setAlertHandlers({
+    select: (id, center) => {
+      const stored = layers.get("fires")?.data?.features?.find((f) => Number(f.properties.fire_id) === id);
+      if (isolatedFireId !== id) isolateFire(id, stored?.geometry);
+      if (!stored?.geometry && center) map?.flyTo({ center, zoom: 10 });
+    },
+    clear: () => showWholeArea(),
+  });
 
   mapReady.then(() => {
     addToMap();
@@ -180,13 +189,30 @@ async function main() {
 
   // Controls
   $("b-play").onclick = timeline.toggle;
-  $("b-spark").onclick = timeline.jumpSpark;
   $("b-peak").onclick = timeline.jumpPeak;
   document.querySelectorAll("[data-speed]").forEach((b) => (b.onclick = () => {
     setState({ speed: Number(b.dataset.speed) });
     document.querySelectorAll("[data-speed]").forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
   }));
-  // Map panel: always visible on desktop, folded on small screens
+  // Timeline: open on every load, can be folded down to the clock and the play controls
+  const foldTimeline = (folded) => {
+    document.body.classList.toggle("tl-folded", folded);
+    $("tl-fold").setAttribute("aria-expanded", String(!folded));
+    $("tl-fold").title = folded ? "Show the chart" : "Hide the chart";
+    $("tl-fold").setAttribute("aria-label", $("tl-fold").title);
+  };
+  let tlFolded = false;
+  $("tl-fold").onclick = () => { foldTimeline((tlFolded = !tlFolded)); fitAlerts(); };
+  // The alert panel stops above the legend (or the timeline): both change size with the layers and the fold
+  function fitAlerts() {
+    const panel = $("alerts"), legend = $("legend");
+    if (!panel || matchMedia("(max-width: 760px)").matches) { panel?.style.removeProperty("max-height"); return; }
+    const floor = !legend.hidden && legend.offsetHeight ? legend.getBoundingClientRect().top : $("timeline").getBoundingClientRect().top;
+    panel.style.maxHeight = `${Math.max(160, floor - panel.getBoundingClientRect().top - 12)}px`;
+  }
+  new ResizeObserver(fitAlerts).observe($("legend"));
+  new ResizeObserver(fitAlerts).observe($("timeline"));
+  window.addEventListener("resize", fitAlerts);
   // Demo disclaimer (W5-F2): once per visitor, never in presenter mode
   const presenterMode = new URLSearchParams(location.search).get("demo") === "1";
   let dismissed = false;
@@ -204,18 +230,6 @@ async function main() {
     if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-pressed", "true"); }
   }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
-  // Demo button: the pitch episodes, opened in presenter mode (paused, keyboard)
-  const demoList = CONFIG.demoEpisodes.map((id) => CONFIG.episodes.find((e) => e.id === id)).filter(Boolean);
-  $("demo-menu").innerHTML = demoList.map((e, i) => `<li><button type="button" data-demo="${e.id}">${i + 1}. ${e.name}</button></li>`).join("");
-  $("demo-toggle").parentElement.hidden = !demoList.length;
-  $("demo-toggle").onclick = () => {
-    const menu = $("demo-menu");
-    menu.hidden = !menu.hidden;
-    $("demo-toggle").setAttribute("aria-expanded", String(!menu.hidden));
-  };
-  $("demo-menu").querySelectorAll("[data-demo]").forEach((b) => (b.onclick = () => {
-    location.search = new URLSearchParams({ episode: b.dataset.demo, demo: "1" }).toString();
-  }));
   $("satellite-toggle").onchange = (e) => {
     setState({ satellite: e.target.checked });
     if (!e.target.checked) $("sat-badge").hidden = true;
@@ -231,7 +245,6 @@ async function main() {
     if (e.target.closest?.("input, textarea, select")) return;
     const k = e.key.toLowerCase();
     if (e.code === "Space") { e.preventDefault(); timeline.toggle(); }
-    else if (k === "s") timeline.jumpSpark();
     else if (k === "p") timeline.jumpPeak();
     else if (k === "r") timeline.restart();
     else if (e.key === "ArrowRight") timeline.step(1);

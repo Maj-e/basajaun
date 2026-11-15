@@ -327,12 +327,82 @@ export function setHotspotFire(fireId) {
 }
 
 // Human labels for known fields; unknown fields show their name.
-const LABELS = { sensor: "Sensor", satellite: "Satellite", timestamp_utc: "Time (UTC)", confidence: "Confidence", frp: "FRP (fire intensity)" };
-const format = (field, v) => {
-  if (field === "frp") return `${Math.round(Number(v)).toLocaleString("en")} MW`;
-  if (field === "timestamp_utc") return String(v).replace("T", " ").replace(":00Z", "");
-  return v;
+// Popups: human labels and units instead of raw field names; empty fields are skipped.
+const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+const compass = (deg) => COMPASS[Math.round((((Number(deg) % 360) + 360) % 360) / 45) % 8];
+const words = (v) => { const t = String(v).replace(/_/g, " "); return t.charAt(0).toUpperCase() + t.slice(1); };
+const num = (v, d = 1) => Number(v).toLocaleString("en", { maximumFractionDigits: d });
+const FORMAT = {
+  text: (v) => v,
+  words,
+  time: (v) => {
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return v;
+    return `${d.getUTCDate()} ${d.toLocaleString("en", { month: "short", timeZone: "UTC" })} · ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
+  },
+  mw: (v) => `${num(v, 0)} MW`,
+  km: (v) => `${num(v)} km`,
+  km2: (v) => `${num(v)} km²`,
+  deg: (v) => `${num(v, 0)}°`,
+  int: (v) => num(v, 0),
+  people: (v) => `${num(v, 0)} people`,
+  score: (v) => `${num(v, 0)} / 100`,
+  hours: (v) => `${num(v, 0)} h`,
+  kmh: (v) => `${num(v, 0)} km/h`,
+  pct: (v) => `${num(v, 0)} %`,
+  mm: (v) => `${num(v)} mm`,
+  celsius: (v) => `${num(v)} °C`,
+  windFrom: (v) => `from ${compass(v)} (${num(v, 0)}°)`,
+  windTo: (v) => `towards ${compass(v)} (${num(v, 0)}°)`,
+  list: (v) => {
+    let a = v;
+    if (typeof a === "string") { try { a = JSON.parse(a); } catch { return words(a); } }
+    return Array.isArray(a) ? a.map(words).join(", ") : words(a);
+  },
 };
+const FIELDS = {
+  sensor: ["Sensor"], satellite: ["Satellite"], timestamp_utc: ["Time", "time"], confidence: ["Confidence", "words"],
+  frp: ["Fire intensity (FRP)", "mw"], country: ["Country"], region: ["Region"],
+  start: ["First detected", "time"], end: ["Last detected", "time"], n_hotspots: ["Hotspots", "int"],
+  frp_max: ["Peak intensity (FRP)", "mw"], area_km2: ["Area", "km2"], slope_deg: ["Mean slope", "deg"], landcover: ["Land cover", "words"],
+  dist_road_km: ["Nearest road", "km"], dist_water_km: ["Nearest water", "km"], dist_fire_station_km: ["Nearest fire station", "km"],
+  dist_water_point_km: ["Nearest water point", "km"], gw_body: ["Groundwater body"], gw_vulnerability: ["Groundwater vulnerability", "words"],
+  gw_chemical_status: ["Groundwater status", "words"], risk_level: ["Risk", "words"], risk_score: ["Risk score", "score"],
+  risk_factors: ["Risk factors", "list"], evacuate_people: ["To evacuate", "people"], warn_people: ["To warn", "people"],
+  horizon_hours: ["Horizon", "hours"], wind_speed_kmh: ["Wind", "kmh"], wind_to_deg: ["Spreading", "windTo"], spread_km: ["Spread distance", "km"],
+  speed: ["Wind speed", "kmh"], direction: ["Wind", "windFrom"], temperature: ["Temperature", "celsius"], humidity: ["Humidity", "pct"], rain: ["Rain", "mm"],
+  name: ["Name"], kind: ["Type", "words"], highway: ["Road type", "words"],
+};
+const isEmpty = (v) => v === undefined || v === null || v === "" || v === "null" || v === "[]";
+export function popupHtml(title, props, fields) {
+  const rows = fields
+    .filter((f) => f !== "fire_id" && !isEmpty(props[f]))
+    .map((f) => {
+      const [label, kind = "text"] = FIELDS[f] ?? [words(f)];
+      return `<tr><th>${label}</th><td>${FORMAT[kind](props[f])}</td></tr>`;
+    }).join("");
+  const id = isEmpty(props.fire_id) ? "" : ` <span class="popup-id">#${props.fire_id}</span>`;
+  return `<strong>${title}${id}</strong>${rows ? `<table class="popup">${rows}</table>` : ""}`;
+}
+
+// Keep an open popup clear of the header and the timeline, which sit on top of the map
+export function keepInView(popup) {
+  const nudge = () => {
+    const el = popup.getElement();
+    if (!el || !map) return;
+    const r = el.getBoundingClientRect();
+    const top = (document.querySelector(".head")?.getBoundingClientRect().bottom ?? 0) + 8;
+    const bottom = (document.getElementById("timeline")?.getBoundingClientRect().top ?? innerHeight) - 8;
+    const left = 8, right = innerWidth - 8;
+    let dx = 0, dy = 0;
+    if (r.top < top) dy = r.top - top; else if (r.bottom > bottom) dy = Math.min(r.bottom - bottom, r.top - top);
+    if (r.left < left) dx = r.left - left; else if (r.right > right) dx = r.right - right;
+    if (dx || dy) map.panBy([dx, dy], { duration: 300 });
+  };
+  // Wait for a zoom in progress (e.g. isolating a fire) to finish
+  if (map.isMoving()) map.once("moveend", nudge); else requestAnimationFrame(nudge);
+  return popup;
+}
 
 function enablePopup(layer, mapLayerIds) {
   const targets = mapLayerIds.filter((id) => !id.endsWith("-glow"));
@@ -340,13 +410,9 @@ function enablePopup(layer, mapLayerIds) {
     map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
     map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
     map.on("click", id, (e) => {
-      const props = e.features[0].properties;
-      const rows = layer.popup
-        .filter((field) => props[field] !== undefined && props[field] !== null)
-        .map((field) => `<tr><th>${LABELS[field] ?? field}</th><td>${format(field, props[field])}</td></tr>`)
-        .join("");
-      new maplibregl.Popup({ offset: 10 }).setLngLat(e.lngLat)
-        .setHTML(`<strong>${layer.name}</strong><table class="popup">${rows}</table>`).addTo(map);
+      const popup = new maplibregl.Popup({ offset: 10, maxWidth: "300px" }).setLngLat(e.lngLat)
+        .setHTML(popupHtml(layer.name, e.features[0].properties, layer.popup)).addTo(map);
+      keepInView(popup);
     });
   });
 }

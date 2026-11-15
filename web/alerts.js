@@ -4,6 +4,7 @@
 // one ring per type around the fire, concentric so they never hide each other. No file → nothing is shown.
 import { map } from "./map.js";
 import { CONFIG } from "./config.js";
+import { keepInView, layers } from "./layers/loader.js";
 
 const H = 3600 * 1000;
 const RANK = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -29,7 +30,30 @@ const fmtTime = (t) => {
   return `${d.getUTCDate()} ${d.toLocaleString("en", { month: "short", timeZone: "UTC" })} · ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
 };
 
+// Readable risk colors on the dark panel (the data's own colors are map colors, too dark for text)
+const RISK_COLOR = { critical: "#ff5a52", high: "#ff9a3c", medium: "#f2c94c", low: "#8aa0b8" };
+
+// Where each fire is: the region most of its hotspots fall in ("Cataluña/Catalunya" → "Cataluña")
+const places = new Map();
+export function setFirePlaces(hotspots) {
+  const tally = new Map();
+  for (const f of hotspots) {
+    const { fire_id: id, region, country } = f.properties;
+    if (id === null || id === undefined || !(region || country)) continue;
+    let name = String(region || country).split("/")[0].trim();
+    if (name === name.toUpperCase()) name = name.toLowerCase().replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase()); // "COIMBRA" → "Coimbra"
+    if (!tally.has(id)) tally.set(id, new Map());
+    const t = tally.get(id);
+    t.set(name, (t.get(name) ?? 0) + 1);
+  }
+  places.clear();
+  for (const [id, t] of tally) places.set(Number(id), [...t].sort((a, b) => b[1] - a[1])[0][0]);
+  shownKey = null;
+}
+
 let alerts = [];
+let detailFire = null; // fire shown in the detail view (null = the list)
+let handlers = { select: () => {}, clear: () => {} }; // wired by app.js: isolate a fire / back to the whole area
 let shownKey = null;
 let lastArgs = null;
 const markers = new Map();
@@ -52,10 +76,19 @@ export async function loadAlerts() {
     alerts = [];
   }
   $("alerts").hidden = !alerts.length;
+  // The header folds the whole panel (filters + list), remembered per visitor
+  const fold = (folded) => {
+    $("alerts-body").hidden = folded;
+    $("alerts").classList.toggle("folded", folded);
+    $("alerts-toggle").setAttribute("aria-expanded", String(!folded));
+  };
+  let folded = false;
+  try { folded = localStorage.getItem("ulinautas-alerts") === "folded"; } catch { /* storage blocked */ }
+  fold(folded);
   $("alerts-toggle").onclick = () => {
-    const list = $("alerts-list");
-    list.hidden = !list.hidden;
-    $("alerts-toggle").setAttribute("aria-expanded", String(!list.hidden));
+    folded = !folded;
+    fold(folded);
+    try { localStorage.setItem("ulinautas-alerts", folded ? "folded" : "open"); } catch { /* fine */ }
   };
   renderFilters();
   return alerts;
@@ -87,15 +120,27 @@ function marker(a) {
   el.style.setProperty("--r", `${ty.ring}px`);
   el.innerHTML = `<button type="button" class="halo" aria-label="${ty.label} alert: ${a.message ?? ""}"></button>` +
     (a.kind === "population" ? `<span class="label">${a.message ?? `${fmtPop(a.pop_5km)} people within 5 km`}</span>` : "");
-  el.querySelector(".halo").onclick = () => new maplibregl.Popup({ offset: ty.ring + 6 }).setLngLat(a.center).setHTML(
+  el.querySelector(".halo").onclick = () => keepInView(new maplibregl.Popup({ offset: ty.ring + 6, maxWidth: "300px" }).setLngLat(a.center).setHTML(
     `<strong style="color:${ty.color}">${ty.label} · ${a.risk}</strong>` +
     `<p class="popup-msg">${a.message ?? ""}</p>` +
     `<table class="popup"><tr><th>Within 1 km</th><td>${fmtPop(a.pop_1km)} people</td></tr>` +
     `<tr><th>Within 5 km</th><td>${fmtPop(a.pop_5km)} people</td></tr>` +
     `<tr><th>Within 10 km</th><td>${fmtPop(a.pop_10km)} people</td></tr>` +
-    `<tr><th>Since</th><td>${fmtTime(a.t)}</td></tr></table>`).addTo(map);
+    `<tr><th>Since</th><td>${fmtTime(a.t)}</td></tr></table>`).addTo(map));
   return new maplibregl.Marker({ element: el }).setLngLat(a.center);
 }
+
+// app.js tells the panel what to do when a fire is picked here, and which fire the map has isolated
+export function setAlertHandlers(h) { handlers = { ...handlers, ...h }; }
+export function showAlertFire(id) {
+  detailFire = id === null || id === undefined ? null : Number(id);
+  shownKey = null;
+  if (lastArgs) renderAlerts(...lastArgs);
+}
+
+const typeIcons = (kinds) => kinds.map((k) => `<span class="type" style="--c:${TYPES[k].color}" title="${TYPES[k].label}">${icon(k)}</span>`).join("");
+const badge = (risk) => `<em class="badge" style="--risk:${RISK_COLOR[risk]}">${risk}</em>`;
+const num = (n) => Math.round(n).toLocaleString("en");
 
 // Alerts that have started at `hour`, belong to the current scope (inScope(alert) → boolean) and match the filters
 export function renderAlerts(hour, inScope) {
@@ -105,7 +150,7 @@ export function renderAlerts(hour, inScope) {
   const active = started
     .filter((a) => !selected.size || selected.has(a.kind))
     .sort((a, b) => RANK[a.risk] - RANK[b.risk] || (b.pop_5km ?? 0) - (a.pop_5km ?? 0));
-  const key = active.map((a) => a.key).join(",") + "|" + started.length;
+  const key = `${detailFire}|` + active.map((a) => a.key).join(",") + "|" + started.length;
   if (key === shownKey) return;
   shownKey = key;
 
@@ -114,7 +159,7 @@ export function renderAlerts(hour, inScope) {
   started.forEach((a) => (newCounts[a.kind] = (newCounts[a.kind] ?? 0) + 1));
   if (JSON.stringify(newCounts) !== JSON.stringify(counts)) { counts = newCounts; renderFilters(); }
 
-  // One row per fire: worst risk first, its types as icons, the most severe message, details on demand
+  // One row per fire, worst risk first
   const fires = new Map();
   for (const a of active) {
     if (!fires.has(a.fire_id)) fires.set(a.fire_id, []);
@@ -122,42 +167,80 @@ export function renderAlerts(hour, inScope) {
   }
   const groups = [...fires.values()];
   const top = groups.slice(0, MAX_SHOWN);
-  $("alerts-count").textContent = active.length;
-  if ($("mb-alerts")) $("mb-alerts").textContent = active.length;
-  $("alerts-title").textContent = active.length ? `${groups.length} fire${groups.length > 1 ? "s" : ""} · ` : "";
-  $("alerts-toggle").classList.toggle("has-critical", active.some((a) => a.risk === "critical"));
-  $("alerts-list").innerHTML = groups.length
-    ? top.map((g) => {
-      const lead = g[0];
-      const kinds = [...new Set(g.map((a) => a.kind))];
-      return `<li class="fire-row" data-fire="${lead.fire_id}">
-        <button type="button" class="fire-head" aria-expanded="false">
-          <span class="risk"><em style="color:${lead.color}">${lead.risk}</em>${kinds.map((k) => `<span class="type" style="--c:${TYPES[k].color}" title="${TYPES[k].label}">${icon(k)}</span>`).join("")}</span>
-          <span class="who">${lead.message ?? `${fmtPop(lead.pop_5km)} people within 5 km`}</span>
-          <span class="when">since ${fmtTime(Math.min(...g.map((a) => a.t)))}${g.length > 1 ? ` · ${g.length} alerts` : ""}</span>
-        </button>
-        <ul class="fire-details" hidden>${g.map((a) => `<li style="--c:${TYPES[a.kind].color}">${icon(a.kind)}<span><b>${TYPES[a.kind].label}</b> · ${a.risk} — ${a.message ?? ""}</span></li>`).join("")}</ul>
-      </li>`;
-    }).join("") +
-      (groups.length > MAX_SHOWN ? `<li class="none">+ ${groups.length - MAX_SHOWN} more fires · zoom in to see them</li>` : "")
-    : `<li class="none">No alert at this time</li>`;
-  $("alerts-list").querySelectorAll(".fire-row").forEach((row) => {
-    const g = fires.get(Number(row.dataset.fire)) ?? fires.get(row.dataset.fire);
-    const head = row.querySelector(".fire-head");
-    head.onclick = () => {
-      const details = row.querySelector(".fire-details");
-      details.hidden = !details.hidden;
-      head.setAttribute("aria-expanded", String(!details.hidden));
-      if (!details.hidden) map?.flyTo({ center: g[0].center, zoom: 10 });
-    };
-    // Hovering a row makes its rings stand out on the map
-    row.onmouseenter = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.add("hot"));
-    row.onmouseleave = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.remove("hot"));
-  });
+  const critical = groups.filter((g) => g[0].risk === "critical").length;
+  if ($("mb-alerts")) $("mb-alerts").textContent = groups.length;
+  $("alerts").classList.toggle("detail", detailFire !== null);
+
+  let onMapAlerts;
+  if (detailFire !== null) {
+    // ---------- Detail of one fire: the list waits behind the Back button ----------
+    const own = started.filter((a) => Number(a.fire_id) === detailFire)
+      .sort((a, b) => RANK[a.risk] - RANK[b.risk]);
+    const place = places.get(detailFire) ?? "Fire";
+    $("alerts-title").textContent = "1 fire selected";
+    $("alerts-count").hidden = true; // the risk is next to the fire's name
+    $("alerts-toggle").classList.remove("has-critical");
+    $("alerts-detail").innerHTML = renderDetail(detailFire, place, own);
+    $("alerts-back").onclick = () => handlers.clear();
+    onMapAlerts = own;
+  } else {
+    // ---------- List of fires ----------
+    $("alerts-title").textContent = groups.length ? `${groups.length} fire${groups.length > 1 ? "s" : ""}` : "none now";
+    $("alerts-count").hidden = false;
+    $("alerts-count").textContent = critical ? `${critical} critical` : groups.length;
+    $("alerts-count").title = `${active.length} alerts on ${groups.length} fires`;
+    $("alerts-toggle").classList.toggle("has-critical", critical > 0);
+    $("alerts-list").innerHTML = groups.length
+      ? top.map((g) => {
+        const lead = g[0];
+        const kinds = [...new Set(g.map((a) => a.kind))];
+        const people = g.find((a) => a.kind === "population");
+        const what = people ? `<b class="ppl">${num(people.pop_5km)}</b> people within 5 km` : lead.message ?? "";
+        return `<li><button type="button" class="fire-row" data-fire="${lead.fire_id}">
+            <span class="r1"><span class="place">${places.get(Number(lead.fire_id)) ?? "Fire"}</span><span class="fid">#${lead.fire_id}</span>${badge(lead.risk)}</span>
+            <span class="r2"><span class="what">${what}</span><span class="types">${typeIcons(kinds)}</span></span>
+            <svg class="go" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 2.5 8 6l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button></li>`;
+      }).join("") +
+        (groups.length > MAX_SHOWN ? `<li class="none">+ ${groups.length - MAX_SHOWN} more fires · zoom in to see them</li>` : "")
+      : `<li class="none">No alert at this time</li>`;
+    $("alerts-list").querySelectorAll(".fire-row").forEach((row) => {
+      const g = fires.get(Number(row.dataset.fire)) ?? fires.get(row.dataset.fire);
+      row.onclick = () => handlers.select(Number(row.dataset.fire), g[0].center);
+      // Hovering a row makes its rings stand out on the map
+      row.onmouseenter = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.add("hot"));
+      row.onmouseleave = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.remove("hot"));
+    });
+    onMapAlerts = top.flat();
+  }
 
   if (!map) return;
-  const shownAlerts = top.flat();
-  const onMap = new Set(shownAlerts.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.key));
+  const onMap = new Set(onMapAlerts.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.key));
   for (const [k, m] of markers) if (!onMap.has(k)) { m.remove(); markers.delete(k); }
-  for (const a of shownAlerts) if (onMap.has(a.key) && !markers.has(a.key)) markers.set(a.key, marker(a).addTo(map));
+  for (const a of onMapAlerts) if (onMap.has(a.key) && !markers.has(a.key)) markers.set(a.key, marker(a).addTo(map));
+}
+
+// One fire: who is exposed, what the alerts say, and the fire's own figures (only the computed ones)
+function renderDetail(id, place, own) {
+  const fire = layers.get("fires")?.data?.features?.find((f) => Number(f.properties.fire_id) === id)?.properties ?? {};
+  const pop = own.find((a) => a.kind === "population");
+  const has = (v) => v !== undefined && v !== null && v !== "";
+  const facts = [
+    ["To evacuate", fire.evacuate_people, (v) => `${num(v)} people`],
+    ["To warn", fire.warn_people, (v) => `${num(v)} people`],
+    ["Area", fire.area_km2, (v) => `${Number(v).toLocaleString("en", { maximumFractionDigits: 1 })} km²`],
+    ["Peak intensity", fire.frp_max, (v) => `${num(v)} MW`],
+    ["Hotspots", fire.n_hotspots, num],
+    ["First detected", fire.t_start, fmtTime],
+  ].filter(([, v]) => has(v));
+  const rings = pop ? [["1 km", pop.pop_1km], ["5 km", pop.pop_5km], ["10 km", pop.pop_10km]].filter(([, v]) => has(v)) : [];
+  return `<button type="button" class="back" id="alerts-back">
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.5 4 6l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      All fires</button>
+    <div class="d-head"><h3>${place} <span class="fid">#${id}</span></h3>${own.length ? badge(own[0].risk) : ""}</div>
+    ${rings.length ? `<div class="d-section"><h4>People nearby</h4><dl class="rings">${rings.map(([k, v]) => `<div><dt>within ${k}</dt><dd>${num(v)}</dd></div>`).join("")}</dl></div>` : ""}
+    <div class="d-section"><h4>Alerts</h4>${own.length
+      ? `<ul class="d-alerts">${own.map((a) => `<li style="--c:${TYPES[a.kind].color}">${icon(a.kind)}<div><b>${TYPES[a.kind].label}</b> ${badge(a.risk)}<p>${a.message ?? ""}</p><small>since ${fmtTime(a.t)}</small></div></li>`).join("")}</ul>`
+      : `<p class="none">No alert for this fire at this time.</p>`}</div>
+    ${facts.length ? `<div class="d-section"><h4>Fire</h4><dl class="facts">${facts.map(([k, v, f]) => `<div><dt>${k}</dt><dd>${f(v)}</dd></div>`).join("")}</dl></div>` : ""}`;
 }
