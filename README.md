@@ -14,6 +14,9 @@
 
 **[▶ Open the live demo](https://maj-e.github.io/basajaun/)** — it opens on the Sierra Bermeja fire (Málaga, Sep 2021), paused on its peak. Press play.
 
+<img src="docs/resources/qr-basajaun.webp" alt="QR code that opens the live demo" width="150"><br>
+<sub>Scan to open the demo on your phone</sub>
+
 </div>
 
 ---
@@ -48,7 +51,17 @@ NASA's FIRMS service publishes wildfire detections from two families of satellit
 
 **4 · Several places, one pipeline.** Three episodes ship ready — **Sierra Bermeja** (1,467 detections, every layer, real alerts), **Galicia, Aug 2025** (4,301 hotspots, 238 fires) and **Chile–Argentina, Feb 2026** — chosen from a selector. A new place is an entry in a JSON file and one command. A **live mode** refreshes the last 48 hours every 30 minutes.
 
-**5 · Predictive ignition risk (AI).** A calibrated logistic-regression model scores the probability that a fire *starts* in each cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. → [AI module](docs/wiki/ai-risk.md)
+**5 · Predictive ignition risk (AI).** Besides what the satellites already saw, the page shows **where a new fire is most likely to start**. A model trained on the episode's own history (weather, distance to roads, fire stations and water, population, slope, and the ignitions FIRMS actually detected) scores every cell of a 12 × 12 grid, day by day. It is a calibrated logistic regression, validated out of time, and each cell carries the factors behind its score and a recommended action. Cells are coloured by relative level — **critical, high, moderate, low** — and follow the clock together with the observed fire.
+
+<div align="center">
+
+![Sierra Bermeja replay with the ML ignition-risk grid under the observed hotspots, perimeters, roads and groundwater](docs/media/basajaum_predictions.gif)
+
+*Sierra Bermeja zoomed in: observed hotspots and the growing perimeter over the risk grid learned by the model.*
+
+</div>
+
+→ [AI module](docs/wiki/ai-risk.md)
 
 **6 · Built to be trusted.** The backend ships display-ready data and a manifest per episode; the front end is one generic loader, so adding a layer needs no front-end code. Every file is validated against a documented [data contract](docs/data_contract.md) in CI, an invalid refresh never reaches the published site, and the deploy is versioned so visitors never get a mix of old and new files. 200+ automated tests.
 
