@@ -1,0 +1,38 @@
+{
+  "updated_at": "2026-11-14T22:48:21Z",
+  "2025-08-15": {
+    "hotspots": 3553,
+    "total_frp": 408491.3,
+    "modis": 1725,
+    "viirs": 1828,
+    "no_data": false
+  },
+  "2025-08-16": {
+    "hotspots": 2584,
+    "total_frp": 320953.8,
+    "modis": 1007,
+    "viirs": 1577,
+    "no_data": false
+  },
+  "2025-08-17": {
+    "hotspots": 3301,
+    "total_frp": 264586.5,
+    "modis": 1457,
+    "viirs": 1844,
+    "no_data": false
+  },
+  "2025-08-18": {
+    "hotspots": 2008,
+    "total_frp": 206211.8,
+    "modis": 602,
+    "viirs": 1406,
+    "no_data": false
+  },
+  "2025-08-19": {
+    "hotspots": 1580,
+    "total_frp": 95289.9,
+    "modis": 478,
+    "viirs": 1102,
+    "no_data": false
+  }
+}

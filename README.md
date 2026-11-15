@@ -121,7 +121,7 @@ ulinautas/
     ├── state.js                    # shared state (date, filters, playback hour, layers)
     ├── app.js                      # entry point: loads data, wires modules, controls and presenter keys
     ├── timeline.js                 # strip chart (fires per day) + playback engine
-    ├── story.js                    # spark and peak, computed from the data, and their callouts
+    ├── story.js                    # peak day, computed from the data
     ├── readouts.js                 # header figures: active fires, strongest fire
     ├── layers/
     │   └── loader.js               # generic loader: manifest → layers, temporal fading, rings, legend, popups

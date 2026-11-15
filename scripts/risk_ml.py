@@ -35,10 +35,10 @@ RISK_COLORS = {
 }
 
 MUNICIPAL_ACTIONS = {
-    "critical": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas.",
-    "high": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas.",
-    "moderate": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación.",
-    "low": "Vigilancia ordinaria de red de alerta temprana.",
+    "critical": "Close forest access roads, keep an aerial watch and pre-position crews.",
+    "high": "Municipal yellow alert, patrol the wildland-urban interface and ban burning.",
+    "moderate": "Keep watching the weather and check hydrants and evacuation routes.",
+    "low": "Routine watch on the early-warning network.",
 }
 
 DEFAULT_FEATURE_NAMES = [
@@ -54,17 +54,17 @@ DEFAULT_FEATURE_NAMES = [
     "slope_deg",
 ]
 
-FEATURE_LABELS_ES = {
-    "temp_max": "Temperatura máx.",
-    "humidity_min": "Humedad mín.",
-    "wind_max": "Racha viento",
-    "rain_sum": "Déficit lluvia",
-    "fwi_30_30_30": "Índice 30-30-30",
-    "dist_road_km": "Proximidad vía",
-    "dist_fire_station_km": "Dist. parque bomberos",
-    "dist_water_km": "Dist. punto agua",
-    "pop_density": "Interfaz urbana",
-    "slope_deg": "Pendiente ladera",
+FEATURE_LABELS = {
+    "temp_max": "Max temperature",
+    "humidity_min": "Min humidity",
+    "wind_max": "Wind gust",
+    "rain_sum": "Rain deficit",
+    "fwi_30_30_30": "30-30-30 index",
+    "dist_road_km": "Near a road",
+    "dist_fire_station_km": "Distance to fire station",
+    "dist_water_km": "Distance to water",
+    "pop_density": "Urban interface",
+    "slope_deg": "Slope",
 }
 
 
@@ -494,13 +494,19 @@ def compute_local_contributions(
         top_items = [
             {
                 "feature": fname,
-                "label": FEATURE_LABELS_ES.get(fname, fname),
+                "label": FEATURE_LABELS.get(fname, fname),
                 "share_pct": round((val / total_pos) * 100.0, 1),
             }
             for fname, val in pos_pairs[:top_k]
         ]
         results.append(top_items)
     return results
+
+
+def day_hours(day: str) -> float:
+    """UTC midnight of YYYY-MM-DD, in hours since 1970. Same clock as weather.py."""
+    dt = datetime.strptime(day[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    return (dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds() / 3600.0
 
 
 def assign_relative_tiers(probs: np.ndarray) -> list[str]:
@@ -539,19 +545,19 @@ def classify_risk_tier(prob: float, base_rate: float = 0.05) -> str:
 
 def format_drivers(row: dict, top_drivers: list[dict] | None = None) -> str:
     parts = [
-        f"T.máx {row['temp_max']:.1f}°C",
-        f"Hum.mín {row['humidity_min']:.0f}%",
-        f"Viento {row['wind_max']:.0f} km/h",
+        f"Max temp {row['temp_max']:.1f}°C",
+        f"Min humidity {row['humidity_min']:.0f}%",
+        f"Wind {row['wind_max']:.0f} km/h",
     ]
     if row.get("slope_deg", 0.0) >= 8.0:
-        parts.append(f"Pendiente {row['slope_deg']:.1f}°")
+        parts.append(f"Slope {row['slope_deg']:.1f}°")
     if row.get("dist_road_km", 99.0) <= 2.5:
-        parts.append(f"Carretera a {row['dist_road_km']:.1f} km")
+        parts.append(f"Road {row['dist_road_km']:.1f} km away")
     elif row.get("pop_density", 0.0) >= 20.0:
-        parts.append(f"Población {row['pop_density']:.0f} hab/km²")
+        parts.append(f"Population {row['pop_density']:.0f} people/km²")
     if top_drivers:
         lead = top_drivers[0]
-        parts.append(f"Factor líder: {lead['label']} ({lead['share_pct']:.0f}%)")
+        parts.append(f"Leading factor: {lead['label']} ({lead['share_pct']:.0f}%)")
     return " · ".join(parts)
 
 
@@ -606,37 +612,41 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
     metrics["calibration"] = {"method": "platt_scaling", "slope": round(cal_a, 4), "intercept": round(cal_b, 4)}
 
     latest_day = days[-1]
-    latest_records = [r for r in records if r["day"] == latest_day]
-    X_latest = np.array([[r[f] for f in feature_names] for r in latest_records], dtype=float)
+    # One score per cell and day. The fit stays the single full-episode model.
+    X_days = np.array([[r[f] for f in feature_names] for r in records], dtype=float)
 
     if len(np.unique(y_all)) > 1:
         params_f, mean_f, std_f = fit_logistic_l2(X_all, y_all)
-        raw_latest = predict_proba(X_latest, params_f, mean_f, std_f)
-        latest_probs = apply_platt_calibrator(raw_latest, cal_a, cal_b)
+        raw_days = predict_proba(X_days, params_f, mean_f, std_f)
+        day_probs = apply_platt_calibrator(raw_days, cal_a, cal_b)
         weights = np.abs(params_f[:-1])
         total_w = float(weights.sum()) or 1.0
         importances = {fname: round(float(w / total_w), 4) for fname, w in zip(feature_names, weights)}
         metrics["feature_importances"] = dict(sorted(importances.items(), key=lambda kv: kv[1], reverse=True))
-        local_drivers = compute_local_contributions(X_latest, params_f, mean_f, std_f, feature_names)
+        local_drivers = compute_local_contributions(X_days, params_f, mean_f, std_f, feature_names)
     else:
-        latest_probs = np.full(len(latest_records), float(y_all.mean()))
+        day_probs = np.full(len(records), float(y_all.mean()))
         metrics["feature_importances"] = {}
-        local_drivers = [[] for _ in latest_records]
+        local_drivers = [[] for _ in records]
 
     base_rate = float(y_all.mean())
     features = []
     tier_counts = {"critical": 0, "high": 0, "moderate": 0, "low": 0}
-    relative_tiers = assign_relative_tiers(latest_probs)
-    for rec, prob, cell_top_drivers, tier in zip(latest_records, latest_probs, local_drivers, relative_tiers):
+    # Relative tiers over the whole episode (every cell of every day ranked together): the 12.5 / 25 / 34.7 % shares hold
+    # for the episode, so a dangerous day carries more critical cells than a calm one. tier_counts = the latest day.
+    relative_tiers = assign_relative_tiers(day_probs)
+    for rec, prob, cell_top_drivers, tier in zip(records, day_probs, local_drivers, relative_tiers):
         p_val = round(float(np.clip(prob, 0.0, 1.0)), 4)
-        tier_counts[tier] += 1
+        if rec["day"] == latest_day:
+            tier_counts[tier] += 1
         cell = rec["cell"]
         features.append({
             "type": "Feature",
             "geometry": mapping(cell["geometry"]),
             "properties": {
                 "cell_id": cell["cell_id"],
-                "reference_date": latest_day,
+                "reference_date": rec["day"],
+                "t": day_hours(rec["day"]),
                 "ignition_prob": p_val,
                 "risk_pct": round(p_val * 100.0, 1),
                 "risk_level": tier,

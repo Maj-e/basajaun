@@ -1,8 +1,10 @@
 {
-  "updated_at": "2026-11-14T17:47:52Z",
+  "updated_at": "2026-11-14T22:59:55Z",
   "alerts": [
     {
       "fire_id": 12,
+      "type": "population",
+      "message": "\u224823,400 people within 5 km \u00b7 wind toward them",
       "risk": "critical",
       "color": "#d7301f",
       "since": "2026-02-12T07:42:00Z",
@@ -11,12 +13,14 @@
       "pop_10km": 51000,
       "wind_toward_population": true,
       "center": [
-        -71.0,
-        -35.5
+        -5.1,
+        36.6
       ]
     },
     {
       "fire_id": 15,
+      "type": "population",
+      "message": "\u22482,400 people within 5 km",
       "risk": "high",
       "color": "#fc8d59",
       "since": "2026-02-13T14:15:00Z",
@@ -25,9 +29,62 @@
       "pop_10km": 9500,
       "wind_toward_population": false,
       "center": [
-        -70.75,
-        -35.75
+        -4.85,
+        36.35
       ]
+    },
+    {
+      "fire_id": 12,
+      "type": "smoke",
+      "message": "Smoke toward \u224818,000 people (wind 28 km/h from SW)",
+      "risk": "high",
+      "color": "#fc8d59",
+      "since": "2026-02-12T07:42:00Z",
+      "pop_1km": 1200,
+      "pop_5km": 23400,
+      "pop_10km": 51000,
+      "wind_toward_population": true,
+      "center": [
+        -5.1,
+        36.6
+      ],
+      "smoke_people": 18000,
+      "wind_kmh": 28.0
+    },
+    {
+      "fire_id": 12,
+      "type": "wind",
+      "message": "Strong wind (34 km/h from SW) feeding the fire",
+      "risk": "high",
+      "color": "#fc8d59",
+      "since": "2026-02-12T07:42:00Z",
+      "pop_1km": 1200,
+      "pop_5km": 23400,
+      "pop_10km": 51000,
+      "wind_toward_population": true,
+      "center": [
+        -5.1,
+        36.6
+      ],
+      "wind_kmh": 34.0
+    },
+    {
+      "fire_id": 12,
+      "type": "contamination",
+      "message": "Ash leachate risk: high-vulnerability aquifer under the fire",
+      "risk": "high",
+      "color": "#fc8d59",
+      "since": "2026-02-12T07:42:00Z",
+      "pop_1km": 1200,
+      "pop_5km": 23400,
+      "pop_10km": 51000,
+      "wind_toward_population": true,
+      "center": [
+        -5.1,
+        36.6
+      ],
+      "gw_body": "Sample karst aquifer",
+      "gw_vulnerability": "high"
     }
   ]
 }

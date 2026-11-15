@@ -8,6 +8,7 @@ contract checks.
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -35,6 +36,7 @@ CELL_KEYS = (
     "stroke",
     "color",
     "opacity",
+    "t",
 )
 
 METRIC_KEYS = ("val_roc_auc", "val_pr_auc", "feature_importances", "tier_counts")
@@ -126,7 +128,17 @@ def test_episode_produces_contract_risk_layer(episode_id: str, tmp_path: Path):
         assert 0.0 <= metrics["val_roc_auc"] <= 1.0
         assert 0.0 <= metrics["val_pr_auc"] <= 1.0
 
-    assert len(fc["features"]) == 144
+    by_day: dict[str, set[str]] = {}
+    for feature in fc["features"]:
+        day = feature["properties"]["reference_date"]
+        by_day.setdefault(day, set()).add(feature["properties"]["cell_id"])
+    assert by_day
+    for day, cells in by_day.items():
+        assert cells == {f"SEC-{i:03d}" for i in range(1, 145)}
+        midnight = datetime.strptime(day, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        stamped = [f for f in fc["features"] if f["properties"]["reference_date"] == day]
+        assert {f["properties"]["t"] for f in stamped} == {midnight.timestamp() / 3600.0}
+
     for feature in fc["features"]:
         assert feature["geometry"]["type"] == "Polygon"
         props = feature["properties"]
@@ -145,6 +157,8 @@ def test_episode_produces_contract_risk_layer(episode_id: str, tmp_path: Path):
 
     registered = {layer["id"]: layer for layer in make_manifest.LAYERS}
     assert registered["ignition_risk"]["active"] is True
+    assert registered["ignition_risk"]["temporal"] is True
+    assert registered["ignition_risk"]["hold_hours"] == 24
     assert registered["ignition_risk"]["type"] == "fill"
     assert len(registered["ignition_risk"]["legend"]) == 4
 
@@ -152,6 +166,8 @@ def test_episode_produces_contract_risk_layer(episode_id: str, tmp_path: Path):
     listed = {layer["id"]: layer for layer in manifest["layers"]}
     layer = listed["ignition_risk"]
     assert layer["active"] is True
+    assert layer["temporal"] is True
+    assert layer["hold_hours"] == 24
     assert layer["type"] == "fill"
     assert layer["file"] == f"{subdir}/ignition_risk.geojson"
     assert len(layer["legend"]) == 4

@@ -4,8 +4,65 @@
 // Temporal layers (`temporal: true`) show each feature from its time `t` and fade it out over CONFIG.trailHours.
 import { map } from "../map.js";
 import { CONFIG } from "../config.js";
+import { createParticlesLayer } from "./particles.js";
 
 const dataUrl = (file) => CONFIG.dataRoot + file;
+
+// ---------- Flowing arrows: each arrow slides forward along its direction, then starts again ----------
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let currentHour = null, flowStarted = false;
+const nowOnly = (hour, max) => ["case", ["all", ["<=", ["get", "t"], hour], [">", ["get", "t"], hour - 1]], max, 0];
+
+function startArrowFlow() {
+  if (flowStarted) return;
+  flowStarted = true;
+  const cache = new Map(); // layer id → { hour, features of that hour }
+  let lastFlow = 0;
+  const tick = (now) => {
+    if (currentHour !== null && now - lastFlow >= 40) {
+      lastFlow = now;
+      const phase = reduceMotion ? 0.5 : (now / 1400) % 1;
+      for (const entry of layers.values()) {
+        const { layer, data } = entry;
+        if (layer.type !== "arrows" || map.getLayoutProperty(layer.id, "visibility") === "none") continue;
+        const h = Math.floor(currentHour);
+        let c = cache.get(layer.id);
+        if (!c || c.hour !== h) {
+          c = { hour: h, features: data.features.filter((f) => f.properties.t <= currentHour && f.properties.t > currentHour - 1) };
+          cache.set(layer.id, c);
+        }
+        // Two arrows per point, half a cycle apart, so the flow never looks empty
+        const moved = [];
+        for (const f of c.features) {
+          const rad = ((f.properties.rotation ?? 0) - map.getBearing()) * Math.PI / 180;
+          for (const p of reduceMotion ? [0.5] : [phase, (phase + 0.5) % 1]) {
+            const pt = map.project(f.geometry.coordinates);
+            const d = 18 * p - 9; // pixels along the wind, from -9 to +9
+            const ll = map.unproject([pt.x + Math.sin(rad) * d, pt.y - Math.cos(rad) * d]);
+            moved.push({ type: "Feature", geometry: { type: "Point", coordinates: [ll.lng, ll.lat] },
+              properties: { ...f.properties, op: reduceMotion ? 0.85 : 0.9 * Math.sin(Math.PI * p) } });
+          }
+        }
+        map.getSource(`${layer.id}-flow`)?.setData({ type: "FeatureCollection", features: moved });
+      }
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+// Arrow icon drawn once on a canvas (pointing up = north); SDF so its color comes from the data
+function addArrowImage() {
+  if (map.hasImage("wind-arrow")) return;
+  const size = 64, c = document.createElement("canvas");
+  c.width = c.height = size;
+  const g = c.getContext("2d");
+  g.fillStyle = "#ffffff";
+  g.beginPath();
+  g.moveTo(32, 6); g.lineTo(48, 28); g.lineTo(37, 26); g.lineTo(37, 58); g.lineTo(27, 58); g.lineTo(27, 26); g.lineTo(16, 28);
+  g.closePath(); g.fill();
+  map.addImage("wind-arrow", g.getImageData(0, 0, size, size), { sdf: true, pixelRatio: 2 });
+}
 const color = ["coalesce", ["get", "color"], "#888888"];
 const isRing = ["==", ["coalesce", ["get", "ring"], false], true];
 const byZoom = (value) => ["interpolate", ["linear"], ["zoom"], 6, ["*", value, 0.35], 9, ["*", value, 0.65], 12, value];
@@ -54,6 +111,39 @@ const BUILDERS = {
     return [layer.id, `${layer.id}-outline`];
   },
 
+  // Wind: arrows of the current hour, pointing where the wind blows (rotation), sized by speed (size).
+  // They "flow": a small dedicated source whose points slide forward along the wind and start again.
+  arrows: (layer) => {
+    addArrowImage();
+    const flowId = `${layer.id}-flow`;
+    map.addSource(flowId, { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+    map.addLayer({ id: layer.id, type: "symbol", source: flowId,
+      layout: {
+        "icon-image": "wind-arrow",
+        "icon-rotate": ["coalesce", ["get", "rotation"], 0],
+        "icon-rotation-alignment": "map",
+        "icon-size": ["interpolate", ["linear"], ["zoom"], 6, ["*", ["coalesce", ["get", "size"], 1], 0.45], 11, ["*", ["coalesce", ["get", "size"], 1], 0.8]],
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
+      },
+      paint: { "icon-color": color, "icon-opacity": ["coalesce", ["get", "op"], 0.85] } });
+    startArrowFlow();
+    return [layer.id];
+  },
+
+  // Rain (front-side style, see CONFIG.rainLayer): blue patches where it rains, bigger and darker with mm/h
+  rain: (layer) => {
+    const mm = ["coalesce", ["get", "rain"], 0];
+    map.addLayer({ id: layer.id, type: "circle", source: layer.id, filter: [">", mm, 0], paint: {
+      "circle-color": ["interpolate", ["linear"], mm, 0.1, "#9ecae1", 2, "#4292c6", 8, "#08519c"],
+      "circle-radius": ["interpolate", ["linear"], ["zoom"],
+        6, ["interpolate", ["linear"], mm, 0.1, 6, 10, 18],
+        11, ["interpolate", ["linear"], mm, 0.1, 18, 10, 48]],
+      "circle-blur": 0.7,
+      "circle-opacity": 0.75 } });
+    return [layer.id];
+  },
+
   line: (layer) => {
     map.addLayer({ id: layer.id, type: "line", source: layer.id, paint: {
       "line-color": color, "line-width": ["coalesce", ["get", "width"], 1.5] } });
@@ -75,37 +165,121 @@ export async function loadData() {
   const response = await fetch(CONFIG.manifest);
   if (!response.ok) throw new Error(`Manifest unavailable (${response.status})`);
   manifest = await response.json();
-  // Every layer file is requested at the same time, then kept in manifest order
+  // Layers shown at start are downloaded now, all at once; the others only when their box is ticked
   const active = manifest.layers.filter((l) => l.active);
+  active.forEach((l) => { if (l.id === CONFIG.rainLayer.id) l.name = CONFIG.rainLayer.name; });
   const files = await Promise.all(active.map(async (layer) => {
-    if (layer.type === "image") return { layer, data: null };
-    try {
-      const r = await fetch(dataUrl(layer.file));
-      if (!r.ok) throw new Error(r.status);
-      return { layer, data: await r.json() };
-    } catch {
-      console.warn(`Layer file unavailable: ${layer.file}`);
-      return null;
-    }
+    if (!isDefaultVisible(layer)) return { layer, data: null, lazy: true };
+    const data = await fetchLayer(layer);
+    return data === undefined ? null : { layer, data };
   }));
-  files.filter(Boolean).forEach(({ layer, data }) => layers.set(layer.id, { layer, data, mapLayerIds: [] }));
+  files.filter(Boolean).forEach(({ layer, data, lazy }) => layers.set(layer.id, { layer, data, lazy: !!lazy, mapLayerIds: [] }));
   return manifest;
+}
+
+// null for an image (MapLibre fetches it), undefined when the file is missing.
+// One download per file: wind, weather and rain share weather.geojson.
+const requests = new Map();
+function fetchLayer(layer, priority = "auto") {
+  if (layer.type === "image") return Promise.resolve(null);
+  if (!requests.has(layer.file)) {
+    requests.set(layer.file, fetch(dataUrl(layer.file), { priority })
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .catch(() => { console.warn(`Layer file unavailable: ${layer.file}`); return undefined; }));
+  }
+  return requests.get(layer.file);
 }
 
 // Add every loaded layer to the map.
 export function addToMap() {
   if (!map) return;
-  for (const entry of layers.values()) {
-    const { layer, data } = entry;
-    const build = BUILDERS[layer.type];
-    if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); continue; }
-    map.addSource(layer.id, layer.type === "image"
-      ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
-      : { type: "geojson", data });
-    entry.mapLayerIds = build(layer);
-    if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
-    if (!isDefaultVisible(layer)) setLayerVisible(layer.id, false);
+  for (const entry of layers.values()) if (!entry.lazy) addEntry(entry);
+}
+
+function addEntry(entry) {
+  const { layer, data } = entry;
+  // Particles: own canvas above the map (no MapLibre source / layer), driven by setHour / setLayerVisible
+  if (layer.type === "particles") {
+    entry.particles = createParticlesLayer(map, layer, data);
+    entry.mapLayerIds = [];
+    if (currentHour !== null) entry.particles.setHour(currentHour);
+    entry.particles.setVisible(entry.visible ?? isDefaultVisible(layer));
+    return true;
   }
+  const build = BUILDERS[layer.id === CONFIG.rainLayer.id ? "rain" : layer.type];
+  if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); return false; }
+  map.addSource(layer.id, layer.type === "image"
+    ? { type: "image", url: dataUrl(layer.file), coordinates: layer.corners }
+    // Current-hour layers (weather / rain) only hold the features of the hour shown
+    : { type: "geojson", data: isNowOnly(entry) ? hourSubset(entry, currentHour) : data });
+  entry.mapLayerIds = build(layer);
+  placeInOrder(entry);
+  if (layer.popup?.length) enablePopup(layer, entry.mapLayerIds);
+  return true;
+}
+
+// Weather-like layers: one value per point and per hour, shown for the current hour only (no trail).
+// hold_hours (default 1) widens that window. Daily ignition risk uses 24, so one midnight `t` lasts the whole day.
+const isNowOnly = (entry) => entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id) && !["arrows", "particles"].includes(entry.layer.type);
+const holdHours = (entry) => {
+  const n = Number(entry.layer.hold_hours);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+};
+// Start of the block that contains `hour`. A 1-hour layer changes every hour; a 24-hour layer changes at midnight UTC.
+const windowStart = (hour, hold) => {
+  const h = Math.floor(hour);
+  return hold === 1 ? h : Math.floor(h / hold) * hold;
+};
+function hourSubset(entry, hour) {
+  const h = hour ?? -Infinity;
+  const hold = holdHours(entry);
+  return { type: "FeatureCollection", features: (entry.data?.features ?? []).filter((f) => f.properties.t <= h && f.properties.t > h - hold) };
+}
+
+// Put a layer's map layers at their place in CONFIG.layerOrder (below the first loaded layer ranked higher)
+function placeInOrder(entry) {
+  const order = CONFIG.layerOrder;
+  const rank = (id) => { const i = order.indexOf(id); return i === -1 ? order.indexOf("hotspots") - 0.5 : i; };
+  const mine = rank(entry.layer.id);
+  const above = [...layers.values()]
+    .filter((e) => e !== entry && e.mapLayerIds.length && rank(e.layer.id) > mine)
+    .sort((a, b) => rank(a.layer.id) - rank(b.layer.id))[0];
+  if (!above) return;
+  const beforeId = map.getStyle().layers.find((l) => above.mapLayerIds.includes(l.id))?.id;
+  if (beforeId) entry.mapLayerIds.forEach((id) => map.moveLayer(id, beforeId));
+}
+
+// Tick a box: download and build the layer the first time, then show or hide it
+async function toggleLayer(id, visible) {
+  const entry = layers.get(id);
+  if (!entry || !map) return;
+  const label = document.querySelector(`[data-layer="${id}"]`)?.parentElement;
+  if (visible && entry.lazy) {
+    label?.classList.add("loading");
+    // Usually already downloaded in the background (prefetchLayers), so only the drawing is left
+    const data = await (entry.prefetch ?? fetchLayer(entry.layer));
+    if (data === undefined) { label?.classList.remove("loading"); return; }
+    entry.data = data;
+    entry.lazy = false;
+    if (!addEntry(entry)) { label?.classList.remove("loading"); return; }
+    if (currentHour !== null) setHour(currentHour);
+    map.once("idle", () => label?.classList.remove("loading"));
+  }
+  if (!entry.lazy) setLayerVisible(id, visible);
+}
+
+// Once the page is shown and idle, download the hidden layers quietly so ticking a box is near-instant
+// One file at a time and at low priority, so it never competes with the map tiles or a box the user ticks.
+export function prefetchLayers() {
+  const start = async () => {
+    for (const entry of layers.values()) {
+      if (!entry.lazy || entry.prefetch || entry.layer.type === "image") continue;
+      entry.prefetch = fetchLayer(entry.layer, "low");
+      await entry.prefetch;
+    }
+  };
+  if ("requestIdleCallback" in window) requestIdleCallback(start, { timeout: 3000 });
+  else setTimeout(start, 1500);
 }
 
 export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
@@ -122,9 +296,24 @@ export function setHour(hour) {
   const fade = ["case", visible, ["interpolate", ["linear"], age, 0, 0.8, trail, 0.25], 0];
   const heatWeight = ["case", visible, ["interpolate", ["linear"], age, 0, 1, trail, 0.2], 0];
   const glowFade = ["case", visible, ["interpolate", ["linear"], age, 0, 0.8, 6, 0.3, trail, 0.05], 0];
+  currentHour = hour;
+  const nowOnlyExpr = nowOnly(hour, 0.85);
   for (const entry of layers.values()) {
     const { mapLayerIds } = entry;
+    if (entry.particles) { entry.particles.setHour(hour); continue; }
     if (!followsTime(entry)) continue;
+    if (entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id)) {
+      // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
+      // Wind arrows are moved by the flow loop.
+      if (isNowOnly(entry) && mapLayerIds.length) {
+        const start = windowStart(hour, holdHours(entry));
+        if (entry.shownHour !== start) {
+          entry.shownHour = start;
+          map.getSource(entry.layer.id)?.setData(hourSubset(entry, hour));
+        }
+      }
+      continue;
+    }
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
       if (id.endsWith("-heat")) map.setPaintProperty(id, "heatmap-weight", heatWeight);
@@ -140,7 +329,10 @@ export function setHour(hour) {
 export function setLayerVisible(id, visible) {
   const entry = layers.get(id);
   if (!map || !entry) return;
+  entry.visible = visible;
+  entry.particles?.setVisible(visible);
   entry.mapLayerIds.forEach((l) => map.setLayoutProperty(l, "visibility", visible ? "visible" : "none"));
+  if (legendEl) renderLegend(legendEl);
 }
 
 // Keep one fire's hotspots. `null` restores every hotspot.
@@ -160,12 +352,84 @@ export function setHotspotFire(fireId) {
 }
 
 // Human labels for known fields; unknown fields show their name.
-const LABELS = { sensor: "Sensor", satellite: "Satellite", timestamp_utc: "Time (UTC)", confidence: "Confidence", frp: "FRP (fire intensity)" };
-const format = (field, v) => {
-  if (field === "frp") return `${Math.round(Number(v)).toLocaleString("en")} MW`;
-  if (field === "timestamp_utc") return String(v).replace("T", " ").replace(":00Z", "");
-  return v;
+// Popups: human labels and units instead of raw field names; empty fields are skipped.
+const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+const compass = (deg) => COMPASS[Math.round((((Number(deg) % 360) + 360) % 360) / 45) % 8];
+const words = (v) => { const t = String(v).replace(/_/g, " "); return t.charAt(0).toUpperCase() + t.slice(1); };
+const num = (v, d = 1) => Number(v).toLocaleString("en", { maximumFractionDigits: d });
+const FORMAT = {
+  text: (v) => v,
+  words,
+  time: (v) => {
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return v;
+    return `${d.getUTCDate()} ${d.toLocaleString("en", { month: "short", timeZone: "UTC" })} · ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
+  },
+  mw: (v) => `${num(v, 0)} MW`,
+  km: (v) => `${num(v)} km`,
+  km2: (v) => `${num(v)} km²`,
+  deg: (v) => `${num(v, 0)}°`,
+  int: (v) => num(v, 0),
+  people: (v) => `${num(v, 0)} people`,
+  score: (v) => `${num(v, 0)} / 100`,
+  hours: (v) => `${num(v, 0)} h`,
+  kmh: (v) => `${num(v, 0)} km/h`,
+  pct: (v) => `${num(v, 0)} %`,
+  mm: (v) => `${num(v)} mm`,
+  celsius: (v) => `${num(v)} °C`,
+  windFrom: (v) => `from ${compass(v)} (${num(v, 0)}°)`,
+  windTo: (v) => `towards ${compass(v)} (${num(v, 0)}°)`,
+  list: (v) => {
+    let a = v;
+    if (typeof a === "string") { try { a = JSON.parse(a); } catch { return words(a); } }
+    return Array.isArray(a) ? a.map(words).join(", ") : words(a);
+  },
 };
+const FIELDS = {
+  sensor: ["Sensor"], satellite: ["Satellite"], timestamp_utc: ["Time", "time"], confidence: ["Confidence", "words"],
+  frp: ["Fire intensity (FRP)", "mw"], country: ["Country"], region: ["Region"],
+  start: ["First detected", "time"], end: ["Last detected", "time"], n_hotspots: ["Hotspots", "int"],
+  frp_max: ["Peak intensity (FRP)", "mw"], area_km2: ["Area", "km2"], slope_deg: ["Mean slope", "deg"], landcover: ["Land cover", "words"],
+  dist_road_km: ["Nearest road", "km"], dist_water_km: ["Nearest water", "km"], dist_fire_station_km: ["Nearest fire station", "km"],
+  dist_water_point_km: ["Nearest water point", "km"], gw_body: ["Groundwater body"], gw_vulnerability: ["Groundwater vulnerability", "words"],
+  gw_chemical_status: ["Groundwater status", "words"], risk_level: ["Risk", "words"], risk_score: ["Risk score", "score"],
+  cell_id: ["Cell"], reference_date: ["Date"], risk_pct: ["Risk %"],
+  drivers: ["Drivers"], recommended_action: ["Recommended action"],
+  risk_factors: ["Risk factors", "list"], evacuate_people: ["To evacuate", "people"], warn_people: ["To warn", "people"],
+  horizon_hours: ["Horizon", "hours"], wind_speed_kmh: ["Wind", "kmh"], wind_to_deg: ["Spreading", "windTo"], spread_km: ["Spread distance", "km"],
+  speed: ["Wind speed", "kmh"], direction: ["Wind", "windFrom"], temperature: ["Temperature", "celsius"], humidity: ["Humidity", "pct"], rain: ["Rain", "mm"],
+  name: ["Name"], kind: ["Type", "words"], highway: ["Road type", "words"],
+};
+const isEmpty = (v) => v === undefined || v === null || v === "" || v === "null" || v === "[]";
+export function popupHtml(title, props, fields) {
+  const rows = fields
+    .filter((f) => f !== "fire_id" && !isEmpty(props[f]))
+    .map((f) => {
+      const [label, kind = "text"] = FIELDS[f] ?? [words(f)];
+      return `<tr><th>${label}</th><td>${FORMAT[kind](props[f])}</td></tr>`;
+    }).join("");
+  const id = isEmpty(props.fire_id) ? "" : ` <span class="popup-id">#${props.fire_id}</span>`;
+  return `<strong>${title}${id}</strong>${rows ? `<table class="popup">${rows}</table>` : ""}`;
+}
+
+// Keep an open popup clear of the header and the timeline, which sit on top of the map
+export function keepInView(popup) {
+  const nudge = () => {
+    const el = popup.getElement();
+    if (!el || !map) return;
+    const r = el.getBoundingClientRect();
+    const top = (document.querySelector(".head")?.getBoundingClientRect().bottom ?? 0) + 8;
+    const bottom = (document.getElementById("timeline")?.getBoundingClientRect().top ?? innerHeight) - 8;
+    const left = 8, right = innerWidth - 8;
+    let dx = 0, dy = 0;
+    if (r.top < top) dy = r.top - top; else if (r.bottom > bottom) dy = Math.min(r.bottom - bottom, r.top - top);
+    if (r.left < left) dx = r.left - left; else if (r.right > right) dx = r.right - right;
+    if (dx || dy) map.panBy([dx, dy], { duration: 300 });
+  };
+  // Wait for a zoom in progress (e.g. isolating a fire) to finish
+  if (map.isMoving()) map.once("moveend", nudge); else requestAnimationFrame(nudge);
+  return popup;
+}
 
 function enablePopup(layer, mapLayerIds) {
   const targets = mapLayerIds.filter((id) => !id.endsWith("-glow"));
@@ -173,30 +437,36 @@ function enablePopup(layer, mapLayerIds) {
     map.on("mouseenter", id, () => (map.getCanvas().style.cursor = "pointer"));
     map.on("mouseleave", id, () => (map.getCanvas().style.cursor = ""));
     map.on("click", id, (e) => {
-      const props = e.features[0].properties;
-      const rows = layer.popup
-        .filter((field) => props[field] !== undefined && props[field] !== null)
-        .map((field) => `<tr><th>${LABELS[field] ?? field}</th><td>${format(field, props[field])}</td></tr>`)
-        .join("");
-      new maplibregl.Popup({ offset: 10 }).setLngLat(e.lngLat)
-        .setHTML(`<strong>${layer.name}</strong><table class="popup">${rows}</table>`).addTo(map);
+      const popup = new maplibregl.Popup({ offset: 10, maxWidth: "300px" }).setLngLat(e.lngLat)
+        .setHTML(popupHtml(layer.name, e.features[0].properties, layer.popup)).addTo(map);
+      keepInView(popup);
     });
   });
 }
 
 // Legend built from the manifest, in the #legend aside.
+// Legend of every visible layer (manifest legend + CONFIG.legendExtras); redrawn when a box is ticked.
+let legendEl = null;
+const SHAPE_BY_TYPE = { circle: "dot", fill: "area", image: "area", line: "line", arrows: "arrow", rain: "dot" };
+const ARROW = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1 10 6H7.4v5H4.6V6H2z" fill="currentColor"/></svg>`;
 export function renderLegend(el) {
-  const withLegend = [...layers.values()].map((l) => l.layer).filter((l) => l.legend?.length && isDefaultVisible(l));
-  el.hidden = !withLegend.length;
-  el.innerHTML = withLegend.map((l) =>
-    `<h2>${l.name}</h2>` +
-    l.legend.map((item) => `<div class="legend-item"><i class="${item.shape === "ring" ? "ring" : "dot"}" style="--c:${item.color}"></i>${item.text}</div>`).join("")
-  ).join("");
+  legendEl = el;
+  const shown = [...layers.values()].filter((e) => !e.lazy && (e.visible ?? isDefaultVisible(e.layer)));
+  const blocks = shown.map(({ layer }) => {
+    const items = [...(layer.legend ?? []), ...(CONFIG.legendExtras[layer.id] ?? [])];
+    if (!items.length) return "";
+    const shape = SHAPE_BY_TYPE[layer.type] ?? "dot";
+    return `<h2>${layer.name}</h2>` + items.map((item) => item.note
+      ? `<div class="legend-note">${item.note}</div>`
+      : `<div class="legend-item"><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</div>`).join("");
+  }).filter(Boolean);
+  el.hidden = !blocks.length;
+  el.innerHTML = blocks.join("");
 }
 
 // Checkbox per loaded layer, in the layers panel.
 export function renderLayerList(el, onToggle) {
   el.innerHTML = [...layers.values()].map(({ layer }) =>
     `<label><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> ${layer.name}</label>`).join("");
-  el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => onToggle(box.dataset.layer, box.checked)));
+  el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => toggleLayer(box.dataset.layer, box.checked)));
 }

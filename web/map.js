@@ -15,24 +15,53 @@ const grid = { type: "FeatureCollection", features: [] };
   for (let y = y0; y <= y1; y += step) grid.features.push({ type: "Feature", geometry: { type: "LineString", coordinates: [[x0, y], [x1, y]] } });
 }
 
+// Base maps (W3-F7): every raster source and layer is declared up front, only the chosen one is visible.
+// MapLibre downloads tiles only for visible layers, so declaring them costs nothing, and switching never calls setStyle()
+// (that would wipe the data layers the loader adds).
+const tiled = CONFIG.basemaps.options.filter((b) => b.tiles || b.dem);
+// A hillshade (elevation tiles) fades through its exaggeration, a raster through its opacity
+const fadeProp = (b) => (b.dem ? "hillshade-exaggeration" : "raster-opacity");
+const fullValue = (b) => (b.dem ? b.paint["hillshade-exaggeration"] : 1);
+const baseSources = Object.fromEntries(tiled.map((b) => [`base-${b.id}`, b.dem
+  ? { type: "raster-dem", tiles: [b.dem], tileSize: b.tileSize, maxzoom: b.maxzoom, encoding: b.encoding, attribution: b.attribution }
+  : { type: "raster", tiles: [b.tiles], tileSize: b.tileSize, maxzoom: b.maxzoom, attribution: b.attribution }]));
+const baseLayers = tiled.map((b) => {
+  const on = b.id === CONFIG.basemaps.default;
+  const paint = { ...b.paint, [fadeProp(b)]: on ? fullValue(b) : 0, [`${fadeProp(b)}-transition`]: { duration: 400 } };
+  if (!b.dem) paint["raster-fade-duration"] = 0;
+  return { id: `base-${b.id}`, type: b.dem ? "hillshade" : "raster", source: `base-${b.id}`,
+    layout: { visibility: on ? "visible" : "none" }, paint };
+});
+
+// One base map at a time: Topo and Satellite hide the dark outline instead of sitting on top of it
+const darkOn = CONFIG.basemaps.default === "dark";
+function showDark(on) {
+  map.setPaintProperty("grid", "line-opacity", on ? 1 : 0);
+  map.setPaintProperty("land", "fill-opacity", on ? 1 : 0);
+  map.setPaintProperty("land-edge", "line-opacity", on ? 1 : 0);
+}
+
 const style = {
   version: 8,
   sources: {
     land: { type: "geojson", data: CONFIG.land, attribution: "Land: Natural Earth · Fires: NASA FIRMS" },
     grid: { type: "geojson", data: grid },
+    ...baseSources,
     "sat-a": { type: "raster", tiles: [CONFIG.satellite.tiles.replace("{date}", "2026-02-01")], tileSize: 256, maxzoom: CONFIG.satellite.maxzoom, attribution: CONFIG.satellite.attribution },
     "sat-b": { type: "raster", tiles: [CONFIG.satellite.tiles.replace("{date}", "2026-02-01")], tileSize: 256, maxzoom: CONFIG.satellite.maxzoom },
   },
   layers: [
     { id: "ocean", type: "background", paint: { "background-color": "#070c16" } },
-    { id: "grid", type: "line", source: "grid", paint: { "line-color": "#1a2538", "line-width": 1 } },
-    { id: "land", type: "fill", source: "land", paint: { "fill-color": "#131c2b" } },
+    // Dark base map (land outline, coast line, graticule): only shown when "dark" is the chosen base map
+    { id: "grid", type: "line", source: "grid", paint: { "line-color": "#1a2538", "line-width": 1, "line-opacity": darkOn ? 1 : 0, "line-opacity-transition": { duration: 400 } } },
+    { id: "land", type: "fill", source: "land", paint: { "fill-color": "#131c2b", "fill-opacity": darkOn ? 1 : 0, "fill-opacity-transition": { duration: 400 } } },
+    ...baseLayers,
     // Dimmed and desaturated so the fires stay the brightest thing on screen
     // Double buffer: the next day loads in the hidden layer, then cross-fades in at once (no tile-by-tile squares)
     ...["sat-a", "sat-b"].map((id) => ({ id, type: "raster", source: id, layout: { visibility: "none" },
       paint: { "raster-opacity": 0, "raster-opacity-transition": { duration: 500 }, "raster-fade-duration": 0,
                "raster-brightness-max": 0.55, "raster-saturation": -0.35, "raster-contrast": 0.1 } })),
-    { id: "land-edge", type: "line", source: "land", paint: { "line-color": "#26344b", "line-width": 1.2 } },
+    { id: "land-edge", type: "line", source: "land", paint: { "line-color": "#26344b", "line-width": 1.2, "line-opacity": darkOn ? 1 : 0, "line-opacity-transition": { duration: 400 } } },
   ],
 };
 
@@ -41,7 +70,7 @@ try {
     container: "map",
     style,
     bounds: CONFIG.view,
-    fitBoundsOptions: { padding: { top: 130, bottom: 200, left: 60, right: 60 } },
+    fitBoundsOptions: { padding: CONFIG.framePadding },
     attributionControl: { compact: true },
     dragRotate: false,
   });
@@ -63,6 +92,45 @@ export const mapReady = new Promise((resolve, reject) => {
   if (map.isStyleLoaded()) resolve(map);
   else map.once("style.load", () => resolve(map));
 });
+
+// ---------- Base map switch ----------
+let currentBase = CONFIG.basemaps.default;
+let baseToken = 0;
+
+// Cross-fade to another base map. The new one loads while still invisible and only fades in once its tiles are
+// there (or after 2.5 s, e.g. offline), so the user never sees a half-drawn map. "dark" = no raster layer.
+export function setBasemap(id) {
+  if (!map || !map.getLayer("land") || id === currentBase) return;
+  const token = ++baseToken;
+  const next = `base-${id}`;
+  currentBase = id;
+  const fadeOutOthers = () => {
+    tiled.forEach((b) => {
+      const lid = `base-${b.id}`;
+      if (lid === next || !map.getLayer(lid)) return;
+      map.setPaintProperty(lid, fadeProp(b), 0);
+      setTimeout(() => { if (lid !== `base-${currentBase}`) map.setLayoutProperty(lid, "visibility", "none"); }, 450);
+    });
+  };
+  if (!map.getLayer(next)) { showDark(true); return fadeOutOthers(); } // "dark": its outline back, the rasters out
+  const nextOpt = tiled.find((b) => `base-${b.id}` === next);
+  // Barely visible, not 0: MapLibre skips the tiles of a fully transparent layer
+  map.setPaintProperty(next, fadeProp(nextOpt), 0.01);
+  map.setLayoutProperty(next, "visibility", "visible");
+  let done = false;
+  const reveal = () => {
+    if (done || baseToken !== token) return;
+    done = true;
+    map.off("sourcedata", check);
+    map.setPaintProperty(next, fadeProp(nextOpt), fullValue(nextOpt));
+    showDark(false);
+    fadeOutOthers();
+  };
+  const check = () => { if (map.isSourceLoaded(next)) reveal(); };
+  map.on("sourcedata", check);
+  setTimeout(reveal, 2500);
+  check();
+}
 
 // ---------- Satellite image of the day (NASA GIBS), double-buffered ----------
 const tileUrl = (date) => CONFIG.satellite.tiles.replace("{date}", date);

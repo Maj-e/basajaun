@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +69,21 @@ def test_risk_tier_thresholds():
     assert classify_risk_tier(0.035, base_rate=0.015) == "moderate"
     assert classify_risk_tier(0.01, base_rate=0.015) == "low"
 
+def _assert_one_grid_per_day(features):
+    """144 distinct cells each day, stamped at that day's UTC midnight."""
+    by_day: dict[str, set[str]] = {}
+    for feature in features:
+        props = feature["properties"]
+        day = props["reference_date"]
+        by_day.setdefault(day, set()).add(props["cell_id"])
+        midnight = datetime.strptime(day, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        assert props["t"] == midnight.timestamp() / 3600.0
+    expected = {f"SEC-{i:03d}" for i in range(1, 145)}
+    assert by_day
+    for cells in by_day.values():
+        assert cells == expected
+
+
 def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
     bbox = (-5.3, 36.4, -5.0, 36.6)
     weather = {
@@ -113,7 +129,8 @@ def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
 
     errors = validate_file(out_file, load_registry())
     assert errors == []
-    assert len(fc["features"]) == 144
+    _assert_one_grid_per_day(fc["features"])
+    assert sum(fc["model_metrics"]["tier_counts"].values()) == 144
     assert fc["model_metrics"]["val_roc_auc"] is not None
     assert fc["model_metrics"]["brier_score"] is not None
     sample_props = fc["features"][0]["properties"]
@@ -162,5 +179,5 @@ def test_run_risk_model_accepts_ia1_dataset(tmp_path: Path, monkeypatch):
     monkeypatch.setattr("risk_ml._fallback_build_dataset", fail_if_called)
 
     fc = run_risk_model(tmp_path, bbox)
-    assert len(fc["features"]) == 144
-    assert {f["properties"]["cell_id"] for f in fc["features"]} == {f"SEC-{i:03d}" for i in range(1, 145)}
+    _assert_one_grid_per_day(fc["features"])
+    assert sum(fc["model_metrics"]["tier_counts"].values()) == 144

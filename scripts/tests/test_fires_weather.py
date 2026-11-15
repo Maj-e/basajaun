@@ -1,3 +1,6 @@
+import math
+
+import pytest
 import json
 import sys
 from pathlib import Path
@@ -145,3 +148,56 @@ def test_spread_projection_generates_downwind_ellipse(tmp_path: Path) -> None:
     assert props["wind_to_deg"] == 0.0
     assert props["spread_km"] > 2.0
     assert props["area_km2"] > 1.0
+
+
+def test_surface_wind_uv_points_where_the_wind_blows() -> None:
+    from weather import wind_uv
+
+    # 36 km/h = 10 m/s. Meteorological direction = where it comes FROM.
+    assert wind_uv(36.0, 270.0) == pytest.approx((10.0, 0.0), abs=0.01)   # west wind blows east
+    assert wind_uv(36.0, 0.0) == pytest.approx((0.0, -10.0), abs=0.01)    # north wind blows south
+    assert wind_uv(36.0, 90.0) == pytest.approx((-10.0, 0.0), abs=0.01)   # east wind blows west
+    u, v = wind_uv(36.0, 225.0)                                           # south-west wind blows north-east
+    assert u > 0 and v > 0 and math.hypot(u, v) == pytest.approx(10.0, abs=0.02)
+    assert wind_uv(0.0, 123.0) == (0.0, 0.0) or wind_uv(0.0, 123.0) == (-0.0, -0.0)
+
+
+def test_wind_particles_layer_reads_weather() -> None:
+    import make_manifest
+
+    [layer] = [l for l in make_manifest.LAYERS if l["id"] == "wind_particles"]
+    # Active since the loader draws the `particles` type (web/layers/particles.js); hidden at start
+    assert layer["type"] == "particles" and layer["temporal"] and layer["active"]
+    assert layer["file"].endswith("weather.geojson")
+
+
+@pytest.mark.parametrize("lon, lat, epsg", [
+    (-71.0, -35.0, "EPSG:32719"),   # Chile
+    (-5.0, 36.5, "EPSG:32630"),     # Sierra Bermeja (Málaga)
+    (-118.5, 34.1, "EPSG:32611"),   # Los Angeles
+    (2.2, 41.4, "EPSG:32631"),      # Barcelona
+])
+def test_spread_uses_the_fires_own_utm_zone(lon, lat, epsg) -> None:
+    from spread import utm_crs_for
+
+    assert utm_crs_for(lon, lat) == epsg
+
+
+def test_spread_area_matches_the_drawn_polygon_outside_chile(tmp_path: Path) -> None:
+    """The old fixed Chile UTM zone made a Málaga fire's ellipse and area about twice too big."""
+    import geopandas as gpd
+    from shapely.geometry import shape
+    from spread import generate_spread
+
+    fire = {"type": "Feature", "properties": {"fire_id": 1, "end": "2021-09-09T12:00:00Z", "frp_max": 85.0},
+            "geometry": {"type": "Polygon", "coordinates": [[[-5.01, 36.49], [-5.0, 36.49], [-5.0, 36.5], [-5.01, 36.5], [-5.01, 36.49]]]}}
+    weather = {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-5.0, 36.5]},
+               "properties": {"t": 452628.0, "speed": 20.0, "direction": 270.0}}
+    (tmp_path / "fires.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": [fire]}))
+    (tmp_path / "weather.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": [weather]}))
+    out = generate_spread(tmp_path / "fires.geojson", tmp_path / "weather.geojson", tmp_path / "spread.geojson")
+
+    [feature] = out["features"]
+    polygon = gpd.GeoSeries([shape(feature["geometry"])], crs="EPSG:4326")
+    real_km2 = polygon.to_crs(polygon.estimate_utm_crs()).area.iloc[0] / 1e6
+    assert feature["properties"]["area_km2"] == pytest.approx(real_km2, rel=0.01)

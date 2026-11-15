@@ -4,6 +4,7 @@ export const state = {
   hour: null,          // playback time (t, hours since 1970)
   playing: false,
   speed: 8,            // playback hours per second
+  basemap: "topo",     // base map id (CONFIG.basemaps): topo | satellite | dark
   satellite: false,    // NASA daily imagery under the fires
   layers: {},          // layer id → visible (true / false)
 };

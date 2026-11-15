@@ -20,7 +20,7 @@ Ulinautas merges NASA FIRMS fire detections from two instruments (MODIS and VIIR
 The harmonization of MODIS (~1 km, confidence 0–100) and VIIRS (~375 m, confidence low/nominal/high) into a single, deduplicated view, replayed as a story of a real episode, built entirely on free NASA and open data.
 
 ## Operating Context
-- Demo episode: Chile–Argentina border, 33–38° S (central Chile and Mendoza, Argentina), 1–14 Feb 2026, 825 vegetation fires (FIRMS `type 0`; static industrial sources excluded). Script in `docs/demo-script.md`: open on 9 Feb, calm, the spark (11 Feb 20:42 UTC, 1,111 MW, 31× the previous max), the peak (12–13 Feb, 151 and 149 fires/day), close.
+- Demo episode: Chile–Argentina border, 33–38° S (central Chile and Mendoza, Argentina), 1–14 Feb 2026, 825 vegetation fires (FIRMS `type 0`; static industrial sources excluded). Script in `docs/demo-script.md`: open on 9 Feb, calm, the strongest fire (11 Feb 20:42 UTC, 1,111 MW, 31× the previous max), the peak (12–13 Feb, 151 and 149 fires/day), close.
 - Presenter drives with the keyboard during the pitch (`?demo=1`); the shared link loops on its own for a stand or a lone viewer.
 - Projection screen, room lighting and pitch length are unknown.
 

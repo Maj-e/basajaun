@@ -1,0 +1,305 @@
+{
+  "updated_at": "2026-11-14T23:43:36Z",
+  "layers": [
+    {
+      "id": "hotspots",
+      "name": "Fire hotspots",
+      "file": "episodes/spain-2025-08/hotspots.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "sensor",
+        "satellite",
+        "timestamp_utc",
+        "confidence",
+        "frp",
+        "country",
+        "region"
+      ],
+      "legend": [
+        {
+          "color": "#ffd9a8",
+          "text": "FRP ≥ 300 MW (fire intensity)"
+        },
+        {
+          "color": "#f9a957",
+          "text": "100–300 MW"
+        },
+        {
+          "color": "#ec8128",
+          "text": "30–100 MW"
+        },
+        {
+          "color": "#c95b17",
+          "text": "10–30 MW"
+        },
+        {
+          "color": "#9a3d12",
+          "text": "< 10 MW"
+        },
+        {
+          "color": "#ec8128",
+          "text": "MODIS · 1 km pixel",
+          "shape": "ring"
+        }
+      ],
+      "updated_at": "2026-11-14T22:49:13Z"
+    },
+    {
+      "id": "regions",
+      "name": "Regions",
+      "file": "episodes/spain-2025-08/regions.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "country",
+        "region"
+      ],
+      "updated_at": "2026-11-14T22:49:07Z"
+    },
+    {
+      "id": "fires",
+      "name": "Fires",
+      "file": "episodes/spain-2025-08/fires.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "fire_id",
+        "start",
+        "end",
+        "n_hotspots",
+        "frp_max",
+        "area_km2",
+        "slope_deg",
+        "landcover",
+        "dist_road_km",
+        "dist_water_km",
+        "dist_fire_station_km",
+        "dist_water_point_km",
+        "gw_body",
+        "gw_vulnerability",
+        "gw_chemical_status",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "updated_at": "2026-11-14T23:23:15Z"
+    },
+    {
+      "id": "fire_risk",
+      "name": "Fire risk (smoke · people · wind)",
+      "file": "episodes/spain-2025-08/fire_risk.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#67000d",
+          "text": "Extreme: fire + people + smoke + strong wind"
+        },
+        {
+          "color": "#d7301f",
+          "text": "High (fire + strong wind, or high score)"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium (smoke + people, or medium score)"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-14T23:23:15Z"
+    },
+    {
+      "id": "evacuation",
+      "name": "Evacuation zone (fire + 1 km + 6 h spread)",
+      "file": "episodes/spain-2025-08/evacuation.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#e31a1c",
+          "text": "Evacuate: fire + 1 km + 6 h spread"
+        }
+      ],
+      "updated_at": "2026-11-14T23:23:15Z"
+    },
+    {
+      "id": "spread",
+      "name": "6h spread estimate",
+      "file": "episodes/spain-2025-08/spread.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "fire_id",
+        "horizon_hours",
+        "wind_speed_kmh",
+        "wind_to_deg",
+        "slope_deg",
+        "spread_km",
+        "area_km2"
+      ],
+      "updated_at": "2026-11-14T23:21:47Z"
+    },
+    {
+      "id": "population",
+      "name": "Population density",
+      "file": "episodes/spain-2025-08/population.png",
+      "type": "image",
+      "corners": [
+        [
+          -9.6,
+          43.9
+        ],
+        [
+          3.4,
+          43.9
+        ],
+        [
+          3.4,
+          35.9
+        ],
+        [
+          -9.6,
+          35.9
+        ]
+      ],
+      "temporal": false,
+      "active": true,
+      "legend": [
+        {
+          "color": "#fee5d9",
+          "text": "< 10 people/km²"
+        },
+        {
+          "color": "#a50f15",
+          "text": "> 1000 people/km²"
+        }
+      ],
+      "updated_at": "2026-11-14T23:07:27Z"
+    },
+    {
+      "id": "wind",
+      "name": "Wind",
+      "file": "episodes/spain-2025-08/weather.geojson",
+      "type": "arrows",
+      "temporal": true,
+      "active": false,
+      "popup": [
+        "timestamp_utc",
+        "speed",
+        "direction"
+      ],
+      "legend": [
+        {
+          "color": "#91cf60",
+          "text": "< 15 km/h"
+        },
+        {
+          "color": "#fee08b",
+          "text": "15–30 km/h"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "30–45 km/h"
+        },
+        {
+          "color": "#d7301f",
+          "text": "≥ 45 km/h"
+        }
+      ],
+      "updated_at": "2026-11-14T22:49:16Z"
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "file": "episodes/spain-2025-08/weather.geojson",
+      "type": "circle",
+      "temporal": true,
+      "active": true,
+      "popup": [
+        "timestamp_utc",
+        "temperature",
+        "humidity",
+        "rain",
+        "speed"
+      ],
+      "updated_at": "2026-11-14T22:49:16Z"
+    },
+    {
+      "id": "wind_particles",
+      "name": "Wind",
+      "file": "episodes/spain-2025-08/weather.geojson",
+      "type": "particles",
+      "temporal": true,
+      "active": true,
+      "color": "#bae6fd",
+      "legend": [
+        {
+          "color": "#bae6fd",
+          "text": "Surface wind (10 m), faster = brighter"
+        }
+      ],
+      "updated_at": "2026-11-14T22:49:16Z"
+    },
+    {
+      "id": "water",
+      "name": "Water",
+      "file": "episodes/spain-2025-08/water.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name",
+        "kind"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Lakes, reservoirs"
+        }
+      ],
+      "updated_at": "2026-11-14T22:52:50Z"
+    },
+    {
+      "id": "rivers",
+      "name": "Rivers",
+      "file": "episodes/spain-2025-08/rivers.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T22:52:50Z"
+    }
+  ]
+}

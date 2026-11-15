@@ -22,9 +22,13 @@ PIPELINE := \
 	weather \
 	terrain \
 	spread \
-	exposure \
 	osm \
+	natural_earth_water \
+	groundwater \
+	exposure \
+	risk_score \
 	risk_ml \
+	compact \
 	make_manifest \
 	validate
 
@@ -85,7 +89,7 @@ test:
 	$(RUN) pytest
 
 serve:
-	$(RUN) python -m http.server $(PORT) --directory web
+	$(RUN) scripts/serve.py $(PORT)
 
 clean:
 	rm -rf .pytest_cache
