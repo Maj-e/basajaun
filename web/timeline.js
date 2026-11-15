@@ -1,5 +1,5 @@
 // Timeline strip (fires per day) + playback engine.
-// The engine owns state.hour; the peak day is highlighted and reachable with the Peak button (P).
+// The engine owns state.hour (it stops at the end; Play from there starts over); the peak day is highlighted and reachable with the Peak button (P).
 // setData() redraws the bars and the peak mark when the figures change (e.g. a new visible area).
 import { state, setState } from "./state.js";
 
@@ -52,6 +52,16 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
       $("strip").appendChild(lab);
     };
     if (story.peak) mark(story.peak.end - 12, `Peak · ${story.peak.count}`, "#f9a957", "right");
+    // Days after the last detection have no bars: say why, so the burned area on the map is not read as a bug
+    const last = story.lastDetection;
+    if (Number.isFinite(last) && end - last >= 24) {
+      mark(last, "Last detection", "#8a96ad", "left");
+      const tail = document.createElement("div");
+      tail.className = "strip-mark tail";
+      tail.textContent = "No detections · burned area only";
+      tail.style.left = `${((x(last) + W) / 2 / W) * 100}%`;
+      $("strip").appendChild(tail);
+    }
   }
 
   // Hover tooltip and scrubbing
@@ -68,10 +78,9 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   svg.addEventListener("pointerdown", (e) => { setPlaying(false); seek(tAt(e)); });
 
   // ---------- Engine ----------
-  let holdUntil = 0, last = performance.now();
+  let last = performance.now();
   function seek(t) {
     const hour = Math.min(Math.max(t, start), end - 0.01);
-    holdUntil = 0;
     setState({ hour });
   }
   function setPlaying(playing) {
@@ -81,10 +90,13 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   }
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    if (state.playing && now >= holdUntil) {
-      let hour = state.hour + dt * state.speed;
-      if (hour >= end) { hour = playFrom; holdUntil = now + 1500; }
-      setState({ hour });
+    if (state.playing) {
+      const hour = state.hour + dt * state.speed;
+      if (hour >= end) {
+        // The last day is the end: stop there (the burned area stays on the map) instead of looping
+        setState({ hour: end - 0.01 });
+        setPlaying(false);
+      } else setState({ hour });
     }
     requestAnimationFrame(frame);
   }
@@ -101,7 +113,11 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   setData(counts, story);
   return {
     render, seek, setPlaying, setData,
-    toggle: () => setPlaying(!state.playing),
+    // Play at the very end starts over from the first day
+    toggle: () => {
+      if (!state.playing && state.hour >= end - 0.5) seek(start);
+      setPlaying(!state.playing);
+    },
     // Back to the first day, keeping the play / pause state (a paused player stays paused on a clean map)
     restart: () => seek(start),
     jumpPeak: () => { if (current.story.peak) { setPlaying(false); seek(current.story.peak.end); } },

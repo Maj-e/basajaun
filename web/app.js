@@ -269,7 +269,7 @@ async function main() {
   });
 
   // Opens paused on the peak (the most telling frame; press Play to watch it build up, R to start over).
-  // Without a peak (no fires) it opens at the start and loops on its own, except in presenter mode.
+  // Without a peak (no fires) it opens at the start and plays on its own (stopping at the end), except in presenter mode.
   if (story.peak) timeline.seek(story.peak.end);
   else timeline.seek(playFrom);
   timeline.setPlaying(!story.peak && !presenter && !reduceMotion);
