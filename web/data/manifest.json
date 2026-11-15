@@ -269,7 +269,8 @@
       "name": "Municipal ignition risk",
       "file": "processed/ignition_risk.geojson",
       "type": "fill",
-      "temporal": false,
+      "temporal": true,
+      "hold_hours": 24,
       "active": true,
       "popup": [
         "cell_id",
