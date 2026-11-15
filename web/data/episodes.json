@@ -17,25 +17,30 @@
       "manifest": "episodes/sierra-bermeja-2021-09/manifest.json"
     },
     {
-      "id": "spain-2025-08",
-      "name": "Spain · Aug 2025 (1 km cells)",
+      "id": "galicia-2025-08",
+      "name": "Galicia · Aug 2025",
       "bbox": [
-        -9.6,
-        35.9,
-        3.4,
-        43.9
+        -9.4,
+        41.8,
+        -6.7,
+        43.8
       ],
       "start": "2025-08-15",
       "end": "2025-08-19",
-      "dir": "episodes/spain-2025-08",
-      "manifest": "episodes/spain-2025-08/manifest.json",
-      "skip": [
-        "osm"
-      ],
+      "dir": "episodes/galicia-2025-08",
+      "manifest": "episodes/galicia-2025-08/manifest.json",
       "min_confidence": "medium",
       "thin": {
         "cell_deg": 0.01,
         "hours": 6
+      },
+      "osm_options": {
+        "roads": [
+          "primary",
+          "secondary",
+          "tertiary"
+        ],
+        "hydrants": false
       }
     },
     {
@@ -51,23 +56,6 @@
       "end": "2026-02-14",
       "dir": "processed",
       "manifest": "manifest.json"
-    },
-    {
-      "id": "los-angeles-2025-01",
-      "name": "Los Angeles · Jan 2025",
-      "bbox": [
-        -119.0,
-        33.6,
-        -117.4,
-        34.6
-      ],
-      "start": "2025-01-06",
-      "end": "2025-01-16",
-      "dir": "episodes/los-angeles-2025-01",
-      "manifest": "episodes/los-angeles-2025-01/manifest.json",
-      "skip": [
-        "osm"
-      ]
     },
     {
       "id": "live",

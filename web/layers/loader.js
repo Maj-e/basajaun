@@ -5,6 +5,7 @@
 import { map } from "../map.js";
 import { CONFIG } from "../config.js";
 import { createParticlesLayer } from "./particles.js";
+import { indexByFire, perimetersAt } from "./perimeter.js";
 
 const dataUrl = (file) => CONFIG.dataRoot + file;
 
@@ -274,7 +275,31 @@ export function prefetchLayers() {
 export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
 
 // A layer follows the playback if the manifest says so, or if its features carry a start time (fires: t_start)
-const followsTime = ({ layer, data }) => layer.temporal || data?.features?.[0]?.properties?.t_start !== undefined;
+const hasStart = (data) => data?.features?.[0]?.properties?.t_start !== undefined;
+// Polygons of a fire (spread, evacuation, risk) carry its fire_id but no time of their own: they start with their fire
+const linkedToFire = ({ layer, data }) => layer.id !== "fires" && ["fill", "line"].includes(layer.type) && !hasStart(data)
+  && data?.features?.[0]?.properties?.fire_id !== undefined;
+const followsTime = (entry) => entry.layer.temporal || hasStart(entry.data) || linkedToFire(entry);
+
+// Expression giving each feature the start time of its fire (hidden when the fire is unknown)
+function fireStartExpr() {
+  const fires = layers.get("fires")?.data?.features ?? [];
+  const pairs = fires.flatMap((f) => [Number(f.properties.fire_id), f.properties.t_start]);
+  return pairs.length ? ["match", ["to-number", ["get", "fire_id"], -1], ...pairs, 1e12] : 1e12;
+}
+
+// Fire perimeters as they were at `hour`: rebuilt from the hotspots so far (perimeter.js), once per playback hour.
+// entry.data keeps the final shapes: clicking a fire still frames its whole extent.
+function showPerimeters(entry, hour) {
+  const hotspots = layers.get("hotspots")?.data;
+  const source = map.getSource(entry.layer.id);
+  if (!hotspots || !source?.setData || !entry.data) return;
+  const h = Math.floor(hour);
+  if (entry.perimeterHour === h) return;
+  entry.perimeterHour = h;
+  entry.byFire ??= indexByFire(hotspots.features);
+  source.setData(perimetersAt(entry.data, entry.byFire, hour));
+}
 
 // Temporal layers: show features detected before `hour`, fading over the trail.
 export function setHour(hour) {
@@ -290,6 +315,7 @@ export function setHour(hour) {
   for (const entry of layers.values()) {
     const { mapLayerIds } = entry;
     if (entry.particles) { entry.particles.setHour(hour); continue; }
+    if (entry.layer.id === "fires" && mapLayerIds.length) showPerimeters(entry, hour);
     if (!followsTime(entry)) continue;
     if (entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id)) {
       // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
@@ -303,14 +329,19 @@ export function setHour(hour) {
       }
       continue;
     }
+    const startOf = linkedToFire(entry) ? fireStartExpr() : ["get", "t_start"];
+    // Visible from t_start; snapshots of a fire's zones (spread, evacuation, risk) also end at t_until, when the next one starts
+    // Fire perimeters stay once the fire stops growing, but fainter: what burned, no longer what is burning
+    const burnedOut = entry.layer.id === "fires" ? ["case", [">", hour, ["+", ["get", "t_end"], CONFIG.trailHours]], 0.3, 1] : 1;
+    const live = ["all", ["<=", startOf, hour], ["<", hour, ["coalesce", ["get", "t_until"], 1e12]]];
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
       if (id.endsWith("-heat")) map.setPaintProperty(id, "heatmap-weight", heatWeight);
       else if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
       else if (id.endsWith("-ring")) map.setPaintProperty(id, "circle-stroke-opacity", fade);
       else if (type === "circle") { map.setPaintProperty(id, "circle-opacity", fade); map.setPaintProperty(id, "circle-stroke-opacity", fade); }
-      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", ["<=", ["get", "t_start"], hour], ["coalesce", ["get", "opacity"], 0.35], 0]);
-      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", ["<=", ["get", "t_start"], hour], 1, 0]);
+      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", live, ["*", ["coalesce", ["get", "opacity"], 0.35], burnedOut], 0]);
+      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", live, burnedOut, 0]);
     }
   }
 }
