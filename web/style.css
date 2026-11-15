@@ -33,7 +33,9 @@ body {
   font: 15px/1.4 var(--font-ui);
   overflow: hidden;
 }
-#map { position: fixed; inset: 0; z-index: -1; } /* last in the DOM after the header (reading order), first on screen */
+#map { position: fixed; inset: 0; }
+/* Stacking: map (auto) < header (1, lets clicks through) < floating UI (2+). The header comes before the map in the DOM
+   (reading order), so everything drawn above the map says so explicitly. Never put the map below 0: the body would catch its clicks. */
 /* `particles` layers (layers/particles.js): own canvas above the map, never catches the mouse */
 .particles-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; transition: opacity .3s; }
 .maplibregl-ctrl-attrib { background: rgba(7, 12, 22, .7) !important; color: var(--ink-3); font: 11px var(--font-ui); }
@@ -48,6 +50,7 @@ body {
   /* Header text can sit on the light Topo base map: a dark halo keeps it readable (WCAG 1.4.3) */
   text-shadow: 0 0 3px #070c16, 0 0 8px #070c16;
   pointer-events: none;
+  z-index: 1;
 }
 .title { min-width: 0; }
 .wordmark {
@@ -82,7 +85,7 @@ body {
 
 /* ---------- Timeline: the strip-chart recorder ---------- */
 .timeline {
-  position: fixed; left: 0; right: 0; bottom: 0;
+  position: fixed; z-index: 2; left: 0; right: 0; bottom: 0;
   padding: 14px var(--gutter-r) calc(14px + env(safe-area-inset-bottom, 0px)) var(--gutter-l);
   background: var(--band); border-top: 1px solid var(--grid);
   display: grid; grid-template-columns: auto 1fr; gap: 10px 24px; align-items: end;
@@ -127,7 +130,8 @@ body {
   background: #172236; border: 1px solid var(--land-edge); border-radius: 6px; padding: 4px 8px; }
 
 /* ---------- Scope: whole area or visible area ---------- */
-.scope { margin: 12px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); pointer-events: auto; }
+.scope { margin: 12px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
+.scope button { pointer-events: auto; } /* only the button catches clicks: the line itself lets the map through */
 .scope.visible-area #scope-text { color: var(--frp-4); }
 .scope button {
   font: 600 12px var(--font-ui); color: var(--ink); background: #172236; border: 1px solid var(--land-edge);
@@ -158,7 +162,7 @@ body.alert-labels .alert-mark { display: block; }
 
 /* ---------- Status badge ---------- */
 .status {
-  position: fixed; left: 50%; transform: translateX(-50%); top: calc(14px + env(safe-area-inset-top, 0px));
+  position: fixed; z-index: 2; left: 50%; transform: translateX(-50%); top: calc(14px + env(safe-area-inset-top, 0px));
   margin: 0; padding: 4px 10px; border-radius: 999px;
   background: var(--band); border: 1px solid var(--grid); color: var(--ink-3); font: 12px var(--font-ui);
 }
@@ -166,7 +170,7 @@ body.alert-labels .alert-mark { display: block; }
 
 /* ---------- Map unavailable ---------- */
 .map-error {
-  position: fixed; left: 50%; top: 45%; transform: translate(-50%, -50%); margin: 0;
+  position: fixed; z-index: 2; left: 50%; top: 45%; transform: translate(-50%, -50%); margin: 0;
   max-width: 420px; text-align: center; color: var(--ink-2); font-size: 15px;
   background: var(--band); border: 1px solid #4a3420; border-radius: 8px; padding: 16px 18px;
 }
@@ -400,7 +404,7 @@ label.layer.loading span::after { content: " · loading…"; font-size: 11px; co
 
 /* Date of the satellite image: bottom left, above the timeline */
 .sat-badge {
-  position: fixed; left: var(--gutter-l); bottom: calc(var(--tl-h, 170px) + 16px); margin: 0;
+  position: fixed; z-index: 2; left: var(--gutter-l); bottom: calc(var(--tl-h, 170px) + 16px); margin: 0;
   padding: 4px 10px; border-radius: 999px; background: var(--band); border: 1px solid var(--grid);
   color: var(--ink-2); font: 12px var(--font-ui);
 }
