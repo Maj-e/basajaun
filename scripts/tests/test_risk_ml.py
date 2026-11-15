@@ -10,6 +10,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import risk_ml
 from risk_ml import (
     apply_platt_calibrator,
     brier_score_np,
@@ -181,3 +182,11 @@ def test_run_risk_model_accepts_ia1_dataset(tmp_path: Path, monkeypatch):
     fc = run_risk_model(tmp_path, bbox)
     _assert_one_grid_per_day(fc["features"])
     assert sum(fc["model_metrics"]["tier_counts"].values()) == 144
+
+
+def test_main_skips_without_weather(tmp_path, monkeypatch, capsys):
+    """An episode with no weather.geojson (the live one) has nothing to train on: skip, never crash."""
+    monkeypatch.setattr(risk_ml, "PROCESSED", tmp_path)
+    risk_ml.main()
+    assert "[SKIP]" in capsys.readouterr().out
+    assert not (tmp_path / "ignition_risk.geojson").exists()

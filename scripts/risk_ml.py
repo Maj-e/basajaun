@@ -682,6 +682,10 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
 
 def main() -> None:
     out_path = PROCESSED / "ignition_risk.geojson"
+    # The model learns from daily weather: an episode without weather.geojson (the live one) has nothing to train on
+    if not (PROCESSED / "weather.geojson").is_file():
+        print(f"[SKIP] {PROCESSED / 'weather.geojson'} not found: no ignition risk.")
+        return
     fc = run_risk_model(PROCESSED, BBOX)
     out_path.write_text(json.dumps(fc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     m = fc["model_metrics"]

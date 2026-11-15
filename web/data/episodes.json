@@ -75,7 +75,8 @@
         "spread",
         "exposure",
         "osm",
-        "groundwater"
+        "groundwater",
+        "risk_ml"
       ]
     }
   ]
