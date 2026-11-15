@@ -121,59 +121,78 @@ def build_spread_ellipse_utm(
     return projected, round(head_dist_m / 1000.0, 2), round(wind_to_deg, 1)
 
 
+def spread_feature(geom_wgs, props: dict, target_t: float, frp_max: float, weather_features: list[dict],
+                   horizon_hours: float) -> dict:
+    """The spread projection of one fire (or of one snapshot of it) as a GeoJSON feature."""
+    centroid_wgs = geom_wgs.centroid
+    wind_speed, wind_from = _nearest_wind(centroid_wgs.x, centroid_wgs.y, target_t, weather_features)
+    slope_deg = float(props.get("slope_deg", 0.0))
+
+    to_utm, to_wgs84 = transformers_for(centroid_wgs.x, centroid_wgs.y)
+    geom_utm = shapely.transform(geom_wgs, lambda coords: np.column_stack(to_utm(coords[:, 0], coords[:, 1])))
+    proj_utm, spread_km, wind_to_deg = build_spread_ellipse_utm(
+        geom_utm,
+        wind_speed_kmh=wind_speed,
+        wind_from_deg=wind_from,
+        frp_max=frp_max,
+        slope_deg=slope_deg,
+        horizon_hours=horizon_hours,
+    )
+    proj_wgs = shapely.transform(proj_utm, lambda coords: np.column_stack(to_wgs84(coords[:, 0], coords[:, 1])))
+    return {
+        "type": "Feature",
+        "geometry": mapping(proj_wgs),
+        "properties": {
+            "fire_id": props.get("fire_id"),
+            "horizon_hours": int(horizon_hours),
+            "wind_speed_kmh": round(wind_speed, 1),
+            "wind_to_deg": wind_to_deg,
+            "slope_deg": round(slope_deg, 1),
+            "spread_km": spread_km,
+            "area_km2": round(proj_utm.area / 1_000_000.0, 2),
+            "color": "#756bb1",
+            "opacity": 0.25,
+        },
+    }
+
+
 def generate_spread(
     fires_path: Path = FIRES_PATH,
     weather_path: Path = WEATHER_PATH,
     out_path: Path = SPREAD_PATH,
     horizon_hours: float = DEFAULT_HORIZON_HOURS,
+    hotspots_path: Path | None = None,
 ) -> dict:
+    """One projection per fire. When the episode's hotspots are next to the fires file, one per snapshot of the
+    fire (fire_history.py): each carries `t_start`, `t_until` and `last` (the final one stays until the fire is no longer active), so the player can show the
+    projection that matched each moment. The last snapshot is the projection of the final polygon."""
+    from fire_history import snapshots
+
     fires_fc = json.loads(fires_path.read_text(encoding="utf-8"))
     weather_features: list[dict] = []
     if weather_path.is_file():
         weather_fc = json.loads(weather_path.read_text(encoding="utf-8"))
         weather_features = weather_fc.get("features", [])
+    hotspots_path = hotspots_path or fires_path.parent / "hotspots.geojson"
+    hotspots_fc = json.loads(hotspots_path.read_text(encoding="utf-8")) if hotspots_path.is_file() else None
+    history = snapshots(fires_fc, hotspots_fc) if hotspots_fc else None
 
     spread_features: list[dict] = []
     for feat in fires_fc.get("features", []):
         props = feat.get("properties", {})
-        geom_wgs = shape(feat["geometry"])
-        centroid_wgs = geom_wgs.centroid
-
         end_ts = props.get("end") or props.get("start") or "2026-02-14T00:00:00Z"
-        target_t = _parse_iso_hours(end_ts)
-        wind_speed, wind_from = _nearest_wind(centroid_wgs.x, centroid_wgs.y, target_t, weather_features)
-
-        frp_max = float(props.get("frp_max", 20.0))
-        slope_deg = float(props.get("slope_deg", 0.0))
-
-        to_utm, to_wgs84 = transformers_for(centroid_wgs.x, centroid_wgs.y)
-        geom_utm = shapely.transform(geom_wgs, lambda coords: np.column_stack(to_utm(coords[:, 0], coords[:, 1])))
-        proj_utm, spread_km, wind_to_deg = build_spread_ellipse_utm(
-            geom_utm,
-            wind_speed_kmh=wind_speed,
-            wind_from_deg=wind_from,
-            frp_max=frp_max,
-            slope_deg=slope_deg,
-            horizon_hours=horizon_hours,
-        )
-        proj_wgs = shapely.transform(proj_utm, lambda coords: np.column_stack(to_wgs84(coords[:, 0], coords[:, 1])))
-        area_km2 = round(proj_utm.area / 1_000_000.0, 2)
-
-        spread_features.append({
-            "type": "Feature",
-            "geometry": mapping(proj_wgs),
-            "properties": {
-                "fire_id": props.get("fire_id"),
-                "horizon_hours": int(horizon_hours),
-                "wind_speed_kmh": round(wind_speed, 1),
-                "wind_to_deg": wind_to_deg,
-                "slope_deg": round(slope_deg, 1),
-                "spread_km": spread_km,
-                "area_km2": area_km2,
-                "color": "#756bb1",
-                "opacity": 0.25,
-            },
-        })
+        if not history:
+            spread_features.append(spread_feature(shape(feat["geometry"]), props, _parse_iso_hours(end_ts),
+                                                  float(props.get("frp_max", 20.0)), weather_features, horizon_hours))
+            continue
+        for snap in history[int(props["fire_id"])]:
+            last = snap["t_until"] is None
+            target_t = _parse_iso_hours(end_ts) if last else snap["t_from"]
+            out = spread_feature(snap["geometry"], props, target_t, snap["frp_max"] or 20.0, weather_features,
+                                 horizon_hours)
+            out["properties"].update({"t_start": snap["t_from"], "t_until": snap["active_until"] if last else snap["t_until"],
+                                      "last": last})
+            spread_features.append(out)
 
     out_fc = {
         "type": "FeatureCollection",

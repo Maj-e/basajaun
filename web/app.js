@@ -267,10 +267,11 @@ async function main() {
     else if (e.key === "ArrowLeft") timeline.step(-1);
   });
 
-  // Shared link loops on its own; ?demo=1 opens paused for the presenter; reduced motion opens on the peak
-  if (reduceMotion && story.peak) timeline.seek(story.peak.end);
+  // Opens paused on the peak (the most telling frame; press Play to watch it build up, R to start over).
+  // Without a peak (no fires) it opens at the start and loops on its own, except in presenter mode.
+  if (story.peak) timeline.seek(story.peak.end);
   else timeline.seek(playFrom);
-  timeline.setPlaying(!presenter && !reduceMotion);
+  timeline.setPlaying(!story.peak && !presenter && !reduceMotion);
   timeline.start();
 }
 

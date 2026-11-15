@@ -195,6 +195,8 @@ def typed_alerts(fires: dict, population_alerts: list[dict], population_tif, wea
     bodies = gpd.GeoDataFrame.from_features(groundwater["features"], crs="EPSG:4326") if groundwater and groundwater.get("features") else None
     spread_by_fire = {}
     for s in (spread or {}).get("features", []):
+        if s["properties"].get("last") is False:
+            continue  # an earlier snapshot of the fire (fire_history.py): only the final projection counts
         spread_by_fire.setdefault(s["properties"].get("fire_id"), []).append(shape(s["geometry"]))
     rank = {"high": 0, "medium": 1, "low": 2}
     for f in features:

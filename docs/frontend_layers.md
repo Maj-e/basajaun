@@ -19,8 +19,8 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 
 | id | Name | Default | Front page today |
 |---|---|---|---|
-| `sierra-bermeja-2021-09` | Sierra Bermeja (Málaga) · Sep 2021 | | — (needs the selector, W4-F2) |
-| `galicia-2025-08` | Galicia · Aug 2025 (1 km cells) | ✅ | — |
+| `sierra-bermeja-2021-09` | Sierra Bermeja (Málaga) · Sep 2021 | ✅ | — (needs the selector, W4-F2) |
+| `galicia-2025-08` | Galicia · Aug 2025 (1 km cells) | | — |
 | `chile-2026-02` | Chile–Argentina border · Feb 2026 | | ✅ (`manifest.json`) |
 | `live` | Live · Iberian Peninsula · last 48 h | | — (needs the Live button, W4-F1) |
 
@@ -94,6 +94,9 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | `spread`, `evacuation` and `fire_risk` now have **one polygon per fire snapshot** (every 6 h from the first to the last detection, `scripts/fire_history.py`): each feature carries `t_start` and, except the fire's last one, `t_until`; the front shows it while `t_start <= hour < t_until`. Zone, people to evacuate and risk level therefore change with the playback. Each feature also has `last`; the last snapshot of a fire stays until **24 h after its last detection** (`ACTIVE_HOURS`), then spread, evacuation and risk disappear and the perimeter (`fires`) stays at 30 % opacity as burned area. The last snapshot equals the old single polygon, `fires.geojson` and the alerts are unchanged; scripts that read the zones use the features with `last: true` |
+| 2026-11-15 | `fires` shows each perimeter **as it was at the playback hour**: the front rebuilds it from the hotspots detected so far (`web/layers/perimeter.js`, same rule as `fires.py`: convex hull + 500 m), so scrubbing back shrinks it. `fires.geojson` is unchanged (final shapes: used for clicks, figures and the other scripts) |
+| 2026-11-15 | Default episode back to Sierra Bermeja (Málaga); the page opens **paused on the peak** with `roads` and `groundwater` on (`CONFIG.defaultLayers`); spread, evacuation and risk polygons now appear only once their fire has started, so scrubbing back hides them (before, they stayed on at every hour) |
 | 2026-11-15 | Episodes kept for the demo: Sierra Bermeja (Málaga), Galicia (default) and Chile; Los Angeles removed (the layer table no longer has its column) |
 | 2026-11-15 | Lighter GeoJSON in every episode (`scripts/compact.py`, new last step before the manifest): coordinates rounded to 5 decimals (~1 m) and no indentation; same fires, same properties. `spread.geojson` of the NW Spain episode 8.2 → 1.8 MB, whole episode 20 → 13 MB; Chile 9.4 → 8.5 MB |
 | 2026-11-15 | Episode `spain-2025-08` (whole peninsula, 27 MB) replaced by `galicia-2025-08` (Galicia, 5 MB, 238 fires, 494 alerts, risk score and evacuation): the national one was too heavy for a smooth map; fires outside Galicia (Castilla y León, Portugal, Extremadura) are no longer in it |
