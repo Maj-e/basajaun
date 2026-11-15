@@ -2,6 +2,8 @@
 
 A predictive layer next to the observed ones: **where is a new fire most likely to start today?** Built by Sergey. The rest of the page shows what the satellites already saw; this layer estimates what could ignite.
 
+![Sierra Bermeja replay with the ML ignition-risk grid under the observed hotspots, perimeters, roads and groundwater](../media/basajaum_predictions.gif)
+
 ## What it produces
 
 `ignition_risk.geojson` per episode: a **12 × 12 grid** (cells `SEC-001` … `SEC-144`) over the episode's bbox, with **one score per cell and per day**.

@@ -2,6 +2,7 @@
 
 | File | What |
 |---|---|
+| `basajaum_predictions.gif` | the replay zoomed on Sierra Bermeja with the ML ignition-risk grid (640 × 535, 19 s, 21 MB), shown in the README and in the AI module page |
 | `demo-placeholder.svg` | stand-in shown in the README until the real GIF exists |
 | `basajaum_video_historic.gif` | the animated demo shown at the top of the README (640 × 444, 47 s, 18 MB) |
 
