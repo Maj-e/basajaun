@@ -1,4 +1,4 @@
-"""Tests for the combined risk score + evacuation estimate (W3-B9)."""
+"""Tests for the combined risk score + evacuation estimate (W3-B11)."""
 import json
 
 import numpy as np
