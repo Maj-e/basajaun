@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate, setBasemap } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -51,6 +51,54 @@ async function dailyCounts(features) {
   return { days, counts };
 }
 
+// ---------- Map panel: one panel, two tabs (Layers, Alerts), foldable ----------
+// Desktop: left column between the header and the timeline. Mobile: bottom sheet above the timeline, folded at first.
+// The panel's room follows the real header and timeline heights (CSS variables).
+const panel = (() => {
+  const tabs = () => [...document.querySelectorAll('#panel [role="tab"]')].filter((t) => !t.hidden);
+  const mobile = matchMedia("(max-width: 760px)");
+  let folded = mobile.matches;
+  const fold = (on) => {
+    folded = on;
+    $("panel").classList.toggle("folded", on);
+    $("panel-body").hidden = on;
+    $("panel-fold").setAttribute("aria-expanded", String(!on));
+    $("panel-fold").setAttribute("aria-label", on ? "Show the panel" : "Hide the panel");
+  };
+  const select = (tab) => {
+    tabs().forEach((t) => {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute("aria-controls")).hidden = !on;
+    });
+  };
+  document.querySelectorAll('#panel [role="tab"]').forEach((t) => {
+    // Tapping the open tab folds the panel; any tab unfolds it
+    t.onclick = () => { if (t.getAttribute("aria-selected") === "true" && !folded) fold(true); else { select(t); fold(false); } };
+    // WAI-ARIA tabs: arrows move between tabs, Home / End to the first / last
+    t.onkeydown = (e) => {
+      const list = tabs(), i = list.indexOf(t);
+      const next = { ArrowRight: list[(i + 1) % list.length], ArrowLeft: list[(i - 1 + list.length) % list.length], Home: list[0], End: list.at(-1) }[e.key];
+      if (!next) return;
+      e.preventDefault();
+      select(next); fold(false); next.focus();
+    };
+  });
+  $("panel-fold").onclick = () => fold(!folded);
+  fold(folded);
+  const measure = () => {
+    const root = document.documentElement.style;
+    root.setProperty("--tl-h", `${$("timeline").offsetHeight}px`);
+    root.setProperty("--head-h", `${document.querySelector(".head .title").getBoundingClientRect().bottom}px`);
+  };
+  new ResizeObserver(measure).observe($("timeline"));
+  new ResizeObserver(measure).observe(document.querySelector(".head"));
+  return {
+    show: (name) => { const t = $(`tab-${name}`); if (t && !t.hidden) { select(t); fold(false); } },
+  };
+})();
+
 async function main() {
   try {
     await loadData();
@@ -90,7 +138,6 @@ async function main() {
   $("caption-scope").textContent = `MODIS + VIIRS merged · ${CONFIG.areaName} · ${fmtDay(days[0])} – ${fmtDay(days.at(-1), { year: "numeric" })}`;
   const generated = manifest.updated_at ? ` · generated ${new Date(manifest.updated_at).toLocaleString("en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC` : "";
   $("status").textContent = (CONFIG.manifest.includes("sample") ? "Sample data" : "Data") + generated;
-  renderLegend($("legend"));
   renderLayerList($("layer-list"), setLayerVisible);
 
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
@@ -146,6 +193,7 @@ async function main() {
   function isolateFire(id, geometry) {
     if (isolatedFireId === id) { showWholeArea(); return; }
     isolatedFireId = id;
+    panel.show("alerts"); // the fire's detail is in the Alerts tab
     alertScope = (a) => Number(a.fire_id) === id;
     setHotspotFire(id);
     showAlertFire(id);
@@ -204,17 +252,7 @@ async function main() {
     $("tl-fold").setAttribute("aria-label", $("tl-fold").title);
   };
   let tlFolded = false;
-  $("tl-fold").onclick = () => { foldTimeline((tlFolded = !tlFolded)); fitAlerts(); };
-  // The alert panel stops above the legend (or the timeline): both change size with the layers and the fold
-  function fitAlerts() {
-    const panel = $("alerts"), legend = $("legend");
-    if (!panel || matchMedia("(max-width: 760px)").matches) { panel?.style.removeProperty("max-height"); return; }
-    const floor = !legend.hidden && legend.offsetHeight ? legend.getBoundingClientRect().top : $("timeline").getBoundingClientRect().top;
-    panel.style.maxHeight = `${Math.max(160, floor - panel.getBoundingClientRect().top - 12)}px`;
-  }
-  new ResizeObserver(fitAlerts).observe($("legend"));
-  new ResizeObserver(fitAlerts).observe($("timeline"));
-  window.addEventListener("resize", fitAlerts);
+  $("tl-fold").onclick = () => foldTimeline((tlFolded = !tlFolded));
   // Demo disclaimer (W5-F2): once per visitor, never in presenter mode
   const presenterMode = new URLSearchParams(location.search).get("demo") === "1";
   let dismissed = false;
@@ -224,13 +262,6 @@ async function main() {
     $("demo-banner").hidden = true;
     try { localStorage.setItem("ulinautas-demo-banner", "closed"); } catch { /* fine, it just shows again next time */ }
   };
-  // Mobile: Layers / Alerts / Legend open as bottom sheets, one at a time (tap again to close)
-  document.querySelectorAll("#mobile-bar [data-sheet]").forEach((b) => (b.onclick = () => {
-    const name = b.dataset.sheet, open = !document.body.classList.contains(`sheet-${name}`);
-    document.body.classList.remove("sheet-layers", "sheet-alerts", "sheet-legend");
-    document.querySelectorAll("#mobile-bar [data-sheet]").forEach((o) => o.setAttribute("aria-expanded", "false"));
-    if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-expanded", "true"); }
-  }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
   // Base map picker (W3-F7): Topo (default) / Satellite / Dark
   const baseSwitch = $("basemap-switch");

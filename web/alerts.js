@@ -79,21 +79,8 @@ export async function loadAlerts() {
   } catch {
     alerts = [];
   }
-  $("alerts").hidden = !alerts.length;
-  // The header folds the whole panel (filters + list), remembered per visitor
-  const fold = (folded) => {
-    $("alerts-body").hidden = folded;
-    $("alerts").classList.toggle("folded", folded);
-    $("alerts-toggle").setAttribute("aria-expanded", String(!folded));
-  };
-  let folded = false;
-  try { folded = localStorage.getItem("ulinautas-alerts") === "folded"; } catch { /* storage blocked */ }
-  fold(folded);
-  $("alerts-toggle").onclick = () => {
-    folded = !folded;
-    fold(folded);
-    try { localStorage.setItem("ulinautas-alerts", folded ? "folded" : "open"); } catch { /* fine */ }
-  };
+  // The Alerts tab of the map panel exists only when the episode has alerts
+  $("tab-alerts").hidden = !alerts.length;
   renderFilters();
   return alerts;
 }
@@ -175,8 +162,11 @@ export function renderAlerts(hour, inScope) {
   const groups = [...fires.values()];
   const top = groups.slice(0, MAX_SHOWN);
   const critical = groups.filter((g) => g[0].risk === "critical").length;
-  if ($("mb-alerts")) $("mb-alerts").textContent = groups.length;
-  $("alerts").classList.toggle("detail", detailFire !== null);
+  $("tp-alerts").classList.toggle("detail", detailFire !== null);
+  // Tab badge: fires with alerts, and how many are critical (in words, not only in red)
+  $("alerts-count").textContent = critical ? `${critical} critical` : groups.length;
+  $("tab-alerts").title = `${active.length} alerts on ${groups.length} fires`;
+  $("tab-alerts").classList.toggle("has-critical", critical > 0);
 
   let onMapAlerts;
   if (detailFire !== null) {
@@ -184,9 +174,7 @@ export function renderAlerts(hour, inScope) {
     const own = started.filter((a) => Number(a.fire_id) === detailFire)
       .sort((a, b) => RANK[a.risk] - RANK[b.risk]);
     const place = places.get(detailFire) ?? "Fire";
-    $("alerts-title").textContent = "1 fire selected";
-    $("alerts-count").hidden = true; // the risk is next to the fire's name
-    $("alerts-toggle").classList.remove("has-critical");
+    $("alerts-title").textContent = "";
     $("alerts-detail").innerHTML = renderDetail(detailFire, place, own);
     $("alerts-back").onclick = () => { returnTo = detailFire; handlers.clear(); };
     if (focusBack || openedFromList) $("alerts-back").focus();
@@ -194,11 +182,9 @@ export function renderAlerts(hour, inScope) {
     onMapAlerts = own;
   } else {
     // ---------- List of fires ----------
-    $("alerts-title").textContent = groups.length ? `${groups.length} fire${groups.length > 1 ? "s" : ""}` : "none now";
-    $("alerts-count").hidden = false;
-    $("alerts-count").textContent = critical ? `${critical} critical` : groups.length;
-    $("alerts-count").title = `${active.length} alerts on ${groups.length} fires`;
-    $("alerts-toggle").classList.toggle("has-critical", critical > 0);
+    $("alerts-title").textContent = groups.length
+      ? `${active.length} alert${active.length > 1 ? "s" : ""} on ${groups.length} fire${groups.length > 1 ? "s" : ""}, worst first`
+      : "";
     $("alerts-list").innerHTML = groups.length
       ? top.map((g) => {
         const lead = g[0];
@@ -221,7 +207,7 @@ export function renderAlerts(hour, inScope) {
       row.onmouseleave = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.remove("hot"));
     });
     const refocus = focusedFire ?? (returnTo !== null ? String(returnTo) : null);
-    if (refocus !== null) ($("alerts-list").querySelector(`.fire-row[data-fire="${refocus}"]`) ?? $("alerts-toggle")).focus();
+    if (refocus !== null) ($("alerts-list").querySelector(`.fire-row[data-fire="${refocus}"]`) ?? $("tab-alerts")).focus();
     returnTo = null;
     onMapAlerts = top.flat();
   }

@@ -64,37 +64,42 @@
     <button type="button" id="demo-banner-close">Got it</button>
   </div>
 
-  <aside class="alerts" id="alerts" aria-label="Alerts" hidden>
-    <button type="button" id="alerts-toggle" aria-expanded="true" aria-controls="alerts-body">
-      <span class="lbl">Alerts</span> <span id="alerts-title"></span> <span id="alerts-count">0</span>
-      <svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <div id="alerts-body">
-      <div class="alert-filters" id="alerts-filters" hidden></div>
-      <ol id="alerts-list"></ol>
-      <div class="alerts-detail" id="alerts-detail"></div>
+  <!-- One panel, two tabs (UI review: the Map, Alerts and Legend panels overlapped). Mobile: the same panel as a bottom sheet. -->
+  <aside id="panel" class="panel" aria-label="Map panel">
+    <div class="panel-bar">
+      <div class="tabs" role="tablist" aria-label="Map panel">
+        <button type="button" role="tab" id="tab-layers" aria-controls="tp-layers" aria-selected="true">Layers</button>
+        <button type="button" role="tab" id="tab-alerts" aria-controls="tp-alerts" aria-selected="false" tabindex="-1" hidden>Alerts <span class="count" id="alerts-count">0</span></button>
+      </div>
+      <button type="button" class="panel-fold" id="panel-fold" aria-expanded="true" aria-controls="panel-body" aria-label="Hide the panel">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 9l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="panel-body" id="panel-body">
+      <div role="tabpanel" id="tp-layers" class="tabpanel" aria-labelledby="tab-layers">
+        <fieldset class="group">
+          <legend>Base map</legend>
+          <div class="basemap-switch" id="basemap-switch" role="group" aria-label="Base map"></div>
+        </fieldset>
+        <div id="layer-list"></div>
+        <fieldset class="group">
+          <legend>Imagery</legend>
+          <label class="layer"><input type="checkbox" id="satellite-toggle"> <span>Satellite image of the day <small>NASA VIIRS true color · needs internet</small></span></label>
+        </fieldset>
+      </div>
+      <div role="tabpanel" id="tp-alerts" class="tabpanel alerts" aria-labelledby="tab-alerts" hidden>
+        <div class="alerts-head">
+          <p class="alerts-summary" id="alerts-title"></p>
+          <label class="layer"><input type="checkbox" id="labels-toggle"> <span>Show on the map <small>circles + people within 5 km</small></span></label>
+          <div class="alert-filters" id="alerts-filters" hidden></div>
+        </div>
+        <ol id="alerts-list"></ol>
+        <div class="alerts-detail" id="alerts-detail"></div>
+      </div>
     </div>
   </aside>
 
-  <aside id="panel-layers" class="layers-panel map-panel" aria-label="Map layers">
-    <details id="panel-details" open>
-      <summary>Map</summary>
-      <div class="basemap-switch" id="basemap-switch" role="group" aria-label="Base map"></div>
-      <div id="layer-list"></div>
-      <label><input type="checkbox" id="satellite-toggle"> Satellite image of the day <small>NASA VIIRS true color · needs internet</small></label>
-      <label><input type="checkbox" id="labels-toggle"> Alerts on the map <small>circles + people within 5 km (the list stays on the right)</small></label>
-    </details>
-  </aside>
-
-  <aside class="legend" id="legend" aria-label="Legend" hidden></aside>
   <p class="sat-badge" id="sat-badge" hidden></p>
-
-  <!-- Mobile only: one bottom sheet at a time -->
-  <nav class="mobile-bar" id="mobile-bar" aria-label="Map panels">
-    <button type="button" data-sheet="layers" aria-expanded="false" aria-controls="panel-layers">Layers</button>
-    <button type="button" data-sheet="alerts" aria-expanded="false" aria-controls="alerts">Alerts <span id="mb-alerts">0</span></button>
-    <button type="button" data-sheet="legend" aria-expanded="false" aria-controls="legend">Legend</button>
-  </nav>
 
   <section id="timeline" class="timeline" aria-label="Playback">
     <button type="button" class="tl-fold" id="tl-fold" aria-expanded="true" aria-controls="strip" title="Hide the chart" aria-label="Hide the chart">
