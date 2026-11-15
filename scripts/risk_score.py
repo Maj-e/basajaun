@@ -1,4 +1,4 @@
-"""Combined risk score + evacuation estimate per fire (W3-B9).
+"""Combined risk score + evacuation estimate per fire (W3-B11).
 
 Four factors, 0-2 points each (thresholds: config.RISK_SCORE):
     F  fire           1 for any fire, 2 when intense (frp_max or number of hotspots)

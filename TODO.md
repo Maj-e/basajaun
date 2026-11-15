@@ -26,7 +26,7 @@ Data contract (file formats, layer manifest, MODIS / VIIRS field mapping): [`doc
 | **0 · Base** | **W0-B1** Frozen contract + sample data | **W0-B2** FIRMS key + area + `config.py` | **W0-B3** FIRMS volume measurement | **W0-B4** Repo, environment, Makefile, CI | **W0-F1** Web skeleton + deployment |
 | **1 · MVP** | **W1-B1** MODIS / VIIRS normalization + tests | **W1-B2** Full FIRMS download | **W1-B3** Hotspot export + daily summary | **W1-B4** Contract validator + manifest | **W1-F0** Playback screen mockup<br>**W1-F1** Layer loader + hotspot layer<br>**W1-F2** Filters + "no data" status |
 | **2 · Calendar + playback** | **W2-B1** MODIS / VIIRS deduplication | **W2-B2** Fires (grouping) | **W2-B3** Time series (counter, chart) | **W2-B4** End-to-end check on the URL | **W2-F1** Calendar<br>**W2-F2** Timeline + animation<br>**W2-F3** Figures follow the visible area |
-| **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts<br>**W3-B8** Typed alerts: wind, smoke, water contamination<br>**W3-B9** Group alerts into relevant incidents | **W3-B2** Wind + weather<br>**W3-B5** Dedup + fires in `make data` | **W3-B3** Population (WorldPop)<br>**W3-B6** Regions per hotspot | **W3-B4** OSM: water, roads, fire stations + accessibility | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel<br>**W3-F3** Isolate a fire<br>**W3-F4** Region selector<br>**W3-F5** Alert types in the panel<br>**W3-F6** Grouped alerts in the panel |
+| **3 · Layers + alerts** | **W3-B1** Exposed population + risk + alerts<br>**W3-B8** Typed alerts: wind, smoke, water contamination<br>**W3-B9** Group alerts into relevant incidents | **W3-B2** Wind + weather<br>**W3-B5** Dedup + fires in `make data` | **W3-B3** Population (WorldPop)<br>**W3-B6** Regions per hotspot | **W3-B4** OSM: water, roads, fire stations + accessibility<br>**W3-B7** Water points + groundwater<br>**W3-B10** Layer description and source<br>**W3-B11** Risk score + evacuation | **W3-F1** Layer panel + temporal layers + relief<br>**W3-F2** Alert panel<br>**W3-F3** Isolate a fire<br>**W3-F4** Region selector<br>**W3-F5** Alert types in the panel<br>**W3-F6** Grouped alerts in the panel |
 | **4 · Live + episodes** | **W4-B1** Alerts on recent data | — | — | **W4-B4** Automatic refresh with validation<br>**W4-B5** Pipeline per episode | **W4-F1** "Live" button<br>**W4-F2** Episode selector + world basemap |
 | **5 · Later** | **W5-B1** Notifications | **W5-B2** Spread projection | **W5-B3** Slope and land cover | **W5-B4** Scalability (API, hosting) | **W5-F1** Mobile, i18n, animation export<br>**W5-F2** Demo disclaimer banner<br>**W5-F3** Data transparency (layer info, About the data, readable popups) |
 
@@ -318,7 +318,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the Spain episode shows a short, sorted incident list on the published URL
   - Depends on: W3-B9, W3-F5
 
-- [x] **W3-B9** · Combined risk score + evacuation estimate · **B4**
+- [x] **W3-B11** · Combined risk score + evacuation estimate · **B4**
   - Per fire, four factors of 0–2 points: fire (intensity), people (within 5 km), smoke (toward people, W3-B8), strong wind (surface, during the fire)
   - Level from the total, raised by combinations: smoke + people ≥ medium, fire + strong wind ≥ high, people + fire + smoke + strong wind = **extreme**
   - Evacuation: people in fire + 1 km + 6 h spread (`evacuate_people`); the rest within 5 km on warning (`warn_people`)

@@ -95,7 +95,7 @@ ALERT_THRESHOLDS = {
     "smoke_critical_people": 50_000,
 }
 
-# Combined risk score + evacuation (W3-B9): read by scripts/risk_score.py
+# Combined risk score + evacuation (W3-B11): read by scripts/risk_score.py
 RISK_SCORE = {
     "fire_intense_frp_mw": 100.0,    # fire factor = 2 when frp_max reaches this ...
     "fire_intense_hotspots": 20,     # ... or the fire has this many hotspots
