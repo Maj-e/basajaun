@@ -44,7 +44,7 @@ Levels are **relative to the episode**, not absolute probabilities: every cell o
 
 ## On the map
 
-- Layer `ignition_risk`: type `fill`, **temporal**, `hold_hours: 24`, switched on in the manifest and **on at start**, drawn underneath the groundwater, roads and fires so it never hides them. `hold_hours` is a new optional manifest field (default 1): a temporal feature stays visible that many hours, so the daily surface lasts until the next midnight UTC. See the [data contract](../data_contract.md).
+- Layer `ignition_risk`: type `fill`, **temporal**, `hold_hours: 24`, switched on in the manifest, off at start (one click in the Layers tab), drawn underneath the groundwater, roads and fires so it never hides them. `hold_hours` is a new optional manifest field (default 1): a temporal feature stays visible that many hours, so the daily surface lasts until the next midnight UTC. See the [data contract](../data_contract.md).
 - Popup: cell, date, level, risk %, drivers and recommended action. Legend with the four levels.
 - Pipeline: `risk_ml` runs inside `make data`, before `make_manifest`. Tests: `test_ml_features.py`, `test_risk_ml.py`, `test_ml_integration.py` (every published episode must have the inputs the model reads).
 
