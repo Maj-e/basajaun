@@ -88,6 +88,20 @@
             },
             "description": "Pipeline steps this episode doesn't run"
           },
+          "osm_options": {
+            "type": "object",
+            "description": "Trim the OSM download for a large area (scripts/osm.py)",
+            "additionalProperties": false,
+            "properties": {
+              "roads": {
+                "type": "array",
+                "items": { "enum": ["primary", "secondary", "tertiary", "track", "path"] },
+                "minItems": 1,
+                "description": "Road classes to download (default: all)"
+              },
+              "hydrants": { "type": "boolean", "description": "Download urban fire hydrants (default true)" }
+            }
+          },
           "live": {
             "type": "boolean",
             "description": "Live episode: the period is today and yesterday, data is published by update-data.yml, not committed"

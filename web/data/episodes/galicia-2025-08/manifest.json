@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-11-14T23:43:36Z",
+  "updated_at": "2026-11-15T12:39:19Z",
   "layers": [
     {
       "id": "hotspots",
       "name": "Fire hotspots",
-      "file": "episodes/spain-2025-08/hotspots.geojson",
+      "file": "episodes/galicia-2025-08/hotspots.geojson",
       "type": "circle",
       "temporal": true,
       "active": true,
@@ -44,12 +44,12 @@
           "shape": "ring"
         }
       ],
-      "updated_at": "2026-11-14T22:49:13Z"
+      "updated_at": "2026-11-15T11:23:21Z"
     },
     {
       "id": "regions",
       "name": "Regions",
-      "file": "episodes/spain-2025-08/regions.geojson",
+      "file": "episodes/galicia-2025-08/regions.geojson",
       "type": "fill",
       "temporal": false,
       "active": true,
@@ -57,12 +57,12 @@
         "country",
         "region"
       ],
-      "updated_at": "2026-11-14T22:49:07Z"
+      "updated_at": "2026-11-15T11:23:17Z"
     },
     {
       "id": "fires",
       "name": "Fires",
-      "file": "episodes/spain-2025-08/fires.geojson",
+      "file": "episodes/galicia-2025-08/fires.geojson",
       "type": "fill",
       "temporal": false,
       "active": true,
@@ -88,12 +88,12 @@
         "evacuate_people",
         "warn_people"
       ],
-      "updated_at": "2026-11-14T23:23:15Z"
+      "updated_at": "2026-11-15T11:23:47Z"
     },
     {
       "id": "fire_risk",
       "name": "Fire risk (smoke · people · wind)",
-      "file": "episodes/spain-2025-08/fire_risk.geojson",
+      "file": "episodes/galicia-2025-08/fire_risk.geojson",
       "type": "fill",
       "temporal": false,
       "active": false,
@@ -123,12 +123,12 @@
           "text": "Low"
         }
       ],
-      "updated_at": "2026-11-14T23:23:15Z"
+      "updated_at": "2026-11-15T11:23:47Z"
     },
     {
       "id": "evacuation",
       "name": "Evacuation zone (fire + 1 km + 6 h spread)",
-      "file": "episodes/spain-2025-08/evacuation.geojson",
+      "file": "episodes/galicia-2025-08/evacuation.geojson",
       "type": "fill",
       "temporal": false,
       "active": false,
@@ -143,12 +143,12 @@
           "text": "Evacuate: fire + 1 km + 6 h spread"
         }
       ],
-      "updated_at": "2026-11-14T23:23:15Z"
+      "updated_at": "2026-11-15T11:23:47Z"
     },
     {
       "id": "spread",
       "name": "6h spread estimate",
-      "file": "episodes/spain-2025-08/spread.geojson",
+      "file": "episodes/galicia-2025-08/spread.geojson",
       "type": "fill",
       "temporal": false,
       "active": true,
@@ -161,29 +161,29 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T23:21:47Z"
+      "updated_at": "2026-11-15T11:23:23Z"
     },
     {
       "id": "population",
       "name": "Population density",
-      "file": "episodes/spain-2025-08/population.png",
+      "file": "episodes/galicia-2025-08/population.png",
       "type": "image",
       "corners": [
         [
-          -9.6,
-          43.9
+          -9.4,
+          43.8
         ],
         [
-          3.4,
-          43.9
+          -6.7,
+          43.8
         ],
         [
-          3.4,
-          35.9
+          -6.7,
+          41.8
         ],
         [
-          -9.6,
-          35.9
+          -9.4,
+          41.8
         ]
       ],
       "temporal": false,
@@ -198,12 +198,12 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T23:07:27Z"
+      "updated_at": "2026-11-15T11:23:22Z"
     },
     {
       "id": "wind",
       "name": "Wind",
-      "file": "episodes/spain-2025-08/weather.geojson",
+      "file": "episodes/galicia-2025-08/weather.geojson",
       "type": "arrows",
       "temporal": true,
       "active": false,
@@ -230,12 +230,12 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T22:49:16Z"
+      "updated_at": "2026-11-15T11:23:22Z"
     },
     {
       "id": "weather",
       "name": "Weather",
-      "file": "episodes/spain-2025-08/weather.geojson",
+      "file": "episodes/galicia-2025-08/weather.geojson",
       "type": "circle",
       "temporal": true,
       "active": true,
@@ -246,12 +246,12 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T22:49:16Z"
+      "updated_at": "2026-11-15T11:23:22Z"
     },
     {
       "id": "wind_particles",
       "name": "Wind",
-      "file": "episodes/spain-2025-08/weather.geojson",
+      "file": "episodes/galicia-2025-08/weather.geojson",
       "type": "particles",
       "temporal": true,
       "active": true,
@@ -262,12 +262,12 @@
           "text": "Surface wind (10 m), faster = brighter"
         }
       ],
-      "updated_at": "2026-11-14T22:49:16Z"
+      "updated_at": "2026-11-15T11:23:22Z"
     },
     {
       "id": "water",
       "name": "Water",
-      "file": "episodes/spain-2025-08/water.geojson",
+      "file": "episodes/galicia-2025-08/water.geojson",
       "type": "fill",
       "temporal": false,
       "active": true,
@@ -281,12 +281,12 @@
           "text": "Lakes, reservoirs"
         }
       ],
-      "updated_at": "2026-11-14T22:52:50Z"
+      "updated_at": "2026-11-15T11:23:24Z"
     },
     {
       "id": "rivers",
       "name": "Rivers",
-      "file": "episodes/spain-2025-08/rivers.geojson",
+      "file": "episodes/galicia-2025-08/rivers.geojson",
       "type": "line",
       "temporal": false,
       "active": true,
@@ -299,7 +299,37 @@
           "text": "Rivers"
         }
       ],
-      "updated_at": "2026-11-14T22:52:50Z"
+      "updated_at": "2026-11-15T11:23:24Z"
+    },
+    {
+      "id": "groundwater",
+      "name": "Groundwater (ash leachate risk)",
+      "file": "episodes/galicia-2025-08/groundwater.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name",
+        "vulnerability",
+        "chemical_status",
+        "at_risk_chemical",
+        "geology"
+      ],
+      "legend": [
+        {
+          "color": "#8e44ad",
+          "text": "High vulnerability (karst / poor or at-risk chemical status)"
+        },
+        {
+          "color": "#5b8def",
+          "text": "Medium (porous aquifer)"
+        },
+        {
+          "color": "#9fb8c9",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-15T11:23:37Z"
     }
   ]
 }

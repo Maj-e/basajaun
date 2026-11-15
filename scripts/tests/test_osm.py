@@ -205,3 +205,19 @@ def test_cache_name_changes_with_the_query():
 def test_manifest_legend_matches_water_point_colors():
     [layer] = [l for l in make_manifest.LAYERS if l["id"] == "water_points"]
     assert [item["color"] for item in layer["legend"]] == list(osm.WATER_POINT_COLORS.values())
+
+
+def test_full_query_asks_for_every_road_class_and_hydrants():
+    # explicit arguments: the module defaults follow the selected episode's osm_options
+    query = osm.overpass_query((-71.0, -35.0, -70.9, -34.9), road_types=osm.ALL_ROAD_TYPES, hydrants=True)
+    assert "primary|secondary|tertiary|track|path" in query
+    assert "fire_hydrant" in query
+
+
+def test_trimmed_query_leaves_out_minor_roads_and_hydrants():
+    """Large episodes (episodes.json "osm_options") download only main roads and no urban hydrants."""
+    query = osm.overpass_query((-71.0, -35.0, -70.9, -34.9), road_types=("primary", "secondary"), hydrants=False)
+    assert "primary|secondary)$" in query
+    assert "track" not in query and "path" not in query
+    assert "fire_hydrant" not in query
+    assert "suction_point" in query  # firefighting tanks and suction points stay

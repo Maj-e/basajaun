@@ -306,16 +306,16 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W3-B1, W3-B2, W3-B7, W5-B2
 
 - [ ] **W3-B9** · Group alerts into relevant incidents · **B1**
-  - Today: one alert per fire (Spain · Aug 2025: 788). Merge alerts that describe the same situation into one **incident**: fires closer than ~5 km or in the same region and time window, same type
+  - Today: one alert per fire (Galicia · Aug 2025: 238 fires, 494 alerts). Merge alerts that describe the same situation into one **incident**: fires closer than ~5 km or in the same region and time window, same type
   - Each incident: type(s), the worst risk, the people concerned **counted once** (union of the buffers, not a sum), first / last time, the fires it groups, a short `message`
   - Relevance: drop or fold incidents below a threshold (e.g. `low` risk and < 100 people) into an "other" counter; thresholds in `config.py`
   - Output `incidents.json` (contract + schema) next to `alerts.json`
-  - **Done when:** the Spain episode gives a readable list (tens, not hundreds) and the validator accepts it
+  - **Done when:** the Galicia episode gives a readable list (tens, not hundreds) and the validator accepts it
   - Depends on: W3-B1, W3-B8
 
 - [ ] **W3-F6** · Grouped alerts in the panel · **F** — *front part done: alerts grouped per fire (`fire_id`) with a detail view; switch to `incidents.json` once W3-B9 ships*
   - The alert panel lists **incidents** (from `incidents.json`) instead of single alerts: one line per incident (type icons, worst risk, people, fires grouped); expand to see its fires; click = zoom on the incident
-  - **Done when:** the Spain episode shows a short, sorted incident list on the published URL
+  - **Done when:** the Galicia episode shows a short, sorted incident list on the published URL
   - Depends on: W3-B9, W3-F5
 
 - [ ] **W3-F7** · Selectable base maps · **B4** — *code on branch `W3F7-basemaps`*

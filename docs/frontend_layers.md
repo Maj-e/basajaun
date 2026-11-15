@@ -19,36 +19,35 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 
 | id | Name | Default | Front page today |
 |---|---|---|---|
-| `sierra-bermeja-2021-09` | Sierra Bermeja (Málaga) · Sep 2021 | ✅ | — (needs the selector, W4-F2) |
-| `spain-2025-08` | Spain · Aug 2025 (1 km cells) | | — |
+| `sierra-bermeja-2021-09` | Sierra Bermeja (Málaga) · Sep 2021 | | — (needs the selector, W4-F2) |
+| `galicia-2025-08` | Galicia · Aug 2025 (1 km cells) | ✅ | — |
 | `chile-2026-02` | Chile–Argentina border · Feb 2026 | | ✅ (`manifest.json`) |
-| `los-angeles-2025-01` | Los Angeles · Jan 2025 | | — |
 | `live` | Live · Iberian Peninsula · last 48 h | | — (needs the Live button, W4-F1) |
 
 ## Layers
 
 ✅ = in that episode's manifest · — = not available there
 
-`spain-2025-08` (whole peninsula, 1 km cells) has: `hotspots`, `regions`, `fires`, `spread`, `population`, `wind`, `weather`, `wind_particles`, `water`, `rivers`.
+`galicia-2025-08` (Galicia, 1 km cells; replaces the whole-peninsula `spain-2025-08`, too heavy for the browser, and the short-lived north-west one) has: `hotspots`, `regions`, `fires`, `fire_risk`, `evacuation`, `spread`, `population`, `wind`, `weather`, `wind_particles`, `water`, `rivers`, `groundwater`. No OSM roads / stations / water points yet (the Overpass download was not reachable when it was built: `osm_options` in `episodes.json` already limits it to main roads, no hydrants), no slope or land cover.
 
-| id | Type | Active | Time | Sierra Bermeja | Chile | Los Angeles | Live | Popup fields | Style properties |
-|---|---|---|---|---|---|---|---|---|---|
-| `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp, country, region (Chile) | color, radius, border |
-| `fires` | fill | ✅ | | ✅ | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
-| `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius; also `u`, `v` (see [surface wind](#surface-wind)) |
-| `wind` | **arrows** | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color (drawn by the loader's `arrows` type) |
-| `wind_particles` | **particles** | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — drawn by the loader's `particles` type (`layers/particles.js`) |
-| `fire_risk` | fill | | | ✅ | ✅ | — | — | fire_id, risk_level, risk_score, risk_factors, evacuate_people, warn_people | color, opacity (by risk level) |
-| `evacuation` | fill | | | ✅ | ✅ | — | — | fire_id, evacuate_people, warn_people | color, opacity |
-| `spread` | fill | ✅ | | ✅ | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
-| `population` | image | ✅ | | ✅ | ✅ | — | — | — | PNG + `corners` in the manifest |
-| `water` | fill | ✅ | | ✅ | ✅ | — | — | name, kind (lake / reservoir) | color, opacity |
-| `rivers` | line | ✅ | | ✅ | ✅ | — | — | name | color, width |
-| `roads` | line | ✅ | | ✅ | ✅ | — | — | name, highway | color, width (by road type) |
-| `fire_stations` | circle | ✅ | | ✅ | ✅ | — | — | name | color, radius, border |
-| `water_points` | circle | ✅ | | ✅ | ✅ | — | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
-| `regions` | fill | ✅ | | — | ✅ | — | — | country, region | color, opacity |
-| `groundwater` | fill | ✅ | | ✅ | — (Europe only) | — | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
+| id | Type | Active | Time | Sierra Bermeja | Chile | Live | Popup fields | Style properties |
+|---|---|---|---|---|---|---|---|---|
+| `hotspots` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | sensor, satellite, timestamp_utc, confidence, frp, country, region (Chile) | color, radius, border |
+| `fires` | fill | ✅ | | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
+| `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius; also `u`, `v` (see [surface wind](#surface-wind)) |
+| `wind` | **arrows** | ✅ | ✅ `t` | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color (drawn by the loader's `arrows` type) |
+| `wind_particles` | **particles** | ✅ | ✅ `t` | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — drawn by the loader's `particles` type (`layers/particles.js`) |
+| `fire_risk` | fill | | | ✅ | ✅ | — | fire_id, risk_level, risk_score, risk_factors, evacuate_people, warn_people | color, opacity (by risk level) |
+| `evacuation` | fill | | | ✅ | ✅ | — | fire_id, evacuate_people, warn_people | color, opacity |
+| `spread` | fill | ✅ | | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
+| `population` | image | ✅ | | ✅ | ✅ | — | — | PNG + `corners` in the manifest |
+| `water` | fill | ✅ | | ✅ | ✅ | — | name, kind (lake / reservoir) | color, opacity |
+| `rivers` | line | ✅ | | ✅ | ✅ | — | name | color, width |
+| `roads` | line | ✅ | | ✅ | ✅ | — | name, highway | color, width (by road type) |
+| `fire_stations` | circle | ✅ | | ✅ | ✅ | — | name | color, radius, border |
+| `water_points` | circle | ✅ | | ✅ | ✅ | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
+| `regions` | fill | ✅ | | — | ✅ | — | country, region | color, opacity |
+| `groundwater` | fill | ✅ | | ✅ | — (Europe only) | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
 
 ### Fire properties
 Each fire polygon in `fires.geojson` carries (a property can be missing or `null` when the input wasn't available for that episode):
@@ -95,6 +94,9 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | Episodes kept for the demo: Sierra Bermeja (Málaga), Galicia (default) and Chile; Los Angeles removed (the layer table no longer has its column) |
+| 2026-11-15 | Lighter GeoJSON in every episode (`scripts/compact.py`, new last step before the manifest): coordinates rounded to 5 decimals (~1 m) and no indentation; same fires, same properties. `spread.geojson` of the NW Spain episode 8.2 → 1.8 MB, whole episode 20 → 13 MB; Chile 9.4 → 8.5 MB |
+| 2026-11-15 | Episode `spain-2025-08` (whole peninsula, 27 MB) replaced by `galicia-2025-08` (Galicia, 5 MB, 238 fires, 494 alerts, risk score and evacuation): the national one was too heavy for a smooth map; fires outside Galicia (Castilla y León, Portugal, Extremadura) are no longer in it |
 | 2026-11-15 | `particles` type in the loader (`layers/particles.js` + Miguel's TerraFlow engine `layers/wind_particles.js`); `wind_particles` active in every episode with weather; still image under reduced motion |
 | 2026-11-15 | `spread` fixed outside Chile: ellipses were drawn at about half their size (fixed Chile UTM zone); `area_km2` now matches the polygon. Evacuation and contamination alerts regenerated |
 | 2026-11-15 | Combined risk score + evacuation (W3-B11): layers `fire_risk`, `evacuation`; fire fields `risk_*`, `evacuate_people`, `warn_people` (Chile, Sierra Bermeja, Spain Aug 2025) |
