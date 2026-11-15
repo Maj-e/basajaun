@@ -95,6 +95,11 @@ jobs:
       - uses: actions/configure-pages@v5
         if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
 
+      # Same module URLs as deploy.yml (?v=<commit>), so a live refresh never mixes front-end versions
+      - name: Version the front-end files
+        if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
+        run: python3 scripts/version_assets.py web "${GITHUB_SHA::8}"
+
       - uses: actions/upload-pages-artifact@v3
         if: steps.refresh.outcome == 'success' || steps.fallback.outputs.publish == 'true'
         with:
