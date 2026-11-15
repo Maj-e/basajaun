@@ -26,6 +26,11 @@
         "type": { "enum": ["circle", "fill", "line", "image", "arrows", "particles"] },
         "color": { "$ref": "common.schema.json#/$defs/hexColor", "description": "Layer-level colour (particles)" },
         "temporal": { "type": "boolean" },
+        "hold_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hours a temporal feature stays visible. Default 1 (the current hour). 24 keeps a daily surface up until the next midnight."
+        },
         "active": { "type": "boolean" },
         "updated_at": { "$ref": "common.schema.json#/$defs/datetimeUtc" },
         "popup": { "type": "array", "items": { "type": "string" } },

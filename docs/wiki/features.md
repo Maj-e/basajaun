@@ -27,13 +27,13 @@ Each episode is a place and a period with its own data and manifest (`web/data/e
 
 ## Map layers
 
-Switched on at start: hotspots, fires, roads, groundwater, wind. Others in the Map panel: 6 h spread, population density, rain, water, rivers, fire stations, water points for firefighting, regions, evacuation zone, fire risk.
+Switched on at start: hotspots, fires, roads, groundwater, wind and the AI ignition risk (drawn underneath the others). Others in the Map panel: 6 h spread, population density, rain, water, rivers, fire stations, water points for firefighting, regions, evacuation zone, fire risk.
 
 **Base maps**: Topo (relief), Satellite (cloud-free Sentinel-2) and Dark; plus the *Satellite image of the day* (NASA GIBS) over any of them. Licences and attribution: [`docs/licenses.md`](../licenses.md).
 
 ## Predictive ignition risk (AI)
 
-*Ready on branch `IA`, pending merge into `dev`.* A calibrated logistic-regression model scores, for every cell of a **12 × 12 grid** and every day, the probability that a fire starts there, from weather, distance to roads / fire stations / water, population and slope. The layer shows four levels (critical → low, relative to the episode), a popup with the **drivers** and a **recommended action**, and stays on the map for the whole day. It answers *where could a fire start*, while the layers below describe fires that already exist. How it works and its limits: [AI module](ai-risk.md).
+A calibrated logistic-regression model scores, for every cell of a **12 × 12 grid** and every day, the probability that a fire starts there, from weather, distance to roads / fire stations / water, population and slope. The layer shows four levels (critical → low, relative to the episode), a popup with the **drivers** and a **recommended action**, and stays on the map for the whole day. It answers *where could a fire start*, while the layers below describe fires that already exist. How it works and its limits: [AI module](ai-risk.md).
 
 ## Alerts, risk and evacuation
 

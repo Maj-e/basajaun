@@ -1,6 +1,8 @@
 # Municipal ignition risk (AI module)
 
-A predictive layer next to the observed ones: **where is a new fire most likely to start today?** Built by Sergey on branch **`IA`** (PR #90 merged into `IA`; **not yet merged into `dev`**, see [Merging it](#merging-it-into-dev)). The rest of the page shows what the satellites already saw; this layer estimates what could ignite.
+A predictive layer next to the observed ones: **where is a new fire most likely to start today?** Built by Sergey. The rest of the page shows what the satellites already saw; this layer estimates what could ignite.
+
+![Sierra Bermeja replay with the ML ignition-risk grid under the observed hotspots, perimeters, roads and groundwater](../media/basajaum_predictions.gif)
 
 ## What it produces
 
@@ -42,7 +44,7 @@ Levels are **relative to the episode**, not absolute probabilities: every cell o
 
 ## On the map
 
-- Layer `ignition_risk`: type `fill`, **temporal**, `hold_hours: 24`, switched on in the manifest. `hold_hours` is a new optional manifest field (default 1): a temporal feature stays visible that many hours, so the daily surface lasts until the next midnight UTC. See the [data contract](../data_contract.md).
+- Layer `ignition_risk`: type `fill`, **temporal**, `hold_hours: 24`, switched on in the manifest and **on at start**, drawn underneath the groundwater, roads and fires so it never hides them. `hold_hours` is a new optional manifest field (default 1): a temporal feature stays visible that many hours, so the daily surface lasts until the next midnight UTC. See the [data contract](../data_contract.md).
 - Popup: cell, date, level, risk %, drivers and recommended action. Legend with the four levels.
 - Pipeline: `risk_ml` runs inside `make data`, before `make_manifest`. Tests: `test_ml_features.py`, `test_risk_ml.py`, `test_ml_integration.py` (every published episode must have the inputs the model reads).
 
@@ -51,11 +53,3 @@ Levels are **relative to the episode**, not absolute probabilities: every cell o
 - It is trained on **the same episode it scores** (a few days of one area), so the metrics are indicative: e.g. Chile, Feb 2026: ROC-AUC 0.74, PR-AUC 0.25; Sierra Bermeja, Sep 2021: ROC-AUC 0.87 but PR-AUC 0.07 with very few ignitions. It is **not** a validated operational forecast.
 - The 12 × 12 grid is coarse; levels are relative, so "critical" means "among the worst cells of this episode", not a fixed danger level.
 - Ignition risk is a different question from the **spread**, **risk score** and **evacuation** layers, which describe fires that already exist ([Features](features.md)).
-
-## Merging it into `dev`
-
-Branch `IA` started from an older `dev`; before merging:
-- `dev` no longer has the Los Angeles episode, which the AI tests and data still list.
-- Galicia has no `ignition_risk.geojson` yet (`make data EPISODE=galicia-2025-08`); manifests of every episode must be regenerated (`make_manifest`) after merging.
-- `web/app.js` and `web/layers/loader.js` changed on both sides: the AI branch repaints the map only when the data hour crosses an integer (this may help the playback-sync item in [`TODO.md`](../../TODO.md)), and adds `hold_hours` to the current-hour layers.
-- Then update [Front-end layers](../frontend_layers.md) (layer row, changelog) in the same PR.

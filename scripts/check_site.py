@@ -30,7 +30,7 @@ import requests
 
 import validate
 
-DEFAULT_URL = os.getenv("SITE_URL", "https://maj-e.github.io/ulinautas/")
+DEFAULT_URL = os.getenv("SITE_URL", "https://maj-e.github.io/basajaun/")
 DEFAULT_MAX_LOAD_S = float(os.getenv("MAX_LOAD_S", "10"))
 TIMEOUT_S = 30
 RETRIES = 3
