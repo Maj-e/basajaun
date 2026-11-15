@@ -6,7 +6,9 @@ moment (hull of the hotspots detected up to then, same rule as fires.py), and th
 from the fire run once per snapshot.
 
 The last snapshot of a fire IS its final polygon (same geometry, same figures), so everything that reads
-"the fire" keeps working: consumers use the snapshots without `t_until`.
+"the fire" keeps working: consumers use the snapshots flagged `last`. The last one stays on the map for
+ACTIVE_HOURS after the fire's last detection (`active_until`): without new detections a fire is no longer
+growing, so its zones should not stay on screen for ever.
 
     snapshots(fires_fc, hotspots_fc)  ->  {fire_id: [ {t_from, t_until, geometry, frp_max, n_hotspots}, ... ]}
 """
@@ -20,6 +22,7 @@ from spread import transformers_for
 
 STEP_HOURS = 6.0
 BUFFER_M = 500.0  # same as fires.py
+ACTIVE_HOURS = 24.0  # how long a fire counts as active after its last detection (= CONFIG.trailHours in the front end)
 
 
 def boundaries(t_start: float, t_end: float, step: float = STEP_HOURS) -> list[float]:
@@ -74,6 +77,7 @@ def snapshots(fires_fc: dict, hotspots_fc: dict | None, step: float = STEP_HOURS
                         "frp_max": max(h[3] for h in upto), "n_hotspots": len(upto)}
             snap["t_from"] = t
             snap["t_until"] = None if last else times[k + 1]
+            snap["active_until"] = round(t_end + ACTIVE_HOURS, 2) if last else None
             out.append(snap)
         result[fid] = out
     return result

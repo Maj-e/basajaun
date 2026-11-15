@@ -164,7 +164,7 @@ def generate_spread(
     hotspots_path: Path | None = None,
 ) -> dict:
     """One projection per fire. When the episode's hotspots are next to the fires file, one per snapshot of the
-    fire (fire_history.py): each carries `t_start` and, but the last one, `t_until`, so the player can show the
+    fire (fire_history.py): each carries `t_start`, `t_until` and `last` (the final one stays until the fire is no longer active), so the player can show the
     projection that matched each moment. The last snapshot is the projection of the final polygon."""
     from fire_history import snapshots
 
@@ -190,9 +190,8 @@ def generate_spread(
             target_t = _parse_iso_hours(end_ts) if last else snap["t_from"]
             out = spread_feature(snap["geometry"], props, target_t, snap["frp_max"] or 20.0, weather_features,
                                  horizon_hours)
-            out["properties"]["t_start"] = snap["t_from"]
-            if not last:
-                out["properties"]["t_until"] = snap["t_until"]
+            out["properties"].update({"t_start": snap["t_from"], "t_until": snap["active_until"] if last else snap["t_until"],
+                                      "last": last})
             spread_features.append(out)
 
     out_fc = {

@@ -36,6 +36,7 @@ def test_snapshots_grow_and_the_last_is_the_final_polygon():
     assert areas == sorted(areas) and areas[0] < areas[-1]
     assert snaps[0]["n_hotspots"] == 1 and snaps[-1]["n_hotspots"] == 4
     assert snaps[-1]["t_until"] is None and all(s["t_until"] for s in snaps[:-1])
+    assert snaps[-1]["active_until"] == 121.0 + fire_history.ACTIVE_HOURS
     assert snaps[-1]["geometry"].equals(shape(fc["features"][0]["geometry"]))
     # Consecutive snapshots tile the time axis
     assert all(a["t_until"] == b["t_from"] for a, b in zip(snaps, snaps[1:]))
@@ -53,6 +54,7 @@ def test_spread_has_one_projection_per_snapshot(tmp_path):
     (tmp_path / "hotspots.geojson").write_text(json.dumps({"type": "FeatureCollection", "features": POINTS}))
     out = spread.generate_spread(tmp_path / "fires.geojson", tmp_path / "none.geojson", tmp_path / "spread.geojson")
     props = [f["properties"] for f in out["features"]]
-    assert len(props) == 5 and "t_until" not in props[-1]
+    assert len(props) == 5 and props[-1]["last"] and not props[0]["last"]
+    assert props[-1]["t_until"] == 121.0 + 24.0
     assert [p["t_start"] for p in props] == sorted(p["t_start"] for p in props)
     assert props[0]["area_km2"] < props[-1]["area_km2"]

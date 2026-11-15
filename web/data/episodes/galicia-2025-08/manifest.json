@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T13:13:05Z",
+  "updated_at": "2026-11-15T13:21:20Z",
   "layers": [
     {
       "id": "hotspots",
@@ -88,7 +88,7 @@
         "evacuate_people",
         "warn_people"
       ],
-      "updated_at": "2026-11-15T13:13:03Z"
+      "updated_at": "2026-11-15T13:21:18Z"
     },
     {
       "id": "fire_risk",
@@ -123,7 +123,7 @@
           "text": "Low"
         }
       ],
-      "updated_at": "2026-11-15T13:13:03Z"
+      "updated_at": "2026-11-15T13:21:18Z"
     },
     {
       "id": "evacuation",
@@ -143,7 +143,7 @@
           "text": "Evacuate: fire + 1 km + 6 h spread"
         }
       ],
-      "updated_at": "2026-11-15T13:13:03Z"
+      "updated_at": "2026-11-15T13:21:18Z"
     },
     {
       "id": "spread",
@@ -161,7 +161,7 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-15T13:12:50Z"
+      "updated_at": "2026-11-15T13:21:03Z"
     },
     {
       "id": "population",

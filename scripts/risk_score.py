@@ -125,7 +125,7 @@ def run(processed: Path = PROCESSED, overrides: dict | None = None) -> bool:
     smoke = {a["fire_id"]: (a["smoke_people"], _hours(a.get("since"))) for a in alerts if a["type"] == "smoke"}
     weather = json.loads(paths["weather"].read_text(encoding="utf-8")) if paths["weather"].exists() else None
     wind_index = index_weather(weather)
-    # Spread projections per fire and per snapshot start (the final one has no `t_until`)
+    # Spread projections per fire and per snapshot start (the final one is flagged `last`)
     spread = {}
     if paths["spread"].exists():
         for s in json.loads(paths["spread"].read_text(encoding="utf-8")).get("features", []):
@@ -184,7 +184,7 @@ def run(processed: Path = PROCESSED, overrides: dict | None = None) -> bool:
             "evacuate_people": evacuate[n],
             "warn_people": max(0, warn_total[n] - evacuate[n]),
         }
-        when = {"t_start": t_from, **({} if row["final"] else {"t_until": snap["t_until"]})}
+        when = {"t_start": t_from, "t_until": snap["active_until"] if row["final"] else snap["t_until"], "last": row["final"]}
         if row["final"]:
             p.update(values)
         light = shapely.set_precision(snap["geometry"].simplify(0.0002), 1e-4)  # ~20 m: display only

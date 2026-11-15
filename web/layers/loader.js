@@ -331,6 +331,8 @@ export function setHour(hour) {
     }
     const startOf = linkedToFire(entry) ? fireStartExpr() : ["get", "t_start"];
     // Visible from t_start; snapshots of a fire's zones (spread, evacuation, risk) also end at t_until, when the next one starts
+    // Fire perimeters stay once the fire stops growing, but fainter: what burned, no longer what is burning
+    const burnedOut = entry.layer.id === "fires" ? ["case", [">", hour, ["+", ["get", "t_end"], CONFIG.trailHours]], 0.3, 1] : 1;
     const live = ["all", ["<=", startOf, hour], ["<", hour, ["coalesce", ["get", "t_until"], 1e12]]];
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
@@ -338,8 +340,8 @@ export function setHour(hour) {
       else if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
       else if (id.endsWith("-ring")) map.setPaintProperty(id, "circle-stroke-opacity", fade);
       else if (type === "circle") { map.setPaintProperty(id, "circle-opacity", fade); map.setPaintProperty(id, "circle-stroke-opacity", fade); }
-      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", live, ["coalesce", ["get", "opacity"], 0.35], 0]);
-      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", live, 1, 0]);
+      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", live, ["*", ["coalesce", ["get", "opacity"], 0.35], burnedOut], 0]);
+      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", live, burnedOut, 0]);
     }
   }
 }
