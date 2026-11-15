@@ -9,10 +9,12 @@ A web page that shows **wildfire hotspots** detected by NASA satellites, merging
 Both are distributed by **NASA FIRMS** (Fire Information for Resource Management System), but with different resolutions, confidence scales and column names. **Harmonizing them** into one format is the core of the project.
 
 On top of the hotspots, the page adds:
-- a **calendar** of fire activity per day,
-- a **map with context layers**: weather, water, wind, terrain, population density, accessibility, roads,
-- **alerts** when a fire threatens a populated area,
-- a **playback** of how fires spread over time, and a **live** mode with the latest detections.
+- a **timeline** of fire activity per day and a **playback** where perimeters, spread, evacuation zones and risk evolve with the clock,
+- a **map with context layers**: wind, rain, population density, water, roads, fire stations, aquifers, base maps,
+- **typed alerts** (population, smoke, wind, water contamination), a **risk score** and an **evacuation estimate** per fire,
+- several **episodes** (Sierra Bermeja, Galicia, Chile) and a **live** mode with the latest detections.
+
+See [Features](features.md) for the full tour and [Architecture](architecture.md) for how it is built.
 
 ## Team
 | Role | Focus |

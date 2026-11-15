@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Placeholder: animated GIF of the MODIS and VIIRS playback">
+  <rect width="1200" height="675" fill="#0b1220"/>
+  <rect x="24" y="24" width="1152" height="627" rx="14" fill="none" stroke="#26344b" stroke-width="2" stroke-dasharray="10 8"/>
+  <g transform="translate(600 290)" fill="none" stroke="#f9a957" stroke-width="3">
+    <circle r="62"/><path d="M-26 -22l66 22-66 22z" fill="#f9a957" stroke="none"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="system-ui, sans-serif" font-size="34" font-weight="600" fill="#e8edf5">Demo GIF goes here</text>
+  <text x="600" y="466" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#9aa7bd">MODIS + VIIRS hotspots, harmonized, played over time</text>
+  <text x="600" y="520" text-anchor="middle" font-family="ui-monospace, monospace" font-size="18" fill="#6b7a93">save it as docs/media/demo.gif (see docs/media/README.md), then point the README to it</text>
+</svg>
