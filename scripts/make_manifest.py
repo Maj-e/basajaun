@@ -19,6 +19,7 @@ from pathlib import Path
 import rasterio
 
 from config import BBOX, MANIFEST, PROCESSED, WEB_DATA
+from risk_ml import RISK_COLORS
 
 DATA_DIR = WEB_DATA  # manifest `file` paths are relative to web/data/
 EPISODE_SUBDIR = PROCESSED.relative_to(WEB_DATA).as_posix()  # "processed" or "episodes/<id>"
@@ -151,6 +152,26 @@ LAYERS: list[dict] = [
         # Surface wind at 10 m: the front end reads u / v (m/s) per grid point and hour
         "color": "#bae6fd",
         "legend": [{"color": "#bae6fd", "text": "Surface wind (10 m), faster = brighter"}],
+    },
+    {
+        "id": "ignition_risk",
+        "name": "Municipal ignition risk",
+        "file": "processed/ignition_risk.geojson",
+        "type": "fill",
+        "temporal": True,
+        # One grid per day, kept on the map until the next midnight (features share that day's t).
+        "hold_hours": 24,
+        "active": True,
+        "popup": [
+            "cell_id", "reference_date", "risk_level", "risk_pct",
+            "drivers", "recommended_action",
+        ],
+        "legend": [
+            {"color": RISK_COLORS["critical"], "text": "Critical"},
+            {"color": RISK_COLORS["high"], "text": "High"},
+            {"color": RISK_COLORS["moderate"], "text": "Moderate"},
+            {"color": RISK_COLORS["low"], "text": "Low"},
+        ],
     },
     {
         "id": "water",

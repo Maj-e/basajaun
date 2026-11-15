@@ -48,7 +48,7 @@ NASA's FIRMS service publishes wildfire detections from two families of satellit
 
 **4 · Several places, one pipeline.** Three episodes ship ready — **Sierra Bermeja** (1,467 detections, every layer, real alerts), **Galicia, Aug 2025** (4,301 hotspots, 238 fires) and **Chile–Argentina, Feb 2026** — chosen from a selector. A new place is an entry in a JSON file and one command. A **live mode** refreshes the last 48 hours every 30 minutes.
 
-**5 · Predictive ignition risk (AI).** A calibrated logistic-regression model scores the probability that a fire *starts* in each cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. Built and tested on its own branch (`IA`) and being integrated. → [AI module](docs/wiki/ai-risk.md)
+**5 · Predictive ignition risk (AI).** A calibrated logistic-regression model scores the probability that a fire *starts* in each cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. → [AI module](docs/wiki/ai-risk.md)
 
 **6 · Built to be trusted.** The backend ships display-ready data and a manifest per episode; the front end is one generic loader, so adding a layer needs no front-end code. Every file is validated against a documented [data contract](docs/data_contract.md) in CI, an invalid refresh never reaches the published site, and the deploy is versioned so visitors never get a mix of old and new files. 200+ automated tests.
 

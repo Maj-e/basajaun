@@ -219,11 +219,22 @@ function addEntry(entry) {
   return true;
 }
 
-// Weather-like layers: one value per point and per hour, shown for the current hour only (no trail)
+// Weather-like layers: one value per point and per hour, shown for the current hour only (no trail).
+// hold_hours (default 1) widens that window. Daily ignition risk uses 24, so one midnight `t` lasts the whole day.
 const isNowOnly = (entry) => entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id) && !["arrows", "particles"].includes(entry.layer.type);
+const holdHours = (entry) => {
+  const n = Number(entry.layer.hold_hours);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+};
+// Start of the block that contains `hour`. A 1-hour layer changes every hour; a 24-hour layer changes at midnight UTC.
+const windowStart = (hour, hold) => {
+  const h = Math.floor(hour);
+  return hold === 1 ? h : Math.floor(h / hold) * hold;
+};
 function hourSubset(entry, hour) {
   const h = hour ?? -Infinity;
-  return { type: "FeatureCollection", features: (entry.data?.features ?? []).filter((f) => f.properties.t <= h && f.properties.t > h - 1) };
+  const hold = holdHours(entry);
+  return { type: "FeatureCollection", features: (entry.data?.features ?? []).filter((f) => f.properties.t <= h && f.properties.t > h - hold) };
 }
 
 // Put a layer's map layers at their place in CONFIG.layerOrder (below the first loaded layer ranked higher)
@@ -321,9 +332,9 @@ export function setHour(hour) {
       // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
       // Wind arrows are moved by the flow loop.
       if (isNowOnly(entry) && mapLayerIds.length) {
-        const h = Math.floor(hour);
-        if (entry.shownHour !== h) {
-          entry.shownHour = h;
+        const start = windowStart(hour, holdHours(entry));
+        if (entry.shownHour !== start) {
+          entry.shownHour = start;
           map.getSource(entry.layer.id)?.setData(hourSubset(entry, hour));
         }
       }
@@ -418,6 +429,8 @@ const FIELDS = {
   dist_road_km: ["Nearest road", "km"], dist_water_km: ["Nearest water", "km"], dist_fire_station_km: ["Nearest fire station", "km"],
   dist_water_point_km: ["Nearest water point", "km"], gw_body: ["Groundwater body"], gw_vulnerability: ["Groundwater vulnerability", "words"],
   gw_chemical_status: ["Groundwater status", "words"], risk_level: ["Risk", "words"], risk_score: ["Risk score", "score"],
+  cell_id: ["Cell"], reference_date: ["Date"], risk_pct: ["Risk %"],
+  drivers: ["Drivers"], recommended_action: ["Recommended action"],
   risk_factors: ["Risk factors", "list"], evacuate_people: ["To evacuate", "people"], warn_people: ["To warn", "people"],
   horizon_hours: ["Horizon", "hours"], wind_speed_kmh: ["Wind", "kmh"], wind_to_deg: ["Spreading", "windTo"], spread_km: ["Spread distance", "km"],
   speed: ["Wind speed", "kmh"], direction: ["Wind", "windFrom"], temperature: ["Temperature", "celsius"], humidity: ["Humidity", "pct"], rain: ["Rain", "mm"],

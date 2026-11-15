@@ -11,13 +11,12 @@ The full path works end to end and is published: FIRMS download → harmonized h
 | **Data (backend)** | download, MODIS / VIIRS harmonization, deduplication, fires, time series, population, weather and surface wind, OSM layers and accessibility, water points and aquifers, typed alerts, risk score and evacuation, spread projection, per-snapshot zones, compact files, contract validator, manifest per episode, automatic live refresh with validation | regions task (W3-B6) to close, slope and land cover (W5-B3), alerts on recent data (W4-B1), grouped alerts (W3-B9), layer descriptions in the manifest (W3-B10; implemented, not yet merged), notifications, scalability |
 | **Front end** | layer loader, Map panel, timeline and playback, figures that follow the visible area, isolate a fire, alert panel with typed alerts, wind particles, rain, base maps (Topo / Satellite / Dark), episode selector, demo banner, mobile pass, versioned deploy | calendar and filters (W1-F2, W2-F1), region selector, grouped alerts panel, Live button (W4-F1), data transparency (W5-F3), i18n and animation export |
 | **Episodes** | Sierra Bermeja (default), Galicia, Chile–Argentina; live published by the refresh workflow | more places: add an entry to `episodes.json` and run `make data EPISODE=<id>` |
-| **AI module** | municipal ignition-risk model, features, tests and layer finished by Sergey on branch `IA` | merge into `dev` (conflicts to solve, see [AI module](ai-risk.md#merging-it-into-dev)), regenerate the manifests, add Galicia |
+| **AI module** | municipal ignition-risk model, features, tests and layer (Sergey), merged and published for every episode | validate on more fires and years; absolute, not only relative, levels |
 | **Docs** | README, wiki, data contract, front-end layers + changelog, demo script, licences | demo GIF for the README ([`docs/media/`](../media/README.md)); licences marked "to verify" |
 
 Live site: https://maj-e.github.io/basajaun/ (shows `main`). Known limits and ideas for after the demo: [`TODO.md`](../../TODO.md#5-future-improvements-found-while-polishing-the-demo-15-nov-2026) (section 5).
 
 ## Open questions
-- **AI branch:** `IA` is ready but started from an older `dev` (Los Angeles still listed, `app.js` / `loader.js` changed on both sides). Its map repaint only on integer hours may help the playback-sync item below.
 - **Playback sync:** the map can look slightly behind the timeline on slow machines (repaint speed and 24 h trails); options are listed in `TODO.md`.
 - **Episode length:** Sierra Bermeja runs to 20 Sep but its last detection is 12 Sep; shorter versions felt cut, so the timeline marks the last detection instead.
 - **Licences:** several sources are marked "to verify" in [`docs/licenses.md`](../licenses.md); check them before any public launch (the satellite base map is non-commercial only).

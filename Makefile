@@ -27,6 +27,7 @@ PIPELINE := \
 	groundwater \
 	exposure \
 	risk_score \
+	risk_ml \
 	compact \
 	make_manifest \
 	validate
