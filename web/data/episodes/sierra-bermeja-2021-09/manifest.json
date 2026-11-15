@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T23:43:35Z",
+  "updated_at": "2026-11-15T12:39:19Z",
   "layers": [
     {
       "id": "hotspots",
@@ -193,7 +193,7 @@
       "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": true,
+      "active": false,
       "popup": [
         "timestamp_utc",
         "speed",
@@ -237,7 +237,7 @@
     },
     {
       "id": "wind_particles",
-      "name": "Wind (particles)",
+      "name": "Wind",
       "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
       "type": "particles",
       "temporal": true,

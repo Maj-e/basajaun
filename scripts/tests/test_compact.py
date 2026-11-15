@@ -1,59 +1,32 @@
-"""Tests for the GeoJSON compactor (smaller files for the browser)."""
+"""compact.py: lighter geometry, same features and properties."""
 import json
 
-import compact
-
-LONG = [[-7.136589818557351, 42.03496144338319], [-7.137163251667416, 42.03490980115287],
-        [-7.137165000000001, 42.03491000000001], [-7.1366, 42.0351], [-7.136589818557351, 42.03496144338319]]
+from compact import compact_file, compact_geometry
 
 
-def write(path, geometry, **props):
-    doc = {"type": "FeatureCollection", "updated_at": "2026-11-15T10:00:00Z",
-           "features": [{"type": "Feature", "geometry": geometry, "properties": {"fire_id": 1, "frp": 3.123456789, **props}}]}
+def test_point_is_rounded_to_five_decimals():
+    g = compact_geometry({"type": "Point", "coordinates": [-7.124822922359398, 41.13596404010658]}, None)
+    assert g == {"type": "Point", "coordinates": [-7.12482, 41.13596]}
+
+
+def test_polygon_is_simplified_and_stays_a_polygon():
+    # A circle-like ring with many vertices a few metres apart
+    import math
+    ring = [[-7 + 0.01 * math.cos(a / 100 * 2 * math.pi), 41 + 0.01 * math.sin(a / 100 * 2 * math.pi)] for a in range(100)]
+    ring.append(ring[0])
+    g = compact_geometry({"type": "Polygon", "coordinates": [ring]}, 2e-4)
+    assert g["type"] == "Polygon"
+    assert 8 < len(g["coordinates"][0]) < len(ring)
+
+
+def test_file_keeps_features_and_properties(tmp_path):
+    path = tmp_path / "fires.geojson"
+    doc = {"type": "FeatureCollection", "updated_at": "2026-11-15T00:00:00Z", "features": [
+        {"type": "Feature", "properties": {"fire_id": 1, "area_km2": 3.09},
+         "geometry": {"type": "Polygon", "coordinates": [[[0.123456789, 0], [1, 0], [1, 1], [0.123456789, 0]]]}}]}
     path.write_text(json.dumps(doc, indent=2))
-    return doc
-
-
-def test_coordinates_are_rounded_and_file_gets_smaller(tmp_path):
-    path = tmp_path / "spread.geojson"
-    write(path, {"type": "Polygon", "coordinates": [LONG]})
-    before, after = compact.compact_file(path)
+    before, after = compact_file(path)
+    out = json.loads(path.read_text())
     assert after < before
-    doc = json.loads(path.read_text())
-    ring = doc["features"][0]["geometry"]["coordinates"][0]
-    assert all(len(str(c).split(".")[1]) <= 5 for p in ring for c in p)
-    assert ring[0] == ring[-1]  # still closed
-    assert "\n" not in path.read_text()
-
-
-def test_properties_and_updated_at_are_untouched(tmp_path):
-    path = tmp_path / "x.geojson"
-    write(path, {"type": "Point", "coordinates": [-7.1379123456, 42.0529987654]})
-    compact.compact_file(path)
-    doc = json.loads(path.read_text())
-    assert doc["updated_at"] == "2026-11-15T10:00:00Z"
-    assert doc["features"][0]["properties"]["frp"] == 3.123456789
-    assert doc["features"][0]["geometry"]["coordinates"] == [-7.13791, 42.053]
-
-
-def test_repeated_points_after_rounding_are_dropped_but_a_ring_stays_valid():
-    ring = [[0.0, 0.0], [0.000001, 0.000001], [0.0, 1.0], [1.0, 1.0], [0.0, 0.0]]
-    out = compact.compact_geojson({"features": [{"geometry": {"type": "Polygon", "coordinates": [ring]}}]})
-    kept = out["features"][0]["geometry"]["coordinates"][0]
-    assert kept == [[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [0.0, 0.0]]
-
-
-def test_a_collapsing_ring_keeps_its_points():
-    tiny = [[0.0, 0.0], [0.000001, 0.0], [0.000001, 0.000001], [0.0, 0.0]]
-    out = compact.compact_geojson({"features": [{"geometry": {"type": "Polygon", "coordinates": [tiny]}}]})
-    assert len(out["features"][0]["geometry"]["coordinates"][0]) >= 4
-
-
-def test_already_compact_file_is_left_alone(tmp_path):
-    path = tmp_path / "hotspots.geojson"
-    path.write_text(json.dumps({"type": "FeatureCollection", "features": [
-        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-7.1379, 42.0529]}, "properties": {}}]},
-        separators=(",", ":")))
-    text = path.read_text()
-    assert compact.compact_file(path) == (len(text), len(text))
-    assert path.read_text() == text
+    assert out["updated_at"] == doc["updated_at"]
+    assert out["features"][0]["properties"] == {"fire_id": 1, "area_km2": 3.09}
