@@ -1,18 +1,18 @@
 <div align="center">
 
-# Ulinautas
+# Basajaun
 
 ### Two satellites, one dataset, one map to understand a wildfire as it unfolds
 
 [![CI](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/live%20demo-open%20the%20map-f9a957)](https://maj-e.github.io/basajaun/)
+[![Live demo](https://img.shields.io/badge/live%20demo-open%20the%20map-f9a957)](https://basajaun.site/)
 [![Documentation](https://img.shields.io/badge/docs-wiki-26344b)](docs/wiki/README.md)
 
-<a href="https://maj-e.github.io/basajaun/">
+<a href="https://basajaun.site/">
   <img src="docs/media/basajaum_video_historic.gif" alt="MODIS and VIIRS hotspots harmonized and replayed over time: the Sierra Bermeja fire growing on the map, with wind, perimeters and alerts" width="720">
 </a>
 
-**[▶ Open the live demo](https://maj-e.github.io/basajaun/)** — it opens on the Sierra Bermeja fire (Málaga, Sep 2021), paused on its peak. Press play.
+**[▶ Open the live demo — basajaun.site](https://basajaun.site/)** — it opens on the Sierra Bermeja fire (Málaga, Sep 2021), paused on its peak. Press play.
 
 <img src="docs/resources/qr-basajaun.webp" alt="QR code that opens the live demo" width="150"><br>
 <sub>Scan to open the demo on your phone</sub>
