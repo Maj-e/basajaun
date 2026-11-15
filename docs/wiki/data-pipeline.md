@@ -35,7 +35,7 @@ In the order `make data` runs them (`PIPELINE` in the `Makefile`).
 | Aquifers | `groundwater.py` | groundwater bodies and ash-leachate risk (Europe) → `groundwater.geojson` |
 | Alerts | `exposure.py` (+ `alert_types.py`) | fires + population + wind → typed alerts in `alerts.json` |
 | Risk | `risk_score.py` | risk level and evacuation estimate per snapshot → `fire_risk.geojson`, `evacuation.geojson`, figures in `fires.geojson` |
-| AI ignition risk | `ml_features.py` → `risk_ml.py` | *(branch `IA`, pending merge)* weather, distances, population and slope on a 12 × 12 grid → daily ignition probability and levels → `ignition_risk.geojson`; runs before the manifest. See [AI module](ai-risk.md) |
+| AI ignition risk | `ml_features.py` → `risk_ml.py` | weather, distances, population and slope on a 12 × 12 grid → daily ignition probability and levels → `ignition_risk.geojson`; runs before the manifest. See [AI module](ai-risk.md) |
 | Compact | `compact.py` | 5-decimal coordinates, per-layer simplification, no indentation; last step before the manifest |
 | Manifest | `make_manifest.py` | existing files → the episode's `manifest.json` (+ layer legends) |
 | Validation | `validate.py` | everything → pass / fail against `docs/schemas/` |

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T14:18:48Z",
+  "updated_at": "2026-11-15T15:18:08Z",
   "layers": [
     {
       "id": "hotspots",
@@ -263,6 +263,42 @@
         }
       ],
       "updated_at": "2026-11-15T14:18:30Z"
+    },
+    {
+      "id": "ignition_risk",
+      "name": "Municipal ignition risk",
+      "file": "episodes/sierra-bermeja-2021-09/ignition_risk.geojson",
+      "type": "fill",
+      "temporal": true,
+      "hold_hours": 24,
+      "active": true,
+      "popup": [
+        "cell_id",
+        "reference_date",
+        "risk_level",
+        "risk_pct",
+        "drivers",
+        "recommended_action"
+      ],
+      "legend": [
+        {
+          "color": "#b10026",
+          "text": "Critical"
+        },
+        {
+          "color": "#fc4e2a",
+          "text": "High"
+        },
+        {
+          "color": "#feb24c",
+          "text": "Moderate"
+        },
+        {
+          "color": "#78c679",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-15T15:17:55Z"
     },
     {
       "id": "water",

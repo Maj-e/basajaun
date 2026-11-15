@@ -1,6 +1,6 @@
 # Municipal ignition risk (AI module)
 
-A predictive layer next to the observed ones: **where is a new fire most likely to start today?** Built by Sergey on branch **`IA`** (PR #90 merged into `IA`; **not yet merged into `dev`**, see [Merging it](#merging-it-into-dev)). The rest of the page shows what the satellites already saw; this layer estimates what could ignite.
+A predictive layer next to the observed ones: **where is a new fire most likely to start today?** Built by Sergey. The rest of the page shows what the satellites already saw; this layer estimates what could ignite.
 
 ## What it produces
 
@@ -51,11 +51,3 @@ Levels are **relative to the episode**, not absolute probabilities: every cell o
 - It is trained on **the same episode it scores** (a few days of one area), so the metrics are indicative: e.g. Chile, Feb 2026: ROC-AUC 0.74, PR-AUC 0.25; Sierra Bermeja, Sep 2021: ROC-AUC 0.87 but PR-AUC 0.07 with very few ignitions. It is **not** a validated operational forecast.
 - The 12 × 12 grid is coarse; levels are relative, so "critical" means "among the worst cells of this episode", not a fixed danger level.
 - Ignition risk is a different question from the **spread**, **risk score** and **evacuation** layers, which describe fires that already exist ([Features](features.md)).
-
-## Merging it into `dev`
-
-Branch `IA` started from an older `dev`; before merging:
-- `dev` no longer has the Los Angeles episode, which the AI tests and data still list.
-- Galicia has no `ignition_risk.geojson` yet (`make data EPISODE=galicia-2025-08`); manifests of every episode must be regenerated (`make_manifest`) after merging.
-- `web/app.js` and `web/layers/loader.js` changed on both sides: the AI branch repaints the map only when the data hour crosses an integer (this may help the playback-sync item in [`TODO.md`](../../TODO.md)), and adds `hold_hours` to the current-hour layers.
-- Then update [Front-end layers](../frontend_layers.md) (layer row, changelog) in the same PR.

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-15T12:39:19Z",
+  "updated_at": "2026-11-15T15:18:13Z",
   "layers": [
     {
       "id": "hotspots",
@@ -198,7 +198,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T21:44:39Z"
+      "updated_at": "2026-11-15T12:42:59Z"
     },
     {
       "id": "wind",
@@ -263,6 +263,42 @@
         }
       ],
       "updated_at": "2026-11-14T22:21:08Z"
+    },
+    {
+      "id": "ignition_risk",
+      "name": "Municipal ignition risk",
+      "file": "processed/ignition_risk.geojson",
+      "type": "fill",
+      "temporal": true,
+      "hold_hours": 24,
+      "active": true,
+      "popup": [
+        "cell_id",
+        "reference_date",
+        "risk_level",
+        "risk_pct",
+        "drivers",
+        "recommended_action"
+      ],
+      "legend": [
+        {
+          "color": "#b10026",
+          "text": "Critical"
+        },
+        {
+          "color": "#fc4e2a",
+          "text": "High"
+        },
+        {
+          "color": "#feb24c",
+          "text": "Moderate"
+        },
+        {
+          "color": "#78c679",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-15T15:18:01Z"
     },
     {
       "id": "water",

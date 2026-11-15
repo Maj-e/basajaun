@@ -54,7 +54,7 @@ How the project is built and why. The short version is in the [README](../../REA
 
 1. **Download**: FIRMS CSVs (MODIS Terra/Aqua + VIIRS S-NPP, NOAA-20, NOAA-21) are saved in `data/raw/`.
 2. **Harmonization**: both sensors are mapped to one schema (confidence, UTC datetime, FRP, brightness, resolution), MODIS / VIIRS double detections are merged into one hotspot.
-3. **Enrichment**: grouping into fires, exposed population, wind, accessibility, aquifers, then the derived zones (6 h spread, evacuation, risk score), computed **per fire snapshot** so they change with the playback. The AI module (`ml_features.py` → `risk_ml.py`, branch `IA`) adds a daily ignition-risk grid; see [AI module](ai-risk.md).
+3. **Enrichment**: grouping into fires, exposed population, wind, accessibility, aquifers, then the derived zones (6 h spread, evacuation, risk score), computed **per fire snapshot** so they change with the playback. The AI module (`ml_features.py` → `risk_ml.py`) adds a daily ignition-risk grid; see [AI module](ai-risk.md).
 4. **Publication**: results are written per **episode** to `web/data/episodes/<id>/`, **already styled** (colors, sizes), and declared in that episode's `manifest.json`; they are versioned and published with the site.
 5. **Display**: the front end reads `episodes.json`, then the episode's manifest, and builds each layer with a generic loader; all filtering and animation happen in the browser.
 
@@ -79,7 +79,7 @@ How the project is built and why. The short version is in the [README](../../REA
 | `daily_summary.json`, `hourly_series.json` | hotspots and FRP per day / hour (timeline) | `export_hotspots.py`, `series.py` |
 | `weather.geojson` | hourly wind, rain, temperature on a 5×5 grid | `weather.py` |
 | `population.png` | population density | `population.py` |
-| `ignition_risk.geojson` | daily AI ignition risk on a 12 × 12 grid (branch `IA`) | `ml_features.py`, `risk_ml.py` |
+| `ignition_risk.geojson` | daily AI ignition risk on a 12 × 12 grid | `ml_features.py`, `risk_ml.py` |
 | `roads`, `rivers`, `water`, `fire_stations`, `water_points`, `groundwater`, `regions` `.geojson` | context layers | `osm.py`, `natural_earth_water.py`, `groundwater.py`, `regions.py` |
 
 ## Project layout
@@ -98,7 +98,7 @@ How the project is built and why. The short version is in the [README](../../REA
 │   ├── download_firms · harmonize · export_hotspots · dedup · regions · fires · series
 │   ├── population · weather · terrain · osm · natural_earth_water · groundwater
 │   ├── spread · exposure · alert_types · risk_score · fire_history
-│   ├── ml_features · risk_ml      # AI ignition risk (branch IA, pending merge)
+│   ├── ml_features · risk_ml      # AI ignition risk
 │   ├── compact · make_manifest · validate · make_sample
 │   └── serve · version_assets · check_site · measure_volume
 ├── .github/workflows/         # ci (tests + contract), deploy (Pages), e2e (published URL), update-data (live, every 30 min)

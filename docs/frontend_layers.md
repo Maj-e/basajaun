@@ -28,7 +28,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 
 ✅ = in that episode's manifest · — = not available there
 
-`galicia-2025-08` (Galicia, 1 km cells; replaces the whole-peninsula `spain-2025-08`, too heavy for the browser, and the short-lived north-west one) has: `hotspots`, `regions`, `fires`, `fire_risk`, `evacuation`, `spread`, `population`, `wind`, `weather`, `wind_particles`, `water`, `rivers`, `groundwater`. No OSM roads / stations / water points yet (the Overpass download was not reachable when it was built: `osm_options` in `episodes.json` already limits it to main roads, no hydrants), no slope or land cover.
+`galicia-2025-08` (Galicia, 1 km cells; replaces the whole-peninsula `spain-2025-08`, too heavy for the browser, and the short-lived north-west one) has: `hotspots`, `regions`, `fires`, `fire_risk`, `evacuation`, `spread`, `population`, `wind`, `weather`, `wind_particles`, `water`, `rivers`, `groundwater`, `ignition_risk`. No OSM roads / stations / water points yet (the Overpass download was not reachable when it was built: `osm_options` in `episodes.json` already limits it to main roads, no hydrants), no slope or land cover.
 
 | id | Type | Active | Time | Sierra Bermeja | Chile | Live | Popup fields | Style properties |
 |---|---|---|---|---|---|---|---|---|
@@ -48,6 +48,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 | `water_points` | circle | ✅ | | ✅ | ✅ | — | name, kind (fire_water / hydrant / tank / well / spring / water_point) | color (by kind), radius, border |
 | `regions` | fill | ✅ | | — | ✅ | — | country, region | color, opacity |
 | `groundwater` | fill | ✅ | | ✅ | — (Europe only) | — | name, vulnerability, chemical_status, at_risk_chemical, geology | color, opacity (by vulnerability) |
+| `ignition_risk` | fill | ✅ | ✅ `t` (one grid per day, `hold_hours: 24`) | ✅ | ✅ | — | cell_id, reference_date, risk_level, risk_pct, drivers, recommended_action | color, opacity (by level); see [AI module](wiki/ai-risk.md) |
 
 ### Fire properties
 Each fire polygon in `fires.geojson` carries (a property can be missing or `null` when the input wasn't available for that episode):
@@ -95,6 +96,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 | Date | Change |
 |---|---|
 | 2026-11-15 | `spread`, `evacuation` and `fire_risk` now have **one polygon per fire snapshot** (every 6 h from the first to the last detection, `scripts/fire_history.py`): each feature carries `t_start` and, except the fire's last one, `t_until`; the front shows it while `t_start <= hour < t_until`. Zone, people to evacuate and risk level therefore change with the playback. Each feature also has `last`; the last snapshot of a fire stays until **24 h after its last detection** (`ACTIVE_HOURS`), then spread, evacuation and risk disappear and the perimeter (`fires`) stays at 60 % of its opacity as burned area. The last snapshot equals the old single polygon, `fires.geojson` and the alerts are unchanged; scripts that read the zones use the features with `last: true` |
+| 2026-11-15 | New layer `ignition_risk` (AI module): a 12 × 12 grid with one score per cell and day, `temporal` with the new manifest field `hold_hours: 24` (a temporal feature stays visible that many hours; default 1). Published for every episode, switched on in the manifest, not at start. The map now repaints only when the playback hour crosses a whole hour |
 | 2026-11-15 | `fires` shows each perimeter **as it was at the playback hour**: the front rebuilds it from the hotspots detected so far (`web/layers/perimeter.js`, same rule as `fires.py`: convex hull + 500 m), so scrubbing back shrinks it. `fires.geojson` is unchanged (final shapes: used for clicks, figures and the other scripts) |
 | 2026-11-15 | When the episode goes on for a day or more after the last hotspot, the timeline marks **Last detection** (dashed line) and labels the empty tail *No detections · burned area only* (Sierra Bermeja: 12 → 20 Sep) |
 | 2026-11-15 | The player **stops at the last day** instead of looping (the burned area stays on the map); Play from the end starts over from the first day |
