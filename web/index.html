@@ -24,10 +24,8 @@
   <link rel="preload" href="data/episodes.json" as="fetch" crossorigin>
 </head>
 <body>
+  <a class="skip-link" href="#timeline">Skip to playback controls</a>
   <!-- Design reference: docs/mockup/index.html (validated) and docs/demo-script.md -->
-  <div id="map" role="img" aria-label="Map of the demo area showing satellite fire detections"></div>
-  <p id="map-error" class="map-error" hidden></p>
-
   <header class="head">
     <div class="title">
       <h1 class="wordmark">
@@ -36,34 +34,39 @@
       </h1>
       <p class="caption"><strong>Active fires detected by NASA satellites</strong><br><span id="caption-scope">MODIS + VIIRS merged</span></p>
       <div class="episode-row">
-        <label class="episode-pick">Episode <select id="episode-select" aria-label="Fire episode"></select></label>
+        <label class="episode-pick" for="episode-select">Episode</label> <select id="episode-select" class="episode-select"></select> <button type="button" id="episode-go" class="episode-go">Open</button>
       </div>
-      <p class="scope" id="scope"><span id="scope-text">Figures for the whole area</span> <button type="button" id="scope-reset" hidden>Show whole area</button></p>
+      <p class="scope" id="scope"><span id="scope-text" role="status">Figures for the whole area</span> <button type="button" id="scope-reset" hidden>Show whole area</button></p>
     </div>
     <dl class="readouts">
       <div class="readout">
         <dt>Active fires</dt>
         <dd id="r-active">–</dd>
-        <div class="sub">last 24 h · <span id="r-total">–</span></div>
+        <dd class="sub">last 24 h · <span id="r-total">–</span></dd>
       </div>
       <div class="readout">
         <dt>Strongest fire</dt>
         <dd id="r-frp">–</dd>
-        <div class="sub">FRP (fire intensity), last 24 h</div>
+        <dd class="sub">FRP (fire intensity), last 24 h</dd>
       </div>
     </dl>
   </header>
 
-  <p id="status" class="status">Loading…</p>
+  <main id="main">
+  <div id="map" role="region" aria-label="Map of the episode area showing satellite fire detections" aria-describedby="map-help"></div>
+  <p id="map-help" class="sr-only">Arrow keys pan the map, plus and minus zoom, once the map has focus. The figures, alerts and the daily table below give the same information as the map.</p>
+  <p id="map-error" class="map-error" role="alert" hidden></p>
+
+  <p id="status" class="status" role="status">Loading…</p>
 
   <div class="demo-banner" id="demo-banner" role="status" hidden>
     <span><b>Demo</b> — past fire episodes replayed from NASA FIRMS data. Some layers may take a few seconds to load.</span>
-    <button type="button" id="demo-banner-close" aria-label="Close this message">Got it</button>
+    <button type="button" id="demo-banner-close">Got it</button>
   </div>
 
-  <aside class="alerts" id="alerts" aria-label="Population alerts" hidden>
+  <aside class="alerts" id="alerts" aria-label="Alerts" hidden>
     <button type="button" id="alerts-toggle" aria-expanded="true" aria-controls="alerts-body">
-      <span class="lbl">Alerts</span><span id="alerts-title"></span><span id="alerts-count">0</span>
+      <span class="lbl">Alerts</span> <span id="alerts-title"></span> <span id="alerts-count">0</span>
       <svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
     <div id="alerts-body">
@@ -76,7 +79,7 @@
   <aside id="panel-layers" class="layers-panel map-panel" aria-label="Map layers">
     <details id="panel-details" open>
       <summary>Map</summary>
-      <div class="basemap-switch" id="basemap-switch" role="radiogroup" aria-label="Base map"></div>
+      <div class="basemap-switch" id="basemap-switch" role="group" aria-label="Base map"></div>
       <div id="layer-list"></div>
       <label><input type="checkbox" id="satellite-toggle"> Satellite image of the day <small>NASA VIIRS true color · needs internet</small></label>
       <label><input type="checkbox" id="labels-toggle"> Alerts on the map <small>circles + people within 5 km (the list stays on the right)</small></label>
@@ -88,9 +91,9 @@
 
   <!-- Mobile only: one bottom sheet at a time -->
   <nav class="mobile-bar" id="mobile-bar" aria-label="Map panels">
-    <button type="button" data-sheet="layers" aria-pressed="false">Layers</button>
-    <button type="button" data-sheet="alerts" aria-pressed="false">Alerts <span id="mb-alerts">0</span></button>
-    <button type="button" data-sheet="legend" aria-pressed="false">Legend</button>
+    <button type="button" data-sheet="layers" aria-expanded="false" aria-controls="panel-layers">Layers</button>
+    <button type="button" data-sheet="alerts" aria-expanded="false" aria-controls="alerts">Alerts <span id="mb-alerts">0</span></button>
+    <button type="button" data-sheet="legend" aria-expanded="false" aria-controls="legend">Legend</button>
   </nav>
 
   <section id="timeline" class="timeline" aria-label="Playback">
@@ -103,10 +106,10 @@
         <div class="time" id="c-time">–</div>
       </div>
       <div class="controls">
-        <button type="button" class="btn play" id="b-play" aria-label="Play">
+        <button type="button" class="btn play" id="b-play" aria-label="Play" aria-keyshortcuts="Space">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" id="i-play"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
         </button>
-        <button type="button" class="btn" id="b-peak" title="Jump to the day with the most fires (P)">Peak day</button>
+        <button type="button" class="btn" id="b-peak" title="Jump to the day with the most fires (P)" aria-keyshortcuts="P">Peak day</button>
         <div class="speed" role="group" aria-label="Playback speed">
           <button type="button" class="btn" data-speed="3" aria-pressed="false">×1</button>
           <button type="button" class="btn" data-speed="8" aria-pressed="true">×2</button>
@@ -115,15 +118,18 @@
       </div>
     </div>
     <div class="strip" id="strip">
-      <svg id="chart" viewBox="0 0 1400 96" preserveAspectRatio="none" role="img" aria-label="Fires per day"></svg>
+      <svg id="chart" viewBox="0 0 1400 96" preserveAspectRatio="none" tabindex="0" role="slider" aria-label="Playback time, over the fires-per-day chart" aria-describedby="days-table-caption"></svg>
       <div class="days" id="days"></div>
       <div class="tip" id="tip" hidden></div>
+      <table class="sr-only" id="days-table"><caption id="days-table-caption">Fires detected per day. Arrow keys move one hour, Page Up and Page Down one day, Home and End to the start or the end.</caption><thead><tr><th scope="col">Day</th><th scope="col">Fires</th></tr></thead><tbody></tbody></table>
     </div>
-    <div class="keys" aria-hidden="true">
+    <div class="keys">
       <span><kbd>Space</kbd>play / pause</span><span><kbd>P</kbd>peak day</span>
       <span><kbd>←</kbd><kbd>→</kbd>one hour</span><span><kbd>R</kbd>restart</span>
+      <label class="keys-toggle"><input type="checkbox" id="shortcuts-toggle" checked> Keyboard shortcuts</label>
     </div>
   </section>
+  </main>
 
 </body>
 </html>

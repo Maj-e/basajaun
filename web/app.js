@@ -80,7 +80,9 @@ async function main() {
   const pick = $("episode-select");
   pick.innerHTML = CONFIG.episodes.map((e) => `<option value="${e.id}"${e.id === CONFIG.episode.id ? " selected" : ""}>${e.name}</option>`).join("");
   pick.parentElement.hidden = CONFIG.episodes.length < 2;
-  pick.onchange = () => {
+  // WCAG 3.2.2: choosing an option never reloads the page by itself (arrow keys would reload on every step); Open does
+  $("episode-go").onclick = () => {
+    if (pick.value === CONFIG.episode.id) return;
     const q = new URLSearchParams(location.search);
     q.set("episode", pick.value);
     location.search = q.toString();
@@ -226,8 +228,8 @@ async function main() {
   document.querySelectorAll("#mobile-bar [data-sheet]").forEach((b) => (b.onclick = () => {
     const name = b.dataset.sheet, open = !document.body.classList.contains(`sheet-${name}`);
     document.body.classList.remove("sheet-layers", "sheet-alerts", "sheet-legend");
-    document.querySelectorAll("#mobile-bar [data-sheet]").forEach((o) => o.setAttribute("aria-pressed", "false"));
-    if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-pressed", "true"); }
+    document.querySelectorAll("#mobile-bar [data-sheet]").forEach((o) => o.setAttribute("aria-expanded", "false"));
+    if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-expanded", "true"); }
   }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
   // Base map picker (W3-F7): Topo (default) / Satellite / Dark
@@ -237,12 +239,11 @@ async function main() {
     btn.type = "button";
     btn.textContent = b.name;
     btn.dataset.basemap = b.id;
-    btn.setAttribute("role", "radio");
-    btn.setAttribute("aria-checked", String(b.id === state.basemap));
+    btn.setAttribute("aria-pressed", String(b.id === state.basemap));
     btn.onclick = () => {
       setState({ basemap: b.id });
       setBasemap(b.id);
-      baseSwitch.querySelectorAll("button").forEach((o) => o.setAttribute("aria-checked", String(o === btn)));
+      baseSwitch.querySelectorAll("button").forEach((o) => o.setAttribute("aria-pressed", String(o === btn)));
     };
     baseSwitch.append(btn);
   });
@@ -256,9 +257,20 @@ async function main() {
     $("sat-badge").textContent = `Satellite image · ${fmtDay(date)} · NASA VIIRS`;
   });
 
-  // Presenter keys (docs/demo-script.md)
+  // Presenter keys (docs/demo-script.md). WCAG 2.1.4: single-key shortcuts can be turned off (remembered per visitor),
+  // never fire with a modifier, and leave Space and the arrows to whatever control has focus (buttons, slider, map).
+  let shortcuts = true;
+  try { shortcuts = localStorage.getItem("ulinautas-shortcuts") !== "off"; } catch { /* storage blocked: on */ }
+  $("shortcuts-toggle").checked = shortcuts;
+  $("shortcuts-toggle").onchange = (e) => {
+    shortcuts = e.target.checked;
+    try { localStorage.setItem("ulinautas-shortcuts", shortcuts ? "on" : "off"); } catch { /* fine */ }
+  };
   window.addEventListener("keydown", (e) => {
-    if (e.target.closest?.("input, textarea, select")) return;
+    if (!shortcuts || e.ctrlKey || e.altKey || e.metaKey) return;
+    if (e.target.closest?.("input, textarea, select, [contenteditable]")) return;
+    const owned = e.target.closest?.("button, a[href], summary, [role=slider], #map");
+    if (owned && (e.code === "Space" || e.key.startsWith("Arrow"))) return;
     const k = e.key.toLowerCase();
     if (e.code === "Space") { e.preventDefault(); timeline.toggle(); }
     else if (k === "p") timeline.jumpPeak();

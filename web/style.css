@@ -8,7 +8,7 @@
   --grid: #1a2538;
   --ink: #e8edf5;
   --ink-2: #a7b3c6;
-  --ink-3: #7484a0;
+  --ink-3: #8797b3; /* ≥ 4.5:1 on every panel and hover background (WCAG 1.4.3) */
   --band: rgba(9, 14, 25, 0.86);
   /* Fire intensity (FRP), one hue, dark to light = weak to strong (validated, dataviz ordinal check) */
   --frp-1: #9a3d12; /* < 10 MW */
@@ -33,7 +33,7 @@ body {
   font: 15px/1.4 var(--font-ui);
   overflow: hidden;
 }
-#map { position: fixed; inset: 0; }
+#map { position: fixed; inset: 0; z-index: -1; } /* last in the DOM after the header (reading order), first on screen */
 /* `particles` layers (layers/particles.js): own canvas above the map, never catches the mouse */
 .particles-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; transition: opacity .3s; }
 .maplibregl-ctrl-attrib { background: rgba(7, 12, 22, .7) !important; color: var(--ink-3); font: 11px var(--font-ui); }
@@ -44,7 +44,9 @@ body {
   position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0;
   display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
   padding: 18px var(--gutter-r) 40px var(--gutter-l);
-  background: linear-gradient(to bottom, rgba(7, 12, 22, .92), rgba(7, 12, 22, 0));
+  background: linear-gradient(to bottom, rgba(7, 12, 22, .94) 0%, rgba(7, 12, 22, .86) 65%, rgba(7, 12, 22, 0));
+  /* Header text can sit on the light Topo base map: a dark halo keeps it readable (WCAG 1.4.3) */
+  text-shadow: 0 0 3px #070c16, 0 0 8px #070c16;
   pointer-events: none;
 }
 .title { min-width: 0; }
@@ -74,7 +76,7 @@ body {
 .callout .big { font: 500 22px/1.1 var(--font-data); color: var(--frp-5); }
 
 /* ---------- City labels ---------- */
-.city { font: 500 12px var(--font-ui); color: var(--ink-3); letter-spacing: .04em; pointer-events: none; white-space: nowrap; }
+.city { font: 500 12px var(--font-ui); color: var(--ink-2); text-shadow: 0 0 2px #070c16, 0 0 3px #070c16, 0 0 6px #070c16; letter-spacing: .04em; pointer-events: none; white-space: nowrap; }
 .city::before { content: ""; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--ink-3); margin-right: 6px; vertical-align: middle; }
 .grid-label { font: 11px var(--font-data); color: #3b4b66; pointer-events: none; }
 
@@ -159,7 +161,7 @@ body {
 /* ---------- Episode selector ---------- */
 .episode-pick { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; font: 600 11px var(--font-ui);
   letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); pointer-events: auto; }
-.episode-pick select { font: 500 13px var(--font-ui); letter-spacing: 0; text-transform: none; color: var(--ink);
+.episode-select { min-height: 28px; pointer-events: auto; font: 500 13px var(--font-ui); letter-spacing: 0; text-transform: none; color: var(--ink);
   background: #172236; border: 1px solid var(--land-edge); border-radius: 6px; padding: 4px 8px; }
 
 /* ---------- Scope: whole area or visible area ---------- */
@@ -178,7 +180,7 @@ body {
   color: var(--ink-2); font: 600 12px var(--font-ui); cursor: pointer;
 }
 .basemap-switch button:hover { background: #1d2b44; }
-.basemap-switch button[aria-checked="true"] { background: #1d2b44; color: var(--ink); border-color: var(--ink-2); }
+.basemap-switch button[aria-pressed="true"] { background: #1d2b44; color: var(--ink); border-color: var(--ink-2); }
 .basemap-switch button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 
 /* ---------- Satellite image date ---------- */
@@ -301,7 +303,7 @@ body.alert-labels .alert-mark { display: block; }
   .caption br { display: none; }
   .episode-row { margin-top: 6px; gap: 8px; }
   .episode-pick { font-size: 0; gap: 0; }
-  .episode-pick select { font-size: 12px; max-width: 220px; padding: 3px 6px; }
+  .episode-select { font-size: 12px; max-width: 220px; padding: 3px 6px; }
   .scope { margin-top: 4px; font-size: 11px; }
   .readouts { gap: 18px; }
   .readout dt { font-size: 10px; }
@@ -328,7 +330,7 @@ body.alert-labels .alert-mark { display: block; }
     flex: 1; height: 32px; font: 600 12px var(--font-ui); letter-spacing: .04em; text-transform: uppercase;
     color: var(--ink-2); background: #172236; border: 1px solid var(--land-edge); border-radius: 6px;
   }
-  .mobile-bar button[aria-pressed="true"] { color: var(--frp-5); border-color: var(--frp-4); }
+  .mobile-bar button[aria-expanded="true"] { color: var(--frp-5); border-color: var(--frp-4); }
   .mobile-bar span { font-family: var(--font-data); color: var(--ink); }
   .timeline { min-height: var(--tl-h); }
 }
@@ -425,7 +427,7 @@ table.popup td { color: var(--ink); padding: 2px 0; overflow-wrap: anywhere; fon
 #alerts-toggle #alerts-count { white-space: nowrap; }
 
 /* ---------- Timeline fold: a small tab on the top edge ---------- */
-.tl-fold { position: absolute; left: 50%; top: -22px; transform: translateX(-50%); width: 44px; height: 22px; padding: 0;
+.tl-fold { position: absolute; left: 50%; top: -24px; transform: translateX(-50%); width: 44px; height: 24px; padding: 0;
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
   color: var(--ink-2); background: var(--band); border: 1px solid var(--grid); border-bottom: 0; border-radius: 8px 8px 0 0; }
 .tl-fold:hover { color: var(--ink); }
@@ -453,9 +455,9 @@ table.popup td { color: var(--ink); padding: 2px 0; overflow-wrap: anywhere; fon
   border: 0; border-radius: 6px; background: none; color: var(--ink-2); font: 600 12px var(--font-ui); cursor: pointer; }
 .alerts-detail .back:hover { color: var(--ink); background: #172236; }
 .alerts-detail .d-head { display: flex; align-items: center; gap: 8px; }
-.alerts-detail h3 { margin: 0; font: 600 18px/1.2 var(--font-ui); color: var(--ink); flex: 1; min-width: 0; }
+.alerts-detail h2 { margin: 0; font: 600 18px/1.2 var(--font-ui); color: var(--ink); flex: 1; min-width: 0; }
 .alerts-detail .fid { font: 12px var(--font-data); color: var(--ink-3); }
-.alerts-detail h4 { margin: 0 0 6px; font: 600 11px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.alerts-detail h3 { margin: 0 0 6px; font: 600 11px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .alerts-detail .rings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
 .alerts-detail .rings dt { font-size: 11px; color: var(--ink-3); }
 .alerts-detail .rings dd { margin: 2px 0 0; font: 500 17px var(--font-data); color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -472,4 +474,39 @@ table.popup td { color: var(--ink); padding: 2px 0; overflow-wrap: anywhere; fon
 .alerts-detail .facts dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
 .alerts-detail .none { margin: 0; font-size: 13px; color: var(--ink-3); }
 @media (max-width: 760px) { body.sheet-alerts .alerts { display: flex !important; flex-direction: column; } }
-@media (max-width: 760px) { .tl-fold { top: calc(-22px - var(--bar-h)); } }
+@media (max-width: 760px) { .tl-fold { top: calc(-24px - var(--bar-h)); } }
+
+/* ---------- Accessibility (WCAG 2.2 AA) ---------- */
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+/* 2.4.1: first Tab stop, visible only when focused */
+.skip-link {
+  position: fixed; left: var(--gutter-l); top: 8px; z-index: 20; transform: translateY(-200%);
+  padding: 8px 12px; border-radius: 6px; background: var(--frp-5); color: #1a0c03; font: 600 14px var(--font-ui); text-decoration: none;
+}
+.skip-link:focus { transform: none; }
+.episode-go {
+  min-height: 28px; pointer-events: auto; font: 600 12px var(--font-ui); color: var(--ink); background: #172236;
+  border: 1px solid var(--land-edge); border-radius: 6px; padding: 3px 10px; cursor: pointer;
+}
+.episode-go:hover { background: #1d2b44; }
+/* 2.5.8: every pointer target at least 24 × 24 px */
+.scope button, .alert-filters button, .alerts-detail .back, .basemap-switch button, .demo-banner button, .maplibregl-popup-close-button {
+  min-height: 24px; min-width: 24px;
+}
+.keys-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; cursor: pointer; color: var(--ink-2); }
+.keys-toggle input { accent-color: var(--frp-3); width: 16px; height: 16px; margin: 0; }
+/* The chart is a slider: the focus ring goes around the whole strip */
+.strip svg:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 2px; }
+.halo:focus-visible { outline-offset: 3px; }
+/* 2.3.3 / comfort: no slides or fades for visitors who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+/* Windows high contrast: keep focus and panel edges visible */
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid CanvasText; }
+  .btn[aria-pressed="true"], .basemap-switch button[aria-pressed="true"], .alert-filters button[aria-pressed="true"], .mobile-bar button[aria-expanded="true"] { outline: 2px solid Highlight; }
+}
