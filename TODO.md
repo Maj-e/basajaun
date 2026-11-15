@@ -219,7 +219,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W1-F2, W2-B3
 
 - [x] **W2-F3** · Figures follow the visible area · **F**
-  - Zooming or panning recomputes the readouts, the timeline bars, the spark and the peak on the hotspots visible on screen; a scope line says "whole area" or "visible area · N of M fires", with a **Show whole area** button
+  - Zooming or panning recomputes the readouts, the timeline bars and the peak on the hotspots visible on screen; a scope line says "whole area" or "visible area · N of M fires", with a **Show whole area** button
   - Files: `web/app.js` (`applyScope`), `web/timeline.js` (`setData`), `web/story.js`
   - **Done when:** zooming on a sector updates every figure, and the button restores the whole area
   - Depends on: W2-F2
@@ -267,7 +267,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** both layers pass the validator, fires carry the new fields, the front-end doc lists them
   - Depends on: W3-B4
 
-- [ ] **W3-F1** · Layer panel + temporal layers + relief · **F** — *panel and wind arrows (`arrows`, flowing) done; relief still to do*
+- [x] **W3-F1** · Layer panel + temporal layers + relief · **F** — *panel and wind arrows (`arrows`, flowing) done; relief comes with the Topo base map (W3-F7)*
   - Checkbox panel generated from the manifest (one checkbox per `active` layer)
   - New `arrows` type in the loader: `symbol` layer with `icon-rotate: ["get","rotation"]`, `icon-size: ["get","size"]`
   - Relief: `raster-dem` source (AWS Terrarium tiles) + `hillshade` layer
@@ -280,8 +280,8 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** `make data && make validate` passes and `make manifest` lists the `fires` layer
   - Depends on: W1-B3, W2-B1, W2-B2
 
-- [ ] **W3-F3** · Isolate a fire · **F**
-  - Click a fire outline → the map zooms on it, only its hotspots stay visible, and the readouts, timeline, spark and peak describe **that fire** (start, growth, max FRP); a **Show whole area** button returns to the overview
+- [x] **W3-F3** · Isolate a fire · **F** — *click a fire outline or a fire in the alert panel; the panel shows its detail, Back / Show whole area returns*
+  - Click a fire outline → the map zooms on it, only its hotspots stay visible, and the readouts, timeline and peak describe **that fire** (start, growth, max FRP); a **Show whole area** button returns to the overview
   - Builds on W2-F3 (figures already follow a scope)
   - **Done when:** clicking a fire shows its own story, on the published URL
   - Depends on: W3-B5
@@ -313,7 +313,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** the Spain episode gives a readable list (tens, not hundreds) and the validator accepts it
   - Depends on: W3-B1, W3-B8
 
-- [ ] **W3-F6** · Grouped alerts in the panel · **F**
+- [ ] **W3-F6** · Grouped alerts in the panel · **F** — *front part done: alerts grouped per fire (`fire_id`) with a detail view; switch to `incidents.json` once W3-B9 ships*
   - The alert panel lists **incidents** (from `incidents.json`) instead of single alerts: one line per incident (type icons, worst risk, people, fires grouped); expand to see its fires; click = zoom on the incident
   - **Done when:** the Spain episode shows a short, sorted incident list on the published URL
   - Depends on: W3-B9, W3-F5
@@ -336,12 +336,12 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** every episode with population has a level and an evacuation estimate per fire, and both layers pass the validator
   - Depends on: W3-B8, W5-B2
 
-- [ ] **W3-F5** · Alert types in the panel · **F**
+- [x] **W3-F5** · Alert types in the panel · **F**
   - One icon + label per type in the alert list, filter chips (Population · Wind · Smoke · Water), circle on the map colored by type
   - **Done when:** each type shows and filters on the published URL
   - Depends on: W3-B8, W3-F2
 
-- [ ] **W3-F2** · Alert panel · **F**
+- [x] **W3-F2** · Alert panel · **F** — *one panel: rows per fire (region, people within 5 km, risk), click → detail*
   - List from `alerts.json`: color by risk, population within 5 km, time; click → `map.flyTo({ center, zoom: 11 })`
   - During playback: only alerts with `since ≤ state.hour`
   - Files: `web/alerts.js`
@@ -391,14 +391,14 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - **Done when:** every active layer of every episode carries them and the validator accepts them
   - Depends on: —
 
-- [ ] **W5-F3** · Data transparency · **F**
+- [ ] **W5-F3** · Data transparency · **F** — *readable popups done (labels, units, never off screen); layer info and About the data to do*
   - **Layer info**: an ⓘ next to each box in the Map panel unfolds what the layer is, its source and its main limit (manifest `description` / `source` / `limits`, front fallback in `config.js` meanwhile)
   - **About the data** button in the header: sources (NASA FIRMS, WorldPop, Open-Meteo, OpenStreetMap, Natural Earth, EEA), processing (MODIS + VIIRS harmonization, static sources excluded, grouping into fires, 1 km thinning for national episodes), limits (~3 h latency, 375 m / 1 km pixels, estimates)
   - **Readable popups**: human labels and units instead of raw field names (`kind`, `frp`…), plus a *Source* line
   - **Done when:** a juror can tell, for every layer, what it is, where it comes from and how far to trust it
   - Depends on: W3-B10 (optional)
 
-- [ ] **W5-F2** · Demo disclaimer banner · **F**
+- [x] **W5-F2** · Demo disclaimer banner · **F**
   - A short, dismissable banner on first visit: *"Demo — past fire episodes replayed from NASA FIRMS data. Some layers may take a few seconds to load."*; remembered per visitor (localStorage, with try/catch) and never shown in presenter mode (`?demo=1`)
   - **Done when:** it shows once on the published URL, can be closed, and stays hidden in presenter mode
   - Depends on: —

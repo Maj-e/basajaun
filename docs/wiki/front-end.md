@@ -11,11 +11,14 @@ The screen follows the validated mockup (`docs/mockup/`) and the demo script (`d
 | `map.js` | the single map (own dark basemap from `data/static/land.geojson`, graticule, towns), the satellite layer, `null` + error message when WebGL is unavailable |
 | `layers/loader.js` | manifest → data → map layers; temporal fading; `ring` features; `glow`; legend; popups; layer list |
 | `timeline.js` | strip chart from `daily_summary.json` and the playback engine (owns `state.hour`) |
-| `story.js` | spark (strongest FRP) and peak (day with most fires), computed from the data; callouts |
+| `story.js` | peak (day with most fires), computed from the data: highlighted bar + *Peak day* button |
+| `alerts.js` | alert panel: one row per fire (region, people within 5 km, risk), click → the fire's detail (isolated on the map); type filters; rings on the map |
 | `readouts.js` | active fires (last 24 h), strongest fire, total |
 | `app.js` | wiring, controls, presenter keys, `?demo=1` |
 
-Presenter keys: `Space` play/pause, `S` spark, `P` peak, `←`/`→` one hour, `R` restart. The shared link loops by itself; `?demo=1` opens paused.
+Presenter keys: `Space` play/pause, `P` peak day, `←`/`→` one hour, `R` restart. The shared link loops by itself; `?demo=1` opens paused (kept when switching episode). A tab on top of the timeline folds the chart.
+
+Popups use human labels and units (`FIELDS` in `layers/loader.js`), scroll when long and pan the map so they stay clear of the header and the timeline.
 
 **Satellite image of the day** (Layers panel): NASA GIBS VIIRS true color for the playback day, dimmed so the fires stay brightest. Needs internet; the land outline is the offline fallback.
 
