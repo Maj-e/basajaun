@@ -509,6 +509,27 @@ def day_hours(day: str) -> float:
     return (dt - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds() / 3600.0
 
 
+def assign_relative_tiers(probs: np.ndarray) -> list[str]:
+    n = len(probs)
+    if n == 0:
+        return []
+    if float(np.max(probs) - np.min(probs)) < 1e-12:
+        return ["low"] * n
+    order = np.argsort(-np.asarray(probs, dtype=float), kind="mergesort")
+    n_crit = max(1, round(n * 0.125))
+    n_high = max(1, round(n * 0.250))
+    n_mod = max(1, round(n * 0.3472))
+    tiers = ["low"] * n
+    for rank, idx in enumerate(order):
+        if rank < n_crit:
+            tiers[idx] = "critical"
+        elif rank < n_crit + n_high:
+            tiers[idx] = "high"
+        elif rank < n_crit + n_high + n_mod:
+            tiers[idx] = "moderate"
+    return tiers
+
+
 def classify_risk_tier(prob: float, base_rate: float = 0.05) -> str:
     effective_base = max(0.005, float(base_rate))
     lift = prob / effective_base
@@ -611,9 +632,11 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
     base_rate = float(y_all.mean())
     features = []
     tier_counts = {"critical": 0, "high": 0, "moderate": 0, "low": 0}
-    for rec, prob, cell_top_drivers in zip(records, day_probs, local_drivers):
+    # Relative tiers over the whole episode (every cell of every day ranked together): the 12.5 / 25 / 34.7 % shares hold
+    # for the episode, so a dangerous day carries more critical cells than a calm one. tier_counts = the latest day.
+    relative_tiers = assign_relative_tiers(day_probs)
+    for rec, prob, cell_top_drivers, tier in zip(records, day_probs, local_drivers, relative_tiers):
         p_val = round(float(np.clip(prob, 0.0, 1.0)), 4)
-        tier = classify_risk_tier(p_val, base_rate=base_rate)
         if rec["day"] == latest_day:
             tier_counts[tier] += 1
         cell = rec["cell"]
