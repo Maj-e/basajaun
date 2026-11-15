@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "updated_at": "2026-11-15T11:22:05Z",
+  "updated_at": "2026-11-15T14:11:07Z",
   "model_metrics": {
     "algorithm": "Calibrated L2 Logistic Regression (numpy/scipy + Platt scaling)",
     "n_cells": 144,
@@ -24,7 +24,7 @@
       "2025-01-16"
     ],
     "val_roc_auc": 0.6228,
-    "val_pr_auc": 0.0311,
+    "val_pr_auc": 0.0313,
     "brier_score": 0.0234,
     "calibration": {
       "method": "platt_scaling",
@@ -45,10 +45,10 @@
     },
     "latest_date": "2025-01-16",
     "tier_counts": {
-      "critical": 0,
-      "high": 0,
-      "moderate": 66,
-      "low": 78
+      "critical": 18,
+      "high": 36,
+      "moderate": 50,
+      "low": 40
     }
   },
   "features": [
@@ -751,12 +751,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0665,
         "risk_pct": 6.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.1,
         "humidity_min": 11.0,
@@ -783,7 +783,7 @@
           }
         ],
         "drivers": "T.máx 13.1°C · Hum.mín 11% · Viento 13 km/h · Factor líder: Humedad mín. (67%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -820,12 +820,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0665,
         "risk_pct": 6.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.1,
         "humidity_min": 11.0,
@@ -852,7 +852,7 @@
           }
         ],
         "drivers": "T.máx 13.1°C · Hum.mín 11% · Viento 13 km/h · Factor líder: Humedad mín. (67%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -1554,12 +1554,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0665,
         "risk_pct": 6.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.1,
         "humidity_min": 11.0,
@@ -1586,7 +1586,7 @@
           }
         ],
         "drivers": "T.máx 13.1°C · Hum.mín 11% · Viento 13 km/h · Factor líder: Humedad mín. (67%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -1623,12 +1623,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0665,
         "risk_pct": 6.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.1,
         "humidity_min": 11.0,
@@ -1655,7 +1655,7 @@
           }
         ],
         "drivers": "T.máx 13.1°C · Hum.mín 11% · Viento 13 km/h · Factor líder: Humedad mín. (67%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -1820,12 +1820,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -1852,7 +1852,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -1889,12 +1889,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -1921,7 +1921,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -1958,12 +1958,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -1990,7 +1990,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -2027,12 +2027,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -2059,7 +2059,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2096,12 +2096,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -2128,7 +2128,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2165,12 +2165,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -2197,7 +2197,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2234,12 +2234,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -2266,7 +2266,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2303,12 +2303,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -2335,7 +2335,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2372,12 +2372,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -2404,7 +2404,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -2441,12 +2441,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -2473,7 +2473,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -2638,12 +2638,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -2670,7 +2670,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -2707,12 +2707,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -2739,7 +2739,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -2776,12 +2776,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -2808,7 +2808,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -2845,12 +2845,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -2877,7 +2877,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2914,12 +2914,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -2946,7 +2946,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -2983,12 +2983,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3015,7 +3015,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3052,12 +3052,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3084,7 +3084,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3121,12 +3121,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3153,7 +3153,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3190,12 +3190,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -3222,7 +3222,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -3259,12 +3259,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -3291,7 +3291,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -3456,12 +3456,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -3488,7 +3488,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -3525,12 +3525,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -3557,7 +3557,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -3594,12 +3594,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0774,
         "risk_pct": 7.7,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 11.0,
@@ -3626,7 +3626,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 11% · Viento 12 km/h · Factor líder: Humedad mín. (61%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -3663,12 +3663,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -3695,7 +3695,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3732,12 +3732,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1108,
         "risk_pct": 11.1,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.7,
         "humidity_min": 9.0,
@@ -3764,7 +3764,7 @@
           }
         ],
         "drivers": "T.máx 22.7°C · Hum.mín 9% · Viento 9 km/h · Factor líder: Humedad mín. (58%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3801,12 +3801,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3833,7 +3833,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3870,12 +3870,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3902,7 +3902,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -3939,12 +3939,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1184,
         "risk_pct": 11.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 22.1,
         "humidity_min": 8.0,
@@ -3971,7 +3971,7 @@
           }
         ],
         "drivers": "T.máx 22.1°C · Hum.mín 8% · Viento 12 km/h · Factor líder: Humedad mín. (62%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -4008,12 +4008,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -4040,7 +4040,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4077,12 +4077,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0884,
         "risk_pct": 8.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.0,
         "humidity_min": 10.0,
@@ -4109,7 +4109,7 @@
           }
         ],
         "drivers": "T.máx 20.0°C · Hum.mín 10% · Viento 16 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4284,12 +4284,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0836,
         "risk_pct": 8.4,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.2,
         "humidity_min": 10.0,
@@ -4316,7 +4316,7 @@
           }
         ],
         "drivers": "T.máx 19.2°C · Hum.mín 10% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4353,12 +4353,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0836,
         "risk_pct": 8.4,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.2,
         "humidity_min": 10.0,
@@ -4385,7 +4385,7 @@
           }
         ],
         "drivers": "T.máx 19.2°C · Hum.mín 10% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4629,12 +4629,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -4661,7 +4661,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4698,12 +4698,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -4730,7 +4730,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4767,12 +4767,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -4799,7 +4799,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4836,12 +4836,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0925,
         "risk_pct": 9.2,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.6,
         "humidity_min": 9.0,
@@ -4868,7 +4868,7 @@
           }
         ],
         "drivers": "T.máx 18.6°C · Hum.mín 9% · Viento 14 km/h · Factor líder: Humedad mín. (74%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -4905,12 +4905,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0925,
         "risk_pct": 9.2,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.6,
         "humidity_min": 9.0,
@@ -4937,7 +4937,7 @@
           }
         ],
         "drivers": "T.máx 18.6°C · Hum.mín 9% · Viento 14 km/h · Factor líder: Humedad mín. (74%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5457,12 +5457,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -5489,7 +5489,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5526,12 +5526,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -5558,7 +5558,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5595,12 +5595,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0967,
         "risk_pct": 9.7,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.6,
         "humidity_min": 9.0,
@@ -5627,7 +5627,7 @@
           }
         ],
         "drivers": "T.máx 20.6°C · Hum.mín 9% · Viento 10 km/h · Factor líder: Humedad mín. (64%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5664,12 +5664,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0925,
         "risk_pct": 9.2,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.6,
         "humidity_min": 9.0,
@@ -5696,7 +5696,7 @@
           }
         ],
         "drivers": "T.máx 18.6°C · Hum.mín 9% · Viento 14 km/h · Factor líder: Humedad mín. (74%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5733,12 +5733,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0925,
         "risk_pct": 9.2,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.6,
         "humidity_min": 9.0,
@@ -5765,7 +5765,7 @@
           }
         ],
         "drivers": "T.máx 18.6°C · Hum.mín 9% · Viento 14 km/h · Factor líder: Humedad mín. (74%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -5802,12 +5802,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -5834,7 +5834,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -5871,12 +5871,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -5903,7 +5903,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -5940,12 +5940,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -5972,7 +5972,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6009,12 +6009,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -6041,7 +6041,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6078,12 +6078,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -6110,7 +6110,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6147,12 +6147,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -6179,7 +6179,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6216,12 +6216,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -6248,7 +6248,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6285,12 +6285,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -6317,7 +6317,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6354,12 +6354,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -6386,7 +6386,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6423,12 +6423,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -6455,7 +6455,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6492,12 +6492,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0509,
         "risk_pct": 5.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 10.4,
         "humidity_min": 13.0,
@@ -6524,7 +6524,7 @@
           }
         ],
         "drivers": "T.máx 10.4°C · Hum.mín 13% · Viento 12 km/h · Factor líder: Humedad mín. (51%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6561,12 +6561,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0509,
         "risk_pct": 5.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 10.4,
         "humidity_min": 13.0,
@@ -6593,7 +6593,7 @@
           }
         ],
         "drivers": "T.máx 10.4°C · Hum.mín 13% · Viento 12 km/h · Factor líder: Humedad mín. (51%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -6630,12 +6630,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "critical",
+        "fill": "#b10026",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#b10026",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#b10026",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -6662,7 +6662,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Cierre preventivo de accesos forestales, vigilancia aérea y preposicionamiento de brigadas."
       }
     },
     {
@@ -6699,12 +6699,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -6731,7 +6731,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6768,12 +6768,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -6800,7 +6800,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6837,12 +6837,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -6869,7 +6869,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6906,12 +6906,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -6938,7 +6938,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -6975,12 +6975,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -7007,7 +7007,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7044,12 +7044,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -7076,7 +7076,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7113,12 +7113,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -7145,7 +7145,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7182,12 +7182,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -7214,7 +7214,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7251,12 +7251,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -7283,7 +7283,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7458,12 +7458,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -7490,7 +7490,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -7527,12 +7527,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.1049,
         "risk_pct": 10.5,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 20.5,
         "humidity_min": 9.0,
@@ -7559,7 +7559,7 @@
           }
         ],
         "drivers": "T.máx 20.5°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -7596,12 +7596,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -7628,7 +7628,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -7665,12 +7665,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -7697,7 +7697,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -7734,12 +7734,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0982,
         "risk_pct": 9.8,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 19.4,
         "humidity_min": 9.0,
@@ -7766,7 +7766,7 @@
           }
         ],
         "drivers": "T.máx 19.4°C · Hum.mín 9% · Viento 20 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -7803,12 +7803,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -7835,7 +7835,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7872,12 +7872,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0611,
         "risk_pct": 6.1,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 13.6,
         "humidity_min": 12.0,
@@ -7904,7 +7904,7 @@
           }
         ],
         "drivers": "T.máx 13.6°C · Hum.mín 12% · Viento 12 km/h · Factor líder: Humedad mín. (60%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -7941,12 +7941,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -7973,7 +7973,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8010,12 +8010,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -8042,7 +8042,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8079,12 +8079,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0695,
         "risk_pct": 7.0,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 14.6,
         "humidity_min": 11.0,
@@ -8111,7 +8111,7 @@
           }
         ],
         "drivers": "T.máx 14.6°C · Hum.mín 11% · Viento 14 km/h · Factor líder: Humedad mín. (69%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8286,12 +8286,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0723,
         "risk_pct": 7.2,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 15.6,
         "humidity_min": 11.0,
@@ -8318,7 +8318,7 @@
           }
         ],
         "drivers": "T.máx 15.6°C · Hum.mín 11% · Viento 16 km/h · Factor líder: Humedad mín. (72%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8355,12 +8355,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0723,
         "risk_pct": 7.2,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 15.6,
         "humidity_min": 11.0,
@@ -8387,7 +8387,7 @@
           }
         ],
         "drivers": "T.máx 15.6°C · Hum.mín 11% · Viento 16 km/h · Factor líder: Humedad mín. (72%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8424,12 +8424,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -8456,7 +8456,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -8493,12 +8493,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -8525,7 +8525,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -8562,12 +8562,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -8594,7 +8594,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -8631,12 +8631,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0548,
         "risk_pct": 5.5,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 12.9,
         "humidity_min": 14.0,
@@ -8663,7 +8663,7 @@
           }
         ],
         "drivers": "T.máx 12.9°C · Hum.mín 14% · Viento 26 km/h · Factor líder: Índice 30-30-30 (39%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -8700,12 +8700,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0548,
         "risk_pct": 5.5,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 12.9,
         "humidity_min": 14.0,
@@ -8732,7 +8732,7 @@
           }
         ],
         "drivers": "T.máx 12.9°C · Hum.mín 14% · Viento 26 km/h · Factor líder: Índice 30-30-30 (39%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -9114,12 +9114,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0723,
         "risk_pct": 7.2,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 15.6,
         "humidity_min": 11.0,
@@ -9146,7 +9146,7 @@
           }
         ],
         "drivers": "T.máx 15.6°C · Hum.mín 11% · Viento 16 km/h · Factor líder: Humedad mín. (72%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -9183,12 +9183,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0723,
         "risk_pct": 7.2,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 15.6,
         "humidity_min": 11.0,
@@ -9215,7 +9215,7 @@
           }
         ],
         "drivers": "T.máx 15.6°C · Hum.mín 11% · Viento 16 km/h · Factor líder: Humedad mín. (72%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -9252,12 +9252,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -9284,7 +9284,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -9321,12 +9321,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -9353,7 +9353,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -9390,12 +9390,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0986,
         "risk_pct": 9.9,
-        "risk_level": "moderate",
-        "fill": "#feb24c",
+        "risk_level": "high",
+        "fill": "#fc4e2a",
         "fill-opacity": 0.42,
-        "color": "#feb24c",
+        "color": "#fc4e2a",
         "opacity": 0.42,
-        "stroke": "#feb24c",
+        "stroke": "#fc4e2a",
         "stroke-width": 1.0,
         "temp_max": 18.7,
         "humidity_min": 9.0,
@@ -9422,7 +9422,7 @@
           }
         ],
         "drivers": "T.máx 18.7°C · Hum.mín 9% · Viento 23 km/h · Factor líder: Humedad mín. (65%)",
-        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
+        "recommended_action": "Alerta amarilla municipal, patrullaje en interfaz urbano-forestal y restricción de quemas."
       }
     },
     {
@@ -9459,12 +9459,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0548,
         "risk_pct": 5.5,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 12.9,
         "humidity_min": 14.0,
@@ -9491,7 +9491,7 @@
           }
         ],
         "drivers": "T.máx 12.9°C · Hum.mín 14% · Viento 26 km/h · Factor líder: Índice 30-30-30 (39%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {
@@ -9528,12 +9528,12 @@
         "reference_date": "2025-01-16",
         "ignition_prob": 0.0548,
         "risk_pct": 5.5,
-        "risk_level": "low",
-        "fill": "#78c679",
+        "risk_level": "moderate",
+        "fill": "#feb24c",
         "fill-opacity": 0.42,
-        "color": "#78c679",
+        "color": "#feb24c",
         "opacity": 0.42,
-        "stroke": "#78c679",
+        "stroke": "#feb24c",
         "stroke-width": 1.0,
         "temp_max": 12.9,
         "humidity_min": 14.0,
@@ -9560,7 +9560,7 @@
           }
         ],
         "drivers": "T.máx 12.9°C · Hum.mín 14% · Viento 26 km/h · Factor líder: Índice 30-30-30 (39%)",
-        "recommended_action": "Vigilancia ordinaria de red de alerta temprana."
+        "recommended_action": "Monitorización meteorológica continua y revisión de hidrantes / vías de evacuación."
       }
     },
     {

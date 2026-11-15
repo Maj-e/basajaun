@@ -503,6 +503,27 @@ def compute_local_contributions(
     return results
 
 
+def assign_relative_tiers(probs: np.ndarray) -> list[str]:
+    n = len(probs)
+    if n == 0:
+        return []
+    if float(np.max(probs) - np.min(probs)) < 1e-12:
+        return ["low"] * n
+    order = np.argsort(-np.asarray(probs, dtype=float), kind="mergesort")
+    n_crit = max(1, round(n * 0.125))
+    n_high = max(1, round(n * 0.250))
+    n_mod = max(1, round(n * 0.3472))
+    tiers = ["low"] * n
+    for rank, idx in enumerate(order):
+        if rank < n_crit:
+            tiers[idx] = "critical"
+        elif rank < n_crit + n_high:
+            tiers[idx] = "high"
+        elif rank < n_crit + n_high + n_mod:
+            tiers[idx] = "moderate"
+    return tiers
+
+
 def classify_risk_tier(prob: float, base_rate: float = 0.05) -> str:
     effective_base = max(0.005, float(base_rate))
     lift = prob / effective_base
@@ -605,9 +626,9 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
     base_rate = float(y_all.mean())
     features = []
     tier_counts = {"critical": 0, "high": 0, "moderate": 0, "low": 0}
-    for rec, prob, cell_top_drivers in zip(latest_records, latest_probs, local_drivers):
+    relative_tiers = assign_relative_tiers(latest_probs)
+    for rec, prob, cell_top_drivers, tier in zip(latest_records, latest_probs, local_drivers, relative_tiers):
         p_val = round(float(np.clip(prob, 0.0, 1.0)), 4)
-        tier = classify_risk_tier(p_val, base_rate=base_rate)
         tier_counts[tier] += 1
         cell = rec["cell"]
         features.append({
