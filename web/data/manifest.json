@@ -19,16 +19,29 @@
       ],
       "legend": [
         {
-          "color": "#d7301f",
-          "text": "High confidence"
+          "color": "#ffd9a8",
+          "text": "FRP ≥ 300 MW (fire intensity)"
         },
         {
-          "color": "#fc8d59",
-          "text": "Medium confidence"
+          "color": "#f9a957",
+          "text": "100–300 MW"
         },
         {
-          "color": "#fdcc8a",
-          "text": "Low confidence"
+          "color": "#ec8128",
+          "text": "30–100 MW"
+        },
+        {
+          "color": "#c95b17",
+          "text": "10–30 MW"
+        },
+        {
+          "color": "#9a3d12",
+          "text": "< 10 MW"
+        },
+        {
+          "color": "#ec8128",
+          "text": "MODIS · 1 km pixel",
+          "shape": "ring"
         }
       ],
       "updated_at": "2026-11-14T21:34:37Z"
@@ -39,7 +52,7 @@
       "file": "processed/regions.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "country",
         "region"
@@ -64,9 +77,73 @@
         "landcover",
         "dist_road_km",
         "dist_water_km",
-        "dist_fire_station_km"
+        "dist_fire_station_km",
+        "dist_water_point_km",
+        "gw_body",
+        "gw_vulnerability",
+        "gw_chemical_status",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T23:21:52Z"
+    },
+    {
+      "id": "fire_risk",
+      "name": "Fire risk (smoke · people · wind)",
+      "file": "processed/fire_risk.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "risk_level",
+        "risk_score",
+        "risk_factors",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#67000d",
+          "text": "Extreme: fire + people + smoke + strong wind"
+        },
+        {
+          "color": "#d7301f",
+          "text": "High (fire + strong wind, or high score)"
+        },
+        {
+          "color": "#fc8d59",
+          "text": "Medium (smoke + people, or medium score)"
+        },
+        {
+          "color": "#fdcc8a",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-14T23:21:52Z"
+    },
+    {
+      "id": "evacuation",
+      "name": "Evacuation zone (fire + 1 km + 6 h spread)",
+      "file": "processed/evacuation.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": false,
+      "popup": [
+        "fire_id",
+        "evacuate_people",
+        "warn_people"
+      ],
+      "legend": [
+        {
+          "color": "#e31a1c",
+          "text": "Evacuate: fire + 1 km + 6 h spread"
+        }
+      ],
+      "updated_at": "2026-11-14T23:21:52Z"
     },
     {
       "id": "spread",
@@ -74,7 +151,7 @@
       "file": "processed/spread.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "fire_id",
         "horizon_hours",
@@ -84,7 +161,7 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T19:10:22Z"
+      "updated_at": "2026-11-14T23:21:44Z"
     },
     {
       "id": "population",
@@ -110,7 +187,7 @@
         ]
       ],
       "temporal": false,
-      "active": false,
+      "active": true,
       "legend": [
         {
           "color": "#fee5d9",
@@ -153,7 +230,7 @@
           "text": "≥ 45 km/h"
         }
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T22:21:08Z"
     },
     {
       "id": "weather",
@@ -169,7 +246,23 @@
         "rain",
         "speed"
       ],
-      "updated_at": "2026-11-14T18:37:53Z"
+      "updated_at": "2026-11-14T22:21:08Z"
+    },
+    {
+      "id": "wind_particles",
+      "name": "Wind",
+      "file": "processed/weather.geojson",
+      "type": "particles",
+      "temporal": true,
+      "active": true,
+      "color": "#bae6fd",
+      "legend": [
+        {
+          "color": "#bae6fd",
+          "text": "Surface wind (10 m), faster = brighter"
+        }
+      ],
+      "updated_at": "2026-11-14T22:21:08Z"
     },
     {
       "id": "ignition_risk",
@@ -212,7 +305,7 @@
       "file": "processed/water.geojson",
       "type": "fill",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "kind"
@@ -220,10 +313,28 @@
       "legend": [
         {
           "color": "#3d8bd4",
-          "text": "Lakes, reservoirs, rivers"
+          "text": "Lakes, reservoirs"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T22:34:27Z"
+    },
+    {
+      "id": "rivers",
+      "name": "Rivers",
+      "file": "processed/rivers.geojson",
+      "type": "line",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name"
+      ],
+      "legend": [
+        {
+          "color": "#3d8bd4",
+          "text": "Rivers"
+        }
+      ],
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "roads",
@@ -231,7 +342,7 @@
       "file": "processed/roads.geojson",
       "type": "line",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name",
         "highway"
@@ -258,7 +369,7 @@
           "text": "Path"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T22:34:27Z"
     },
     {
       "id": "fire_stations",
@@ -266,7 +377,7 @@
       "file": "processed/fire_stations.geojson",
       "type": "circle",
       "temporal": false,
-      "active": false,
+      "active": true,
       "popup": [
         "name"
       ],
@@ -276,7 +387,46 @@
           "text": "Fire station"
         }
       ],
-      "updated_at": "2026-11-14T18:56:43Z"
+      "updated_at": "2026-11-14T22:34:27Z"
+    },
+    {
+      "id": "water_points",
+      "name": "Water points for firefighting",
+      "file": "processed/water_points.geojson",
+      "type": "circle",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "name",
+        "kind"
+      ],
+      "legend": [
+        {
+          "color": "#0077b6",
+          "text": "Firefighting tank / suction point"
+        },
+        {
+          "color": "#00b4d8",
+          "text": "Hydrant"
+        },
+        {
+          "color": "#48cae4",
+          "text": "Water tank"
+        },
+        {
+          "color": "#90e0ef",
+          "text": "Well"
+        },
+        {
+          "color": "#ade8f4",
+          "text": "Spring"
+        },
+        {
+          "color": "#caf0f8",
+          "text": "Water point"
+        }
+      ],
+      "updated_at": "2026-11-14T22:34:27Z"
     }
   ]
 }

@@ -38,9 +38,12 @@ LAYERS: list[dict] = [
         "active": True,
         "popup": ["sensor", "satellite", "timestamp_utc", "confidence", "frp", "country", "region"],
         "legend": [
-            {"color": "#d7301f", "text": "High confidence"},
-            {"color": "#fc8d59", "text": "Medium confidence"},
-            {"color": "#fdcc8a", "text": "Low confidence"},
+            {"color": "#ffd9a8", "text": "FRP ≥ 300 MW (fire intensity)"},
+            {"color": "#f9a957", "text": "100–300 MW"},
+            {"color": "#ec8128", "text": "30–100 MW"},
+            {"color": "#c95b17", "text": "10–30 MW"},
+            {"color": "#9a3d12", "text": "< 10 MW"},
+            {"color": "#ec8128", "text": "MODIS · 1 km pixel", "shape": "ring"},
         ],
     },
     {
@@ -49,7 +52,7 @@ LAYERS: list[dict] = [
         "file": "processed/regions.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["country", "region"],
     },
     {
@@ -61,7 +64,35 @@ LAYERS: list[dict] = [
         "active": True,
         "popup": ["fire_id", "start", "end", "n_hotspots", "frp_max", "area_km2",
                   "slope_deg", "landcover",
-                  "dist_road_km", "dist_water_km", "dist_fire_station_km"],
+                  "dist_road_km", "dist_water_km", "dist_fire_station_km",
+                  "dist_water_point_km", "gw_body", "gw_vulnerability", "gw_chemical_status",
+                  "risk_level", "risk_score", "risk_factors", "evacuate_people", "warn_people"],
+    },
+    {
+        "id": "fire_risk",
+        "name": "Fire risk (smoke · people · wind)",
+        "file": "processed/fire_risk.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["fire_id", "risk_level", "risk_score", "risk_factors", "evacuate_people", "warn_people"],
+        # Colors match risk_score.LEVEL_STYLE
+        "legend": [
+            {"color": "#67000d", "text": "Extreme: fire + people + smoke + strong wind"},
+            {"color": "#d7301f", "text": "High (fire + strong wind, or high score)"},
+            {"color": "#fc8d59", "text": "Medium (smoke + people, or medium score)"},
+            {"color": "#fdcc8a", "text": "Low"},
+        ],
+    },
+    {
+        "id": "evacuation",
+        "name": "Evacuation zone (fire + 1 km + 6 h spread)",
+        "file": "processed/evacuation.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": False,
+        "popup": ["fire_id", "evacuate_people", "warn_people"],
+        "legend": [{"color": "#e31a1c", "text": "Evacuate: fire + 1 km + 6 h spread"}],
     },
     {
         "id": "spread",
@@ -69,7 +100,7 @@ LAYERS: list[dict] = [
         "file": "processed/spread.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["fire_id", "horizon_hours", "wind_speed_kmh", "wind_to_deg", "slope_deg",
                   "spread_km", "area_km2"],
     },
@@ -80,7 +111,7 @@ LAYERS: list[dict] = [
         "type": "image",
         "corners": BBOX_CORNERS,
         "temporal": False,
-        "active": False,
+        "active": True,
         "legend": [
             {"color": "#fee5d9", "text": "< 10 people/km²"},
             {"color": "#a50f15", "text": "> 1000 people/km²"},
@@ -92,6 +123,7 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
+        # Replaced by the particles below (same wind, one layer is enough); kept for reference
         "active": False,
         "popup": ["timestamp_utc", "speed", "direction"],
         "legend": [
@@ -109,6 +141,17 @@ LAYERS: list[dict] = [
         "temporal": True,
         "active": True,
         "popup": ["timestamp_utc", "temperature", "humidity", "rain", "speed"],
+    },
+    {
+        "id": "wind_particles",
+        "name": "Wind",
+        "file": "processed/weather.geojson",
+        "type": "particles",
+        "temporal": True,
+        "active": True,
+        # Surface wind at 10 m: the front end reads u / v (m/s) per grid point and hour
+        "color": "#bae6fd",
+        "legend": [{"color": "#bae6fd", "text": "Surface wind (10 m), faster = brighter"}],
     },
     {
         "id": "ignition_risk",
@@ -134,9 +177,19 @@ LAYERS: list[dict] = [
         "file": "processed/water.geojson",
         "type": "fill",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "kind"],
-        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs, rivers"}],
+        "legend": [{"color": "#3d8bd4", "text": "Lakes, reservoirs"}],
+    },
+    {
+        "id": "rivers",
+        "name": "Rivers",
+        "file": "processed/rivers.geojson",
+        "type": "line",
+        "temporal": False,
+        "active": True,  # water is active: rivers were drawn (wrongly) inside it
+        "popup": ["name"],
+        "legend": [{"color": "#3d8bd4", "text": "Rivers"}],
     },
     {
         "id": "roads",
@@ -144,7 +197,7 @@ LAYERS: list[dict] = [
         "file": "processed/roads.geojson",
         "type": "line",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name", "highway"],
         # Colors match osm.ROAD_STYLE
         "legend": [
@@ -161,9 +214,42 @@ LAYERS: list[dict] = [
         "file": "processed/fire_stations.geojson",
         "type": "circle",
         "temporal": False,
-        "active": False,
+        "active": True,
         "popup": ["name"],
         "legend": [{"color": "#2b8cbe", "text": "Fire station"}],
+    },
+    {
+        "id": "water_points",
+        "name": "Water points for firefighting",
+        "file": "processed/water_points.geojson",
+        "type": "circle",
+        "temporal": False,
+        "active": True,
+        "popup": ["name", "kind"],
+        # Colors match osm.WATER_POINT_COLORS
+        "legend": [
+            {"color": "#0077b6", "text": "Firefighting tank / suction point"},
+            {"color": "#00b4d8", "text": "Hydrant"},
+            {"color": "#48cae4", "text": "Water tank"},
+            {"color": "#90e0ef", "text": "Well"},
+            {"color": "#ade8f4", "text": "Spring"},
+            {"color": "#caf0f8", "text": "Water point"},
+        ],
+    },
+    {
+        "id": "groundwater",
+        "name": "Groundwater (ash leachate risk)",
+        "file": "processed/groundwater.geojson",
+        "type": "fill",
+        "temporal": False,
+        "active": True,
+        "popup": ["name", "vulnerability", "chemical_status", "at_risk_chemical", "geology"],
+        # Colors match groundwater.STYLE
+        "legend": [
+            {"color": "#8e44ad", "text": "High vulnerability (karst / poor or at-risk chemical status)"},
+            {"color": "#5b8def", "text": "Medium (porous aquifer)"},
+            {"color": "#9fb8c9", "text": "Low"},
+        ],
     },
 ]
 

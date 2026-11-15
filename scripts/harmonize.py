@@ -7,6 +7,21 @@ CONFIDENCE_COLORS = {
     "low": "#fdcc8a",
 }
 
+# Fire intensity (FRP, MW) -> one-hue amber ramp, dark to light (validated for the dark map; design mockup)
+FRP_STEPS = [(10.0, "#9a3d12"), (30.0, "#c95b17"), (100.0, "#ec8128"), (300.0, "#f9a957")]
+FRP_MAX_COLOR = "#ffd9a8"
+
+
+def frp_color(frp) -> str:
+    """Color of a hotspot from its FRP: <10, 10-30, 30-100, 100-300, >=300 MW."""
+    if frp is None or pd.isna(frp):
+        return FRP_STEPS[0][1]
+    for limit, color in FRP_STEPS:
+        if float(frp) < limit:
+            return color
+    return FRP_MAX_COLOR
+
+
 SENSOR_BORDERS = {
     "MODIS": "#ffffff",
     "VIIRS": "#222222",
@@ -142,7 +157,7 @@ def normalize_modis(df: pd.DataFrame) -> pd.DataFrame:
             "resolution_m": 1000,
             "detected_by": ["MODIS"],
             "fire_id": None,
-            "color": CONFIDENCE_COLORS[confidence],
+            "color": frp_color(frp),
             "radius": calculate_radius(frp),
             "border": SENSOR_BORDERS["MODIS"],
         })
@@ -193,7 +208,7 @@ def normalize_viirs(df: pd.DataFrame, satellite: str | None = None) -> pd.DataFr
             "resolution_m": 375,
             "detected_by": ["VIIRS"],
             "fire_id": None,
-            "color": CONFIDENCE_COLORS[confidence],
+            "color": frp_color(frp),
             "radius": calculate_radius(frp),
             "border": SENSOR_BORDERS["VIIRS"],
         })

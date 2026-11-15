@@ -116,7 +116,8 @@ def test_daily_summary(registry, data_dir):
 
 
 def test_alerts(registry, data_dir):
-    alert = {"fire_id": 12, "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800,
+    alert = {"fire_id": 12, "type": "population", "message": "≈23,400 people within 5 km",
+             "risk": "critical", "since": "2026-02-14T07:42:00Z", "pop_1km": 800,
              "pop_5km": 23400, "pop_10km": 51000, "wind_toward_population": False,
              "center": [-70.65, -33.46], "color": "#a50f15"}
     path = write(data_dir / "processed/alerts.json", {"updated_at": UPDATED, "alerts": [alert]})
@@ -126,6 +127,13 @@ def test_alerts(registry, data_dir):
     assert validate.validate_file(path, registry, data_dir)
 
     write(path, [alert])  # old bare-list format: no room for `updated_at`
+    assert validate.validate_file(path, registry, data_dir)
+
+    write(path, {"updated_at": UPDATED, "alerts": [{**alert, "type": "earthquake"}]})
+    assert validate.validate_file(path, registry, data_dir)
+
+    untyped = {k: v for k, v in alert.items() if k not in ("type", "message")}
+    write(path, {"updated_at": UPDATED, "alerts": [untyped]})
     assert validate.validate_file(path, registry, data_dir)
 
 
@@ -196,3 +204,23 @@ def test_static_assets_are_not_validated(data_dir):
     write(data_dir / "processed/hotspots.geojson", hotspots(HOTSPOT))
     found = [p.relative_to(data_dir).as_posix() for p in validate.find_data_files(data_dir)]
     assert found == ["processed/hotspots.geojson"]
+
+
+@pytest.mark.parametrize("layer_type, geometry, ok", [
+    ("fill", {"type": "Polygon", "coordinates": [[[-71, -35], [-70.9, -35], [-70.9, -34.9], [-71, -35]]]}, True),
+    ("fill", {"type": "LineString", "coordinates": [[-71, -35], [-70.9, -34.9]]}, False),  # river in a fill layer
+    ("line", {"type": "LineString", "coordinates": [[-71, -35], [-70.9, -34.9]]}, True),
+    ("line", {"type": "Point", "coordinates": [-71, -35]}, False),
+    ("circle", {"type": "Point", "coordinates": [-71, -35]}, True),
+    ("circle", {"type": "Polygon", "coordinates": [[[-71, -35], [-70.9, -35], [-70.9, -34.9], [-71, -35]]]}, False),
+])
+def test_layer_type_matches_geometry(registry, data_dir, layer_type, geometry, ok):
+    fc = {"type": "FeatureCollection", "updated_at": UPDATED,
+          "features": [{"type": "Feature", "geometry": geometry, "properties": {}}]}
+    write(data_dir / "processed/layer.geojson", fc)
+    layer = {"id": "layer", "name": "Layer", "file": "processed/layer.geojson", "type": layer_type,
+             "temporal": False, "active": False}
+    errors = validate.validate_file(write(data_dir / "manifest.json", manifest(layer)), registry, data_dir)
+    assert (errors == []) == ok, errors
+    if not ok:
+        assert any("draws" in e for e in errors)

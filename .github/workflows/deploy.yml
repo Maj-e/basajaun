@@ -23,8 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Each deploy gets its own module URLs (?v=<commit>): with GitHub Pages' 10 min cache a visitor
+      # could otherwise mix modules from two deploys and get a blank page. Only the published copy changes.
+      - name: Version the front-end files
+        run: |
+          cp -r web _site
+          python3 scripts/version_assets.py _site "${GITHUB_SHA::8}"
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
