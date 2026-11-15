@@ -33,6 +33,14 @@ const baseLayers = tiled.map((b) => {
     layout: { visibility: on ? "visible" : "none" }, paint };
 });
 
+// One base map at a time: Topo and Satellite hide the dark outline instead of sitting on top of it
+const darkOn = CONFIG.basemaps.default === "dark";
+function showDark(on) {
+  map.setPaintProperty("grid", "line-opacity", on ? 1 : 0);
+  map.setPaintProperty("land", "fill-opacity", on ? 1 : 0);
+  map.setPaintProperty("land-edge", "line-opacity", on ? 1 : 0);
+}
+
 const style = {
   version: 8,
   sources: {
@@ -44,15 +52,16 @@ const style = {
   },
   layers: [
     { id: "ocean", type: "background", paint: { "background-color": "#070c16" } },
-    { id: "grid", type: "line", source: "grid", paint: { "line-color": "#1a2538", "line-width": 1 } },
-    { id: "land", type: "fill", source: "land", paint: { "fill-color": "#131c2b" } },
+    // Dark base map (land outline, coast line, graticule): only shown when "dark" is the chosen base map
+    { id: "grid", type: "line", source: "grid", paint: { "line-color": "#1a2538", "line-width": 1, "line-opacity": darkOn ? 1 : 0, "line-opacity-transition": { duration: 400 } } },
+    { id: "land", type: "fill", source: "land", paint: { "fill-color": "#131c2b", "fill-opacity": darkOn ? 1 : 0, "fill-opacity-transition": { duration: 400 } } },
     ...baseLayers,
     // Dimmed and desaturated so the fires stay the brightest thing on screen
     // Double buffer: the next day loads in the hidden layer, then cross-fades in at once (no tile-by-tile squares)
     ...["sat-a", "sat-b"].map((id) => ({ id, type: "raster", source: id, layout: { visibility: "none" },
       paint: { "raster-opacity": 0, "raster-opacity-transition": { duration: 500 }, "raster-fade-duration": 0,
                "raster-brightness-max": 0.55, "raster-saturation": -0.35, "raster-contrast": 0.1 } })),
-    { id: "land-edge", type: "line", source: "land", paint: { "line-color": "#26344b", "line-width": 1.2 } },
+    { id: "land-edge", type: "line", source: "land", paint: { "line-color": "#26344b", "line-width": 1.2, "line-opacity": darkOn ? 1 : 0, "line-opacity-transition": { duration: 400 } } },
   ],
 };
 
@@ -103,7 +112,7 @@ export function setBasemap(id) {
       setTimeout(() => { if (lid !== `base-${currentBase}`) map.setLayoutProperty(lid, "visibility", "none"); }, 450);
     });
   };
-  if (!map.getLayer(next)) return fadeOutOthers();      // "dark": just fade the rasters out
+  if (!map.getLayer(next)) { showDark(true); return fadeOutOthers(); } // "dark": its outline back, the rasters out
   const nextOpt = tiled.find((b) => `base-${b.id}` === next);
   // Barely visible, not 0: MapLibre skips the tiles of a fully transparent layer
   map.setPaintProperty(next, fadeProp(nextOpt), 0.01);
@@ -114,6 +123,7 @@ export function setBasemap(id) {
     done = true;
     map.off("sourcedata", check);
     map.setPaintProperty(next, fadeProp(nextOpt), fullValue(nextOpt));
+    showDark(false);
     fadeOutOthers();
   };
   const check = () => { if (map.isSourceLoaded(next)) reveal(); };

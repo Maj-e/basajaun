@@ -206,7 +206,7 @@
       "file": "episodes/spain-2025-08/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": true,
+      "active": false,
       "popup": [
         "timestamp_utc",
         "speed",
@@ -250,7 +250,7 @@
     },
     {
       "id": "wind_particles",
-      "name": "Wind (particles)",
+      "name": "Wind",
       "file": "episodes/spain-2025-08/weather.geojson",
       "type": "particles",
       "temporal": true,

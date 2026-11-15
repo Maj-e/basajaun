@@ -101,7 +101,7 @@
       "file": "episodes/los-angeles-2025-01/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": true,
+      "active": false,
       "popup": [
         "timestamp_utc",
         "speed",
@@ -145,7 +145,7 @@
     },
     {
       "id": "wind_particles",
-      "name": "Wind (particles)",
+      "name": "Wind",
       "file": "episodes/los-angeles-2025-01/weather.geojson",
       "type": "particles",
       "temporal": true,

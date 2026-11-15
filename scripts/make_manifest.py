@@ -122,7 +122,8 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
-        "active": True,
+        # Replaced by the particles below (same wind, one layer is enough); kept for reference
+        "active": False,
         "popup": ["timestamp_utc", "speed", "direction"],
         "legend": [
             {"color": "#91cf60", "text": "< 15 km/h"},
@@ -142,7 +143,7 @@ LAYERS: list[dict] = [
     },
     {
         "id": "wind_particles",
-        "name": "Wind (particles)",
+        "name": "Wind",
         "file": "processed/weather.geojson",
         "type": "particles",
         "temporal": True,
