@@ -110,6 +110,7 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 | 2026-11-15 | `spread` fixed outside Chile: ellipses were drawn at about half their size (fixed Chile UTM zone); `area_km2` now matches the polygon. Evacuation and contamination alerts regenerated |
 | 2026-11-15 | Combined risk score + evacuation (W3-B11): layers `fire_risk`, `evacuation`; fire fields `risk_*`, `evacuate_people`, `warn_people` (Chile, Sierra Bermeja, Spain Aug 2025) |
 | 2026-11-15 | Typed alerts (W3-B8): `type` + `message` on every alert; new `wind`, `smoke`, `contamination` alerts (Chile 129 alerts, Sierra Bermeja 16, Spain Aug 2025 1,437) |
+| 2026-11-15 | The page opens with hotspots, fires and wind only (`defaultLayers`); ignition risk, roads and groundwater are one click away in the Layers tab |
 | 2026-11-14 | Rivers moved out of `water` into their own `rivers` line layer (a fill layer closed each river into a bogus polygon); the validator now rejects a layer whose geometries don't match its type |
 | 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
 | 2026-11-14 | `regions` layer and `country` / `region` on hotspots, Chile (W5-B3, #46) |
