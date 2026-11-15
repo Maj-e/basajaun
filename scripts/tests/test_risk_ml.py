@@ -10,6 +10,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import risk_ml
 from risk_ml import (
     apply_platt_calibrator,
     brier_score_np,
