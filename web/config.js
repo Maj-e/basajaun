@@ -48,7 +48,7 @@ export const CONFIG = {
   ],
   // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
   // (design council: one place to look during playback)
-  defaultLayers: ["hotspots", "fires", "roads", "groundwater", "wind_particles"],
+  defaultLayers: ["hotspots", "fires", "roads", "groundwater", "wind_particles", "ignition_risk"],
   // Point layers that also get a heatmap when zoomed out (readability of dense episodes)
   heatmapLayers: ["hotspots"],
   // Fires stay visible this many hours after their detection, fading out
@@ -67,7 +67,7 @@ export const CONFIG = {
               { note: "Bigger, darker patch = heavier rain (current hour)" }],
   },
   // Stacking order, bottom to top (unknown layers go just under the hotspots)
-  layerOrder: ["population", "groundwater", "regions", "water", "weather", "spread", "roads", "fires",
+  layerOrder: ["population", "ignition_risk", "groundwater", "regions", "water", "weather", "spread", "roads", "fires",
                "fire_stations", "water_points", "hotspots", "wind"],
   // Temporal layers that keep a trail; every other temporal layer (weather, wind) shows the current hour only
   trailLayers: ["hotspots"],

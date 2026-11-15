@@ -27,7 +27,7 @@ Each episode is a place and a period with its own data and manifest (`web/data/e
 
 ## Map layers
 
-Switched on at start: hotspots, fires, roads, groundwater, wind. Others in the Map panel: 6 h spread, population density, rain, water, rivers, fire stations, water points for firefighting, regions, evacuation zone, fire risk.
+Switched on at start: hotspots, fires, roads, groundwater, wind and the AI ignition risk (drawn underneath the others). Others in the Map panel: 6 h spread, population density, rain, water, rivers, fire stations, water points for firefighting, regions, evacuation zone, fire risk.
 
 **Base maps**: Topo (relief), Satellite (cloud-free Sentinel-2) and Dark; plus the *Satellite image of the day* (NASA GIBS) over any of them. Licences and attribution: [`docs/licenses.md`](../licenses.md).
 
