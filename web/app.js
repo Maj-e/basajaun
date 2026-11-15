@@ -92,8 +92,18 @@ async function main() {
   renderLayerList($("layer-list"), setLayerVisible);
 
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
-  subscribe((s) => {
+  // The playhead moves every frame. Paint, counts, alerts and the satellite day
+  // change only when the data hour crosses an integer. A same-hour scrub keeps
+  // the clock moving and leaves the map still. Any other state change (new
+  // scope, satellite toggle) still refreshes, because those are not hour ticks.
+  let paintedHour = null;
+  subscribe((s, changes = {}) => {
     timeline.render(s.hour);
+    const bucket = Math.floor(s.hour);
+    const keys = Object.keys(changes);
+    const onlyHour = keys.length === 1 && keys[0] === "hour";
+    if (onlyHour && bucket === paintedHour) return;
+    paintedHour = bucket;
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
     renderAlerts(s.hour, (a) => alertScope(a));
     setHour(s.hour);
