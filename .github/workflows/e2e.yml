@@ -12,7 +12,7 @@ on:
       url:
         description: "Site to check"
         required: false
-        default: "https://maj-e.github.io/ulinautas/"
+        default: "https://maj-e.github.io/basajaun/"
       max_load:
         description: "First page load budget (seconds)"
         required: false
@@ -42,5 +42,5 @@ jobs:
       - name: Check the published site
         run: uv run scripts/check_site.py --url "$SITE_URL" --max-load "$MAX_LOAD"
         env:
-          SITE_URL: ${{ inputs.url || 'https://maj-e.github.io/ulinautas/' }}
+          SITE_URL: ${{ inputs.url || 'https://maj-e.github.io/basajaun/' }}
           MAX_LOAD: ${{ inputs.max_load || '10' }}

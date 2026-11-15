@@ -110,7 +110,7 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - `index.html` + MapLibre GL `4.7.1` (unpkg); map framed on the area; empty panels: left (filters, calendar, layers), right (alerts), bottom (timeline)
   - `state.js`: shared state (`date`, `range`, `sensors`, `confidences`, `hour`, `layers`) with `setState` / `subscribe`
   - `.github/workflows/deploy.yml`: publishes `web/` to GitHub Pages on every push to `main`
-  - **Demo URL: `https://maj-e.github.io/ulinautas/`** until the custom domain is verified from outside (`web/CNAME` + DNS + HTTPS in parallel, blocking nothing)
+  - **Demo URL: `https://maj-e.github.io/basajaun/`** until the custom domain is verified from outside (`web/CNAME` + DNS + HTTPS in parallel, blocking nothing)
   - Paths **always relative** (`data/processed/...`)
   - **Done when:** the skeleton is visible on the github.io URL
   - Depends on: W0-B4 (layout)
