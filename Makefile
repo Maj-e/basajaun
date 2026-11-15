@@ -24,6 +24,7 @@ PIPELINE := \
 	spread \
 	exposure \
 	osm \
+	risk_ml \
 	make_manifest \
 	validate
 

@@ -621,6 +621,8 @@ def run_risk_model(processed_dir: Path = PROCESSED, bbox: tuple[float, float, fl
                 "risk_level": tier,
                 "fill": RISK_COLORS[tier],
                 "fill-opacity": 0.42,
+                "color": RISK_COLORS[tier],
+                "opacity": 0.42,
                 "stroke": RISK_COLORS[tier],
                 "stroke-width": 1.0,
                 "temp_max": rec["temp_max"],

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T20:35:13Z",
+  "updated_at": "2026-11-15T11:20:55Z",
   "layers": [
     {
       "id": "hotspots",
@@ -13,7 +13,9 @@
         "satellite",
         "timestamp_utc",
         "confidence",
-        "frp"
+        "frp",
+        "country",
+        "region"
       ],
       "legend": [
         {
@@ -45,6 +47,8 @@
         "n_hotspots",
         "frp_max",
         "area_km2",
+        "slope_deg",
+        "landcover",
         "dist_road_km",
         "dist_water_km",
         "dist_fire_station_km"
@@ -63,6 +67,7 @@
         "horizon_hours",
         "wind_speed_kmh",
         "wind_to_deg",
+        "slope_deg",
         "spread_km",
         "area_km2"
       ],
@@ -103,7 +108,7 @@
           "text": "> 1000 people/km²"
         }
       ],
-      "updated_at": "2026-11-14T20:34:58Z"
+      "updated_at": "2026-11-14T21:57:24Z"
     },
     {
       "id": "wind",
@@ -152,6 +157,41 @@
         "speed"
       ],
       "updated_at": "2026-11-14T20:34:59Z"
+    },
+    {
+      "id": "ignition_risk",
+      "name": "Municipal ignition risk",
+      "file": "episodes/sierra-bermeja-2021-09/ignition_risk.geojson",
+      "type": "fill",
+      "temporal": false,
+      "active": true,
+      "popup": [
+        "cell_id",
+        "reference_date",
+        "risk_level",
+        "risk_pct",
+        "drivers",
+        "recommended_action"
+      ],
+      "legend": [
+        {
+          "color": "#b10026",
+          "text": "Critical"
+        },
+        {
+          "color": "#fc4e2a",
+          "text": "High"
+        },
+        {
+          "color": "#feb24c",
+          "text": "Moderate"
+        },
+        {
+          "color": "#78c679",
+          "text": "Low"
+        }
+      ],
+      "updated_at": "2026-11-15T11:20:38Z"
     },
     {
       "id": "water",

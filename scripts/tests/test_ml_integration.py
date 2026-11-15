@@ -33,34 +33,11 @@ CELL_KEYS = (
     "recommended_action",
     "fill",
     "stroke",
+    "color",
+    "opacity",
 )
 
 METRIC_KEYS = ("val_roc_auc", "val_pr_auc", "feature_importances", "tier_counts")
-
-# Same shape IA3-1 will register in make_manifest.LAYERS. Passed in here so
-# the contract can be checked before that list is edited.
-IGNITION_LAYER = {
-    "id": "ignition_risk",
-    "name": "Municipal ignition risk",
-    "file": "processed/ignition_risk.geojson",
-    "type": "fill",
-    "temporal": False,
-    "active": False,
-    "popup": [
-        "cell_id",
-        "reference_date",
-        "risk_level",
-        "risk_pct",
-        "drivers",
-        "recommended_action",
-    ],
-    "legend": [
-        {"color": RISK_COLORS["critical"], "text": "Critical"},
-        {"color": RISK_COLORS["high"], "text": "High"},
-        {"color": RISK_COLORS["moderate"], "text": "Moderate"},
-        {"color": RISK_COLORS["low"], "text": "Low"},
-    ],
-}
 
 
 def _episode(episode_id: str) -> dict:
@@ -159,16 +136,22 @@ def test_episode_produces_contract_risk_layer(episode_id: str, tmp_path: Path):
         assert 0.0 <= prob <= 1.0
         assert props["risk_level"] in RISK_COLORS
         assert props["fill"] == RISK_COLORS[props["risk_level"]]
+        assert props["color"] == props["fill"]
+        assert props["opacity"] == 0.42
         assert props["stroke"] == props["fill"]
         assert props["risk_pct"] == round(prob * 100.0, 1)
         assert isinstance(props["drivers"], str) and props["drivers"]
         assert isinstance(props["recommended_action"], str) and props["recommended_action"]
 
-    layers = [*make_manifest.LAYERS, IGNITION_LAYER]
-    manifest = make_manifest.build_manifest(data_dir, layers=layers, subdir=subdir)
+    registered = {layer["id"]: layer for layer in make_manifest.LAYERS}
+    assert registered["ignition_risk"]["active"] is True
+    assert registered["ignition_risk"]["type"] == "fill"
+    assert len(registered["ignition_risk"]["legend"]) == 4
+
+    manifest = make_manifest.build_manifest(data_dir, subdir=subdir)
     listed = {layer["id"]: layer for layer in manifest["layers"]}
     layer = listed["ignition_risk"]
-    assert layer["active"] is False
+    assert layer["active"] is True
     assert layer["type"] == "fill"
     assert layer["file"] == f"{subdir}/ignition_risk.geojson"
     assert len(layer["legend"]) == 4
