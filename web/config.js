@@ -10,6 +10,26 @@ export const CONFIG = {
     maxzoom: 9,
     attribution: "Imagery: NASA GIBS / VIIRS",
   },
+  // Base maps the user can pick (W3-F7). Static tiles: cached by the browser, never re-requested while the playback runs.
+  // `paint` dims and desaturates the imagery so the fires stay the brightest thing on screen.
+  // "dark" has no tiles: it is the offline land outline above, also what shows under the tiles while they load.
+  basemaps: {
+    default: "topo",
+    options: [
+      // Topo = terrain relief: open elevation tiles (AWS Open Data, Terrarium encoding) shaded by the GPU in dark tones
+      { id: "topo", name: "Topo", maxzoom: 15, tileSize: 256, encoding: "terrarium",
+        dem: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+        attribution: "Relief: Mapzen / AWS Terrain Tiles (SRTM, NASADEM, USGS 3DEP, GMTED, ETOPO1)",
+        paint: { "hillshade-exaggeration": 0.75, "hillshade-shadow-color": "#03060c", "hillshade-highlight-color": "#8aa0c4",
+                 "hillshade-accent-color": "#0a1424", "hillshade-illumination-anchor": "map" } },
+      { id: "satellite", name: "Satellite", maxzoom: 14, tileSize: 256,
+        tiles: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg",
+        // CC BY-NC-SA 4.0: free for non-commercial use with this exact attribution; commercial use needs an EOX licence
+        attribution: "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2021)",
+        paint: { "raster-brightness-max": 0.62, "raster-saturation": -0.25, "raster-contrast": 0.1 } },
+      { id: "dark", name: "Dark" },
+    ],
+  },
   // Map margins kept clear of the header and the timeline (mobile: taller header + panel bar)
   framePadding: window.matchMedia("(max-width: 760px)").matches
     ? { top: 170, bottom: 230, left: 16, right: 16 }

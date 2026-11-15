@@ -4,6 +4,7 @@
 // Temporal layers (`temporal: true`) show each feature from its time `t` and fade it out over CONFIG.trailHours.
 import { map } from "../map.js";
 import { CONFIG } from "../config.js";
+import { createParticlesLayer } from "./particles.js";
 
 const dataUrl = (file) => CONFIG.dataRoot + file;
 
@@ -197,6 +198,14 @@ export function addToMap() {
 
 function addEntry(entry) {
   const { layer, data } = entry;
+  // Particles: own canvas above the map (no MapLibre source / layer), driven by setHour / setLayerVisible
+  if (layer.type === "particles") {
+    entry.particles = createParticlesLayer(map, layer, data);
+    entry.mapLayerIds = [];
+    if (currentHour !== null) entry.particles.setHour(currentHour);
+    entry.particles.setVisible(entry.visible ?? isDefaultVisible(layer));
+    return true;
+  }
   const build = BUILDERS[layer.id === CONFIG.rainLayer.id ? "rain" : layer.type];
   if (!build) { console.warn(`Unknown layer type: "${layer.type}" (${layer.id})`); return false; }
   map.addSource(layer.id, layer.type === "image"
@@ -210,7 +219,7 @@ function addEntry(entry) {
 }
 
 // Weather-like layers: one value per point and per hour, shown for the current hour only (no trail)
-const isNowOnly = (entry) => entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id) && entry.layer.type !== "arrows";
+const isNowOnly = (entry) => entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id) && !["arrows", "particles"].includes(entry.layer.type);
 function hourSubset(entry, hour) {
   const h = hour ?? -Infinity;
   return { type: "FeatureCollection", features: (entry.data?.features ?? []).filter((f) => f.properties.t <= h && f.properties.t > h - 1) };
@@ -277,6 +286,7 @@ export function setHour(hour) {
   const nowOnlyExpr = nowOnly(hour, 0.85);
   for (const entry of layers.values()) {
     const { mapLayerIds } = entry;
+    if (entry.particles) { entry.particles.setHour(hour); continue; }
     if (!followsTime(entry)) continue;
     if (entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id)) {
       // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
@@ -306,6 +316,7 @@ export function setLayerVisible(id, visible) {
   const entry = layers.get(id);
   if (!map || !entry) return;
   entry.visible = visible;
+  entry.particles?.setVisible(visible);
   entry.mapLayerIds.forEach((l) => map.setLayoutProperty(l, "visibility", visible ? "visible" : "none"));
   if (legendEl) renderLegend(legendEl);
 }

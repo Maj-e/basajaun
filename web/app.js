@@ -1,5 +1,5 @@
 // Entry point: loads the data, wires the modules, handles controls and presenter keys.
-import { map, mapReady, mapError, updateSatellite, onSatelliteDate } from "./map.js";
+import { map, mapReady, mapError, updateSatellite, onSatelliteDate, setBasemap } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
 import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
@@ -230,6 +230,22 @@ async function main() {
     if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-pressed", "true"); }
   }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
+  // Base map picker (W3-F7): Topo (default) / Satellite / Dark
+  const baseSwitch = $("basemap-switch");
+  CONFIG.basemaps.options.forEach((b) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = b.name;
+    btn.dataset.basemap = b.id;
+    btn.setAttribute("role", "radio");
+    btn.setAttribute("aria-checked", String(b.id === state.basemap));
+    btn.onclick = () => {
+      setState({ basemap: b.id });
+      setBasemap(b.id);
+      baseSwitch.querySelectorAll("button").forEach((o) => o.setAttribute("aria-checked", String(o === btn)));
+    };
+    baseSwitch.append(btn);
+  });
   $("satellite-toggle").onchange = (e) => {
     setState({ satellite: e.target.checked });
     if (!e.target.checked) $("sat-badge").hidden = true;
