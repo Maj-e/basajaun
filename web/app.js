@@ -52,7 +52,8 @@ async function dailyCounts(features) {
 }
 
 // ---------- Map panel: one panel, two tabs (Layers, Alerts), foldable ----------
-// Desktop: left column between the header and the timeline. Mobile: bottom sheet above the timeline, folded at first.
+// Desktop: right column, under the header figures, above the timeline (the left keeps the title and caption room
+// to breathe). Mobile: bottom sheet above the timeline, folded at first.
 // The panel's room follows the real header and timeline heights (CSS variables).
 const panel = (() => {
   const tabs = () => [...document.querySelectorAll('#panel [role="tab"]')].filter((t) => !t.hidden);
@@ -91,6 +92,7 @@ const panel = (() => {
     const root = document.documentElement.style;
     root.setProperty("--tl-h", `${$("timeline").offsetHeight}px`);
     root.setProperty("--head-h", `${document.querySelector(".head .title").getBoundingClientRect().bottom}px`);
+    root.setProperty("--figures-h", `${document.querySelector(".head .readouts").getBoundingClientRect().bottom}px`);
   };
   new ResizeObserver(measure).observe($("timeline"));
   new ResizeObserver(measure).observe(document.querySelector(".head"));
