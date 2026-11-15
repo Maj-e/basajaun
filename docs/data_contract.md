@@ -70,7 +70,7 @@ One entry per **whole** hour of the period (`t` = hours since 1970, integer), ze
   "default": "sierra-bermeja-2021-09",
   "episodes": [
     { "id": "sierra-bermeja-2021-09", "name": "Sierra Bermeja (Málaga) · Sep 2021", "bbox": [-5.6, 36.3, -4.6, 36.9],
-      "start": "2021-09-08", "end": "2021-09-14", "dir": "episodes/sierra-bermeja-2021-09",
+      "start": "2021-09-08", "end": "2021-09-20", "dir": "episodes/sierra-bermeja-2021-09",
       "manifest": "episodes/sierra-bermeja-2021-09/manifest.json" },
     { "id": "chile-2026-02", "name": "Chile–Argentina border · Feb 2026", "bbox": [-72.0, -38.0, -70.0, -33.0],
       "start": "2026-02-01", "end": "2026-02-14", "dir": "processed", "manifest": "manifest.json" },
