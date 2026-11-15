@@ -368,3 +368,21 @@ body.alert-labels .alert-mark { display: block; }
 .demo-banner b { color: var(--frp-4); }
 .demo-banner button { flex: none; font: 600 12px var(--font-ui); color: #1a0c03; background: var(--frp-3); border: 0; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
 @media (max-width: 760px) { .demo-banner { top: auto; bottom: calc(var(--tl-h) + var(--bar-h) + 8px); font-size: 12px; } }
+
+/* ---------- Alert window: one row per fire, sticky filters, counts ---------- */
+.alerts { max-height: calc(100vh - 360px); display: flex; flex-direction: column; align-items: stretch; }
+#alerts-toggle { align-self: flex-end; }
+#alerts-toggle #alerts-title { font-family: var(--font-ui); color: var(--ink-2); margin: 0; }
+.alert-filters { position: sticky; top: 0; z-index: 1; }
+.alert-filters .n { font: 500 11px var(--font-data); color: var(--ink); margin-left: 3px; }
+#alerts-list { flex: 1 1 auto; min-height: 0; }
+#alerts-list .fire-head { width: 100%; text-align: left; display: grid; gap: 2px; padding: 8px; border-radius: 6px;
+  background: none; border: 0; color: var(--ink); font: 13px var(--font-ui); cursor: pointer; }
+#alerts-list .fire-head:hover, .fire-row:focus-within .fire-head { background: #172236; }
+#alerts-list .risk { gap: 6px; }
+#alerts-list .risk em { font-style: normal; margin-right: 2px; }
+#alerts-list .type { display: inline-flex; color: var(--c); }
+.fire-details { list-style: none; margin: 0 0 6px; padding: 0 8px 0 12px; display: grid; gap: 4px; font-size: 12px; color: var(--ink-2); }
+.fire-details li { display: flex; gap: 6px; align-items: flex-start; }
+.fire-details li svg { color: var(--c); margin-top: 2px; }
+.alert-mark.hot .halo { border-width: 3px; box-shadow: 0 0 22px var(--c); opacity: 1; }

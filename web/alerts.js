@@ -62,18 +62,19 @@ export async function loadAlerts() {
 }
 
 // Filter chips: one per type present in the episode
+let counts = {}; // alerts per type at the current hour (before the type filter)
 function renderFilters() {
   const present = Object.keys(TYPES).filter((t) => alerts.some((a) => a.kind === t));
   const el = $("alerts-filters");
   if (!el) return;
   el.hidden = present.length < 2;
   el.innerHTML = `<button type="button" data-type="" aria-pressed="${!selected.size}">All</button>` +
-    present.map((t) => `<button type="button" data-type="${t}" aria-pressed="${selected.has(t)}" style="--c:${TYPES[t].color}">${icon(t)}${TYPES[t].label}</button>`).join("");
+    present.map((t) => `<button type="button" data-type="${t}" aria-pressed="${selected.has(t)}" style="--c:${TYPES[t].color}">${icon(t)}${TYPES[t].label}<span class="n">${counts[t] ?? 0}</span></button>`).join("");
   el.querySelectorAll("button").forEach((b) => (b.onclick = () => {
     const t = b.dataset.type;
     if (!t) selected.clear(); else if (selected.has(t)) selected.delete(t); else selected.add(t);
-    renderFilters();
     shownKey = null;
+    renderFilters();
     if (lastArgs) renderAlerts(...lastArgs);
   }));
 }
@@ -100,33 +101,63 @@ function marker(a) {
 export function renderAlerts(hour, inScope) {
   lastArgs = [hour, inScope];
   if (!alerts.length) return;
-  const active = alerts
-    .filter((a) => a.t <= hour && inScope(a) && (!selected.size || selected.has(a.kind)))
+  const started = alerts.filter((a) => a.t <= hour && inScope(a));
+  const active = started
+    .filter((a) => !selected.size || selected.has(a.kind))
     .sort((a, b) => RANK[a.risk] - RANK[b.risk] || (b.pop_5km ?? 0) - (a.pop_5km ?? 0));
-  const key = active.map((a) => a.key).join(",");
+  const key = active.map((a) => a.key).join(",") + "|" + started.length;
   if (key === shownKey) return;
   shownKey = key;
 
+  // Counts per type on the chips
+  const newCounts = {};
+  started.forEach((a) => (newCounts[a.kind] = (newCounts[a.kind] ?? 0) + 1));
+  if (JSON.stringify(newCounts) !== JSON.stringify(counts)) { counts = newCounts; renderFilters(); }
+
+  // One row per fire: worst risk first, its types as icons, the most severe message, details on demand
+  const fires = new Map();
+  for (const a of active) {
+    if (!fires.has(a.fire_id)) fires.set(a.fire_id, []);
+    fires.get(a.fire_id).push(a);
+  }
+  const groups = [...fires.values()];
+  const top = groups.slice(0, MAX_SHOWN);
   $("alerts-count").textContent = active.length;
   if ($("mb-alerts")) $("mb-alerts").textContent = active.length;
+  $("alerts-title").textContent = active.length ? `${groups.length} fire${groups.length > 1 ? "s" : ""} · ` : "";
   $("alerts-toggle").classList.toggle("has-critical", active.some((a) => a.risk === "critical"));
-  const top = active.slice(0, MAX_SHOWN);
-  $("alerts-list").innerHTML = active.length
-    ? top.map((a) => `
-      <li><button type="button" data-key="${a.key}" style="--c:${TYPES[a.kind].color}">
-        <span class="risk">${icon(a.kind)}${TYPES[a.kind].label} · <em style="color:${a.color}">${a.risk}</em></span>
-        <span class="who">${a.message ?? `${fmtPop(a.pop_5km)} people within 5 km`}</span>
-        <span class="when">since ${fmtTime(a.t)}</span>
-      </button></li>`).join("") +
-      (active.length > MAX_SHOWN ? `<li class="none">+ ${active.length - MAX_SHOWN} more · zoom in to see them</li>` : "")
+  $("alerts-list").innerHTML = groups.length
+    ? top.map((g) => {
+      const lead = g[0];
+      const kinds = [...new Set(g.map((a) => a.kind))];
+      return `<li class="fire-row" data-fire="${lead.fire_id}">
+        <button type="button" class="fire-head" aria-expanded="false">
+          <span class="risk"><em style="color:${lead.color}">${lead.risk}</em>${kinds.map((k) => `<span class="type" style="--c:${TYPES[k].color}" title="${TYPES[k].label}">${icon(k)}</span>`).join("")}</span>
+          <span class="who">${lead.message ?? `${fmtPop(lead.pop_5km)} people within 5 km`}</span>
+          <span class="when">since ${fmtTime(Math.min(...g.map((a) => a.t)))}${g.length > 1 ? ` · ${g.length} alerts` : ""}</span>
+        </button>
+        <ul class="fire-details" hidden>${g.map((a) => `<li style="--c:${TYPES[a.kind].color}">${icon(a.kind)}<span><b>${TYPES[a.kind].label}</b> · ${a.risk} — ${a.message ?? ""}</span></li>`).join("")}</ul>
+      </li>`;
+    }).join("") +
+      (groups.length > MAX_SHOWN ? `<li class="none">+ ${groups.length - MAX_SHOWN} more fires · zoom in to see them</li>` : "")
     : `<li class="none">No alert at this time</li>`;
-  $("alerts-list").querySelectorAll("[data-key]").forEach((b) => (b.onclick = () => {
-    const a = active.find((x) => x.key === b.dataset.key);
-    map?.flyTo({ center: a.center, zoom: 10 });
-  }));
+  $("alerts-list").querySelectorAll(".fire-row").forEach((row) => {
+    const g = fires.get(Number(row.dataset.fire)) ?? fires.get(row.dataset.fire);
+    const head = row.querySelector(".fire-head");
+    head.onclick = () => {
+      const details = row.querySelector(".fire-details");
+      details.hidden = !details.hidden;
+      head.setAttribute("aria-expanded", String(!details.hidden));
+      if (!details.hidden) map?.flyTo({ center: g[0].center, zoom: 10 });
+    };
+    // Hovering a row makes its rings stand out on the map
+    row.onmouseenter = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.add("hot"));
+    row.onmouseleave = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.remove("hot"));
+  });
 
   if (!map) return;
-  const onMap = new Set(top.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.key));
+  const shownAlerts = top.flat();
+  const onMap = new Set(shownAlerts.filter((a) => a.risk === "critical" || a.risk === "high").map((a) => a.key));
   for (const [k, m] of markers) if (!onMap.has(k)) { m.remove(); markers.delete(k); }
-  for (const a of top) if (onMap.has(a.key) && !markers.has(a.key)) markers.set(a.key, marker(a).addTo(map));
+  for (const a of shownAlerts) if (onMap.has(a.key) && !markers.has(a.key)) markers.set(a.key, marker(a).addTo(map));
 }
