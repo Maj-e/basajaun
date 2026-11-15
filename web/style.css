@@ -58,7 +58,7 @@ body {
   display: flex; align-items: center; gap: 12px;
 }
 .wordmark .emblem { flex: none; width: 40px; height: 40px; filter: drop-shadow(0 0 4px #070c16); } /* white on transparent: a dark halo keeps it on the light base map */
-.caption { margin: 12px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.caption { margin: 20px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
 .caption strong { color: var(--ink); font-weight: 600; }
 
 .readouts { display: flex; gap: 28px; text-align: right; }
@@ -120,7 +120,7 @@ body {
 }
 
 /* ---------- Episode row ---------- */
-.episode-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.episode-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 .episode-row .episode-pick { margin-top: 0; }
 
 /* ---------- Episode selector ---------- */
@@ -130,7 +130,7 @@ body {
   background: #172236; border: 1px solid var(--land-edge); border-radius: 6px; padding: 4px 8px; }
 
 /* ---------- Scope: whole area or visible area ---------- */
-.scope { margin: 12px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
+.scope { margin: 16px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
 .scope button { pointer-events: auto; } /* only the button catches clicks: the line itself lets the map through */
 .scope.visible-area #scope-text { color: var(--frp-4); }
 .scope button {
@@ -207,16 +207,16 @@ body.alert-labels .alert-mark { display: block; }
 
 /* ---------- Mobile pass: compact header, visible map, panel as a bottom sheet ---------- */
 @media (max-width: 760px) {
-  .head { padding: 10px var(--gutter-r) 18px var(--gutter-l); gap: 6px; }
+  .head { padding: 10px var(--gutter-r) 18px var(--gutter-l); gap: 16px; }
   .wordmark { font-size: 20px; }
   .wordmark .emblem { width: 32px; height: 32px; }
-  .caption { font-size: 12px; margin-top: 6px; }
+  .caption { font-size: 12px; margin-top: 12px; }
   .caption strong { display: none; }
   .caption br { display: none; }
-  .episode-row { margin-top: 10px; gap: 8px; }
+  .episode-row { margin-top: 14px; gap: 8px; }
   .episode-pick { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } /* label kept for screen readers */
   .episode-select { font-size: 12px; max-width: 220px; padding: 3px 6px; }
-  .scope { margin-top: 8px; font-size: 11px; }
+  .scope { margin-top: 10px; font-size: 11px; }
   .readouts { gap: 18px; }
   .readout dt { font-size: 10px; }
   .readout dd { font-size: 22px; margin-top: 2px; }
