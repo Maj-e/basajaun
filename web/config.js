@@ -16,10 +16,14 @@ export const CONFIG = {
   basemaps: {
     default: "topo",
     options: [
-      // Topo = terrain relief: open elevation tiles (AWS Open Data, Terrarium encoding) shaded by the GPU in dark tones
-      { id: "topo", name: "Topo", maxzoom: 15, tileSize: 256, encoding: "terrarium",
-        dem: "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
-        attribution: "Relief: Mapzen / AWS Terrain Tiles (SRTM, NASADEM, USGS 3DEP, GMTED, ETOPO1)",
+      // Topo = terrain relief: open elevation tiles shaded by the GPU in dark tones.
+      // Mapterhorn: Terrarium in lossless WebP, 512 px tiles (a quarter of the requests of 256 px tiles), served from a CDN.
+      // 30 m worldwide, finer (down to 1 m lidar) where national agencies publish it.
+      // Fallback if it ever goes down: AWS Open Data, 256 px PNG, maxzoom 15:
+      //   https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png (attribution "Mapzen / AWS Terrain Tiles")
+      { id: "topo", name: "Topo", maxzoom: 16, tileSize: 512, encoding: "terrarium",
+        dem: "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp",
+        attribution: "<a href='https://mapterhorn.com/attribution'>© Mapterhorn</a>",
         paint: { "hillshade-exaggeration": 0.75, "hillshade-shadow-color": "#03060c", "hillshade-highlight-color": "#8aa0c4",
                  "hillshade-accent-color": "#0a1424", "hillshade-illumination-anchor": "map" } },
       { id: "satellite", name: "Satellite", maxzoom: 14, tileSize: 256,
