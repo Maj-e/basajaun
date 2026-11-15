@@ -467,29 +467,37 @@ function enablePopup(layer, mapLayerIds) {
   });
 }
 
-// Legend built from the manifest, in the #legend aside.
-// Legend of every visible layer (manifest legend + CONFIG.legendExtras); redrawn when a box is ticked.
+// Legend of each visible layer (manifest legend + CONFIG.legendExtras), right under its box in the Layers tab;
+// redrawn when a box is ticked. `el` is the layer list.
 let legendEl = null;
 const SHAPE_BY_TYPE = { circle: "dot", fill: "area", image: "area", line: "line", arrows: "arrow", rain: "dot" };
 const ARROW = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1 10 6H7.4v5H4.6V6H2z" fill="currentColor"/></svg>`;
 export function renderLegend(el) {
   legendEl = el;
-  const shown = [...layers.values()].filter((e) => !e.lazy && (e.visible ?? isDefaultVisible(e.layer)));
-  const blocks = shown.map(({ layer }) => {
-    const items = [...(layer.legend ?? []), ...(CONFIG.legendExtras[layer.id] ?? [])];
-    if (!items.length) return "";
-    const shape = SHAPE_BY_TYPE[layer.type] ?? "dot";
-    return `<h2>${layer.name}</h2>` + items.map((item) => item.note
-      ? `<div class="legend-note">${item.note}</div>`
-      : `<div class="legend-item"><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</div>`).join("");
-  }).filter(Boolean);
-  el.hidden = !blocks.length;
-  el.innerHTML = blocks.join("");
+  for (const box of el.querySelectorAll(".layer-legend")) {
+    const entry = layers.get(box.dataset.for);
+    const shown = entry && !entry.lazy && (entry.visible ?? isDefaultVisible(entry.layer));
+    const items = shown ? [...(entry.layer.legend ?? []), ...(CONFIG.legendExtras[entry.layer.id] ?? [])] : [];
+    box.hidden = !items.length;
+    if (!items.length) { box.innerHTML = ""; continue; }
+    const shape = SHAPE_BY_TYPE[entry.layer.type] ?? "dot";
+    const keys = items.filter((item) => !item.note);
+    const notes = items.filter((item) => item.note);
+    box.innerHTML = (keys.length ? `<ul class="legend-items">${keys.map((item) =>
+      `<li><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</li>`).join("")}</ul>` : "") +
+      notes.map((item) => `<p class="legend-note">${item.note}</p>`).join("");
+  }
 }
 
-// Checkbox per loaded layer, in the layers panel.
+// Boxes in the Layers tab, grouped by theme (CONFIG.layerGroups), each with its legend underneath.
 export function renderLayerList(el, onToggle) {
-  el.innerHTML = [...layers.values()].map(({ layer }) =>
-    `<label><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> ${layer.name}</label>`).join("");
+  const all = [...layers.values()].map((e) => e.layer);
+  const listed = new Set(CONFIG.layerGroups.flatMap((g) => g.ids));
+  const groups = [...CONFIG.layerGroups.map((g) => ({ name: g.name, layers: g.ids.map((id) => all.find((l) => l.id === id)).filter(Boolean) })),
+    { name: "Other", layers: all.filter((l) => !listed.has(l.id)) }].filter((g) => g.layers.length);
+  el.innerHTML = groups.map((g) => `<fieldset class="group"><legend>${g.name}</legend>${g.layers.map((layer) =>
+    `<div class="layer-row"><label class="layer"><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> <span>${layer.name}</span></label>` +
+    `<div class="layer-legend" data-for="${layer.id}" hidden></div></div>`).join("")}</fieldset>`).join("");
   el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => toggleLayer(box.dataset.layer, box.checked)));
+  renderLegend(el);
 }

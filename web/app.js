@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate, setBasemap } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, setPlayback, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, setPlayback, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -51,6 +51,56 @@ async function dailyCounts(features) {
   return { days, counts };
 }
 
+// ---------- Map panel: one panel, two tabs (Layers, Alerts), foldable ----------
+// Desktop: right column, under the header figures, above the timeline (the left keeps the title and caption room
+// to breathe). Mobile: bottom sheet above the timeline, folded at first.
+// The panel's room follows the real header and timeline heights (CSS variables).
+const panel = (() => {
+  const tabs = () => [...document.querySelectorAll('#panel [role="tab"]')].filter((t) => !t.hidden);
+  const mobile = matchMedia("(max-width: 760px)");
+  let folded = mobile.matches;
+  const fold = (on) => {
+    folded = on;
+    $("panel").classList.toggle("folded", on);
+    $("panel-body").hidden = on;
+    $("panel-fold").setAttribute("aria-expanded", String(!on));
+    $("panel-fold").setAttribute("aria-label", on ? "Show the panel" : "Hide the panel");
+  };
+  const select = (tab) => {
+    tabs().forEach((t) => {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      $(t.getAttribute("aria-controls")).hidden = !on;
+    });
+  };
+  document.querySelectorAll('#panel [role="tab"]').forEach((t) => {
+    // Tapping the open tab folds the panel; any tab unfolds it
+    t.onclick = () => { if (t.getAttribute("aria-selected") === "true" && !folded) fold(true); else { select(t); fold(false); } };
+    // WAI-ARIA tabs: arrows move between tabs, Home / End to the first / last
+    t.onkeydown = (e) => {
+      const list = tabs(), i = list.indexOf(t);
+      const next = { ArrowRight: list[(i + 1) % list.length], ArrowLeft: list[(i - 1 + list.length) % list.length], Home: list[0], End: list.at(-1) }[e.key];
+      if (!next) return;
+      e.preventDefault();
+      select(next); fold(false); next.focus();
+    };
+  });
+  $("panel-fold").onclick = () => fold(!folded);
+  fold(folded);
+  const measure = () => {
+    const root = document.documentElement.style;
+    root.setProperty("--tl-h", `${$("timeline").offsetHeight}px`);
+    root.setProperty("--head-h", `${document.querySelector(".head .title").getBoundingClientRect().bottom}px`);
+    root.setProperty("--figures-h", `${document.querySelector(".head .readouts").getBoundingClientRect().bottom}px`);
+  };
+  new ResizeObserver(measure).observe($("timeline"));
+  new ResizeObserver(measure).observe(document.querySelector(".head"));
+  return {
+    show: (name) => { const t = $(`tab-${name}`); if (t && !t.hidden) { select(t); fold(false); } },
+  };
+})();
+
 async function main() {
   try {
     await loadData();
@@ -80,7 +130,9 @@ async function main() {
   const pick = $("episode-select");
   pick.innerHTML = CONFIG.episodes.map((e) => `<option value="${e.id}"${e.id === CONFIG.episode.id ? " selected" : ""}>${e.name}</option>`).join("");
   pick.parentElement.hidden = CONFIG.episodes.length < 2;
-  pick.onchange = () => {
+  // WCAG 3.2.2: choosing an option never reloads the page by itself (arrow keys would reload on every step); Open does
+  $("episode-go").onclick = () => {
+    if (pick.value === CONFIG.episode.id) return;
     const q = new URLSearchParams(location.search);
     q.set("episode", pick.value);
     location.search = q.toString();
@@ -88,7 +140,6 @@ async function main() {
   $("caption-scope").textContent = `MODIS + VIIRS merged · ${CONFIG.areaName} · ${fmtDay(days[0])} – ${fmtDay(days.at(-1), { year: "numeric" })}`;
   const generated = manifest.updated_at ? ` · generated ${new Date(manifest.updated_at).toLocaleString("en", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} UTC` : "";
   $("status").textContent = (CONFIG.manifest.includes("sample") ? "Sample data" : "Data") + generated;
-  renderLegend($("legend"));
   renderLayerList($("layer-list"), setLayerVisible);
 
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
@@ -145,6 +196,7 @@ async function main() {
   function isolateFire(id, geometry) {
     if (isolatedFireId === id) { showWholeArea(); return; }
     isolatedFireId = id;
+    panel.show("alerts"); // the fire's detail is in the Alerts tab
     alertScope = (a) => Number(a.fire_id) === id;
     setHotspotFire(id);
     showAlertFire(id);
@@ -203,17 +255,7 @@ async function main() {
     $("tl-fold").setAttribute("aria-label", $("tl-fold").title);
   };
   let tlFolded = false;
-  $("tl-fold").onclick = () => { foldTimeline((tlFolded = !tlFolded)); fitAlerts(); };
-  // The alert panel stops above the legend (or the timeline): both change size with the layers and the fold
-  function fitAlerts() {
-    const panel = $("alerts"), legend = $("legend");
-    if (!panel || matchMedia("(max-width: 760px)").matches) { panel?.style.removeProperty("max-height"); return; }
-    const floor = !legend.hidden && legend.offsetHeight ? legend.getBoundingClientRect().top : $("timeline").getBoundingClientRect().top;
-    panel.style.maxHeight = `${Math.max(160, floor - panel.getBoundingClientRect().top - 12)}px`;
-  }
-  new ResizeObserver(fitAlerts).observe($("legend"));
-  new ResizeObserver(fitAlerts).observe($("timeline"));
-  window.addEventListener("resize", fitAlerts);
+  $("tl-fold").onclick = () => foldTimeline((tlFolded = !tlFolded));
   // Demo disclaimer (W5-F2): once per visitor, never in presenter mode
   const presenterMode = new URLSearchParams(location.search).get("demo") === "1";
   let dismissed = false;
@@ -223,13 +265,6 @@ async function main() {
     $("demo-banner").hidden = true;
     try { localStorage.setItem("ulinautas-demo-banner", "closed"); } catch { /* fine, it just shows again next time */ }
   };
-  // Mobile: Layers / Alerts / Legend open as bottom sheets, one at a time (tap again to close)
-  document.querySelectorAll("#mobile-bar [data-sheet]").forEach((b) => (b.onclick = () => {
-    const name = b.dataset.sheet, open = !document.body.classList.contains(`sheet-${name}`);
-    document.body.classList.remove("sheet-layers", "sheet-alerts", "sheet-legend");
-    document.querySelectorAll("#mobile-bar [data-sheet]").forEach((o) => o.setAttribute("aria-pressed", "false"));
-    if (open) { document.body.classList.add(`sheet-${name}`); b.setAttribute("aria-pressed", "true"); }
-  }));
   $("labels-toggle").onchange = (e) => setAlertLabels(e.target.checked);
   // Base map picker (W3-F7): Topo (default) / Satellite / Dark
   const baseSwitch = $("basemap-switch");
@@ -238,12 +273,11 @@ async function main() {
     btn.type = "button";
     btn.textContent = b.name;
     btn.dataset.basemap = b.id;
-    btn.setAttribute("role", "radio");
-    btn.setAttribute("aria-checked", String(b.id === state.basemap));
+    btn.setAttribute("aria-pressed", String(b.id === state.basemap));
     btn.onclick = () => {
       setState({ basemap: b.id });
       setBasemap(b.id);
-      baseSwitch.querySelectorAll("button").forEach((o) => o.setAttribute("aria-checked", String(o === btn)));
+      baseSwitch.querySelectorAll("button").forEach((o) => o.setAttribute("aria-pressed", String(o === btn)));
     };
     baseSwitch.append(btn);
   });
@@ -257,9 +291,20 @@ async function main() {
     $("sat-badge").textContent = `Satellite image · ${fmtDay(date)} · NASA VIIRS`;
   });
 
-  // Presenter keys (docs/demo-script.md)
+  // Presenter keys (docs/demo-script.md). WCAG 2.1.4: single-key shortcuts can be turned off (remembered per visitor),
+  // never fire with a modifier, and leave Space and the arrows to whatever control has focus (buttons, slider, map).
+  let shortcuts = true;
+  try { shortcuts = localStorage.getItem("ulinautas-shortcuts") !== "off"; } catch { /* storage blocked: on */ }
+  $("shortcuts-toggle").checked = shortcuts;
+  $("shortcuts-toggle").onchange = (e) => {
+    shortcuts = e.target.checked;
+    try { localStorage.setItem("ulinautas-shortcuts", shortcuts ? "on" : "off"); } catch { /* fine */ }
+  };
   window.addEventListener("keydown", (e) => {
-    if (e.target.closest?.("input, textarea, select")) return;
+    if (!shortcuts || e.ctrlKey || e.altKey || e.metaKey) return;
+    if (e.target.closest?.("input, textarea, select, [contenteditable]")) return;
+    const owned = e.target.closest?.("button, a[href], summary, [role=slider], #map");
+    if (owned && (e.code === "Space" || e.key.startsWith("Arrow"))) return;
     const k = e.key.toLowerCase();
     if (e.code === "Space") { e.preventDefault(); timeline.toggle(); }
     else if (k === "p") timeline.jumpPeak();

@@ -37,10 +37,18 @@ export const CONFIG = {
   // Map margins kept clear of the header and the timeline (mobile: taller header + panel bar)
   framePadding: window.matchMedia("(max-width: 760px)").matches
     ? { top: 170, bottom: 230, left: 16, right: 16 }
-    : { top: 130, bottom: 200, left: 60, right: 60 },
+    : { top: 200, bottom: 200, left: 60, right: 380 }, // right: the map panel
+  // Layer groups in the Layers tab, in this order; a layer not listed here goes to "Other"
+  layerGroups: [
+    { name: "Fire", ids: ["hotspots", "fires", "spread", "fire_risk", "evacuation"] },
+    { name: "People", ids: ["population", "regions"] },
+    { name: "Weather", ids: ["weather", "wind", "wind_particles"] },
+    { name: "Water and terrain", ids: ["water", "rivers", "groundwater"] },
+    { name: "Firefighting", ids: ["roads", "fire_stations", "water_points"] },
+  ],
   // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
   // (design council: one place to look during playback)
-  defaultLayers: ["hotspots", "fires", "roads", "groundwater", "wind_particles"],
+  defaultLayers: ["hotspots", "fires", "wind_particles"],
   // Point layers that also get a heatmap when zoomed out (readability of dense episodes)
   heatmapLayers: ["hotspots"],
   // Fires stay visible this many hours after their detection, fading out
