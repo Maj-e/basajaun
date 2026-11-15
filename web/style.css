@@ -55,9 +55,9 @@ body {
 .title { min-width: 0; }
 .wordmark {
   margin: 0; font: 700 26px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase;
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
 }
-.wordmark svg { flex: none; }
+.wordmark .emblem { flex: none; width: 40px; height: 40px; filter: drop-shadow(0 0 4px #070c16); } /* white on transparent: a dark halo keeps it on the light base map */
 .caption { margin: 12px 0 0; color: var(--ink-2); font-size: 15px; line-height: 1.45; }
 .caption strong { color: var(--ink); font-weight: 600; }
 
@@ -209,11 +209,12 @@ body.alert-labels .alert-mark { display: block; }
 @media (max-width: 760px) {
   .head { padding: 10px var(--gutter-r) 18px var(--gutter-l); gap: 6px; }
   .wordmark { font-size: 20px; }
+  .wordmark .emblem { width: 32px; height: 32px; }
   .caption { font-size: 12px; margin-top: 6px; }
   .caption strong { display: none; }
   .caption br { display: none; }
   .episode-row { margin-top: 10px; gap: 8px; }
-  .episode-pick { font-size: 0; gap: 0; }
+  .episode-pick { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } /* label kept for screen readers */
   .episode-select { font-size: 12px; max-width: 220px; padding: 3px 6px; }
   .scope { margin-top: 8px; font-size: 11px; }
   .readouts { gap: 18px; }
