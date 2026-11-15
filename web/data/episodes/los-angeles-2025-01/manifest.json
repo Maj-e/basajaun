@@ -164,7 +164,8 @@
       "name": "Municipal ignition risk",
       "file": "episodes/los-angeles-2025-01/ignition_risk.geojson",
       "type": "fill",
-      "temporal": false,
+      "temporal": true,
+      "hold_hours": 24,
       "active": true,
       "popup": [
         "cell_id",

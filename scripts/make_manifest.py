@@ -158,7 +158,9 @@ LAYERS: list[dict] = [
         "name": "Municipal ignition risk",
         "file": "processed/ignition_risk.geojson",
         "type": "fill",
-        "temporal": False,
+        "temporal": True,
+        # One grid per day, kept on the map until the next midnight (features share that day's t).
+        "hold_hours": 24,
         "active": True,
         "popup": [
             "cell_id", "reference_date", "risk_level", "risk_pct",
