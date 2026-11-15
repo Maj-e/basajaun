@@ -319,13 +319,13 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W3-B9, W3-F5
 
 - [ ] **W3-F7** · Selectable base maps · **B4** — *code on branch `W3F7-basemaps`*
-  - Picker in the Map panel: **Topo** (default: dark terrain relief from open AWS Terrarium elevation tiles, shaded on the GPU), **Satellite** (Sentinel-2 cloudless, no clouds) and **Dark** (offline land outline); the daily NASA image stays a separate switch (it shows the real smoke and clouds)
+  - Picker in the Map panel: **Topo** (default: dark terrain relief from open Mapterhorn elevation tiles, 512 px WebP, shaded on the GPU), **Satellite** (Sentinel-2 cloudless, no clouds) and **Dark** (offline land outline); the daily NASA image stays a separate switch (it shows the real smoke and clouds)
   - Smooth: static tiles (cached, no per-day reload), all sources declared up front and only the chosen one visible, cross-fade once the new tiles are loaded, never `setStyle()`; imagery dimmed so the fires stay the brightest thing; offline falls back to the land outline
   - Config in `CONFIG.basemaps` (`config.js`); switch in `setBasemap()` (`map.js`)
   - **Done when:** the three base maps switch without flicker or losing any data layer, Topo is the default, and the page still works offline
-  - Licences: Topo = AWS Open Data / Mapzen terrain tiles (open, attribution in the map). Satellite = EOX Sentinel-2 cloudless, **CC BY-NC-SA 4.0**: fine for the non-commercial hackathon demo with the EOX attribution; a commercial use needs an EOX licence. Esri World Topo was dropped (deprecated, unclear terms without an API key)
+  - Licences: Topo = Mapterhorn terrain tiles (open sources, "© Mapterhorn" in the map; the free endpoint states no usage limits, self-host if traffic grows; AWS Terrarium kept as fallback). Satellite = EOX Sentinel-2 cloudless, **CC BY-NC-SA 4.0**: fine for the non-commercial hackathon demo with the EOX attribution; a commercial use needs an EOX licence. Esri World Topo was dropped (deprecated, unclear terms without an API key)
   - Full licence table and future caveats: `docs/licenses.md`; the daily NASA image stays as its own switch (works over any base map)
-  - Coordinate with F's relief hillshade (W3-F1): same AWS elevation source, can share it
+  - Coordinate with F's relief hillshade (W3-F1): same elevation source (Mapterhorn), can share it
   - Depends on: —
 
 - [x] **W3-B11** · Combined risk score + evacuation estimate · **B4**
