@@ -2,6 +2,7 @@
 // Each point carries the surface wind at 10 m as u / v (m/s, where it blows to) for one hour `t` (see docs/frontend_layers.md).
 // The loader creates one controller per particles layer and drives it with setHour / setVisible, like any other layer.
 import { WindParticles } from "./wind_particles.js";
+import { state } from "../state.js";
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -31,7 +32,7 @@ export function createParticlesLayer(map, layer, data) {
   canvas.dataset.particles = layer.id; // not data-layer: that attribute identifies the panel checkbox
   canvas.setAttribute("aria-hidden", "true");
   map.getContainer().appendChild(canvas);
-  const engine = new WindParticles(canvas, map, { color: layer.color, reduceMotion });
+  const engine = new WindParticles(canvas, map, { color: layer.color, reduceMotion, playing: state.playing });
   let shownHour = null;
 
   // Nearest available hour at or before `hour` (weather is hourly; playback hours have decimals)
@@ -50,6 +51,9 @@ export function createParticlesLayer(map, layer, data) {
       const keep = shownHour !== null;
       shownHour = h;
       engine.setField(fieldFor(byHour.get(h)), { keepParticles: keep });
+    },
+    setPlaying(playing) {
+      engine.setPlaying(playing);
     },
     setVisible(visible) {
       engine.setEnabled(visible);

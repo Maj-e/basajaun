@@ -1,14 +1,17 @@
 // Lightweight wind particle overlay for MapLibre ("Windy-lite"), ported from Miguel's TerraFlow (ui/js/wind_particles.js).
 // Bilinear-sampled u/v field + a light curl so paths bend smoothly instead of snapping cell to cell.
 // Drawn on its own <canvas> above the map; the map stays interactive (pointer-events: none).
-// Reduced motion: no animation, a still image of short streaks redrawn when the map or the hour changes.
+// Reduced motion: no animation, a still image of streaks redrawn when the map or the hour changes.
+// Paused player: the animation stops and the last frame stays as it is (frozen particles); it is only redrawn,
+// as short streaks, when the map or the hour changes.
 
 const PARTICLE_COUNT = 420;
 const MAX_AGE = 110;
 const STILL_STEPS = 14; // trail length of the still image (reduced motion)
+const FROZEN_STEPS = 3; // short streaks when the map or the hour changes while paused: particles, not long lines
 
 export class WindParticles {
-  constructor(canvas, map, { color = "#bae6fd", reduceMotion = false } = {}) {
+  constructor(canvas, map, { color = "#bae6fd", reduceMotion = false, playing = false } = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.map = map;
@@ -17,12 +20,13 @@ export class WindParticles {
     this.enabled = false;
     this.raf = null;
     this.reduceMotion = reduceMotion;
+    this.playing = playing; // the player is running: animate; otherwise show a still image
     this.rgb = hexToRgb(color);
-    this._onResize = () => { this.resize(); if (this.reduceMotion) this._drawStill(); };
+    this._onResize = () => { this.resize(); if (this._still()) this._drawStill(); };
     window.addEventListener("resize", this._onResize);
     this.resize();
     // Moving the map invalidates the trails: fade them (animated) or redraw the still image
-    this.map.on("move", () => (this.reduceMotion ? this._drawStill() : this._fade()));
+    this.map.on("move", () => (this._still() ? this._drawStill() : this._fade()));
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) this.stop();
       else if (this.enabled) this.start();
@@ -56,7 +60,26 @@ export class WindParticles {
     });
     this.grid = { nx, ny, west, south, east, north, U, V };
     if (!keepParticles || !this.particles.length) this.particles = Array.from({ length: PARTICLE_COUNT }, () => this._spawn());
-    if (this.reduceMotion && this.enabled) this._drawStill();
+    if (this._still() && this.enabled) this._drawStill();
+  }
+
+  _still() {
+    return this.reduceMotion || !this.playing;
+  }
+
+  // The player started or paused: animate while it runs, freeze into a still image while it is paused
+  setPlaying(playing) {
+    this.playing = !!playing;
+    if (!this.enabled) return;
+    if (this._still()) {
+      if (this.raf) cancelAnimationFrame(this.raf);
+      this.raf = null;
+      if (!this.animated) this._drawStill(); // never ran: nothing to freeze yet
+    } else {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.animated = false;
+      this.start();
+    }
   }
 
   setEnabled(on) {
@@ -131,6 +154,7 @@ export class WindParticles {
 
   _frame() {
     if (!this.enabled || !this.grid) { this.raf = null; return; }
+    this.animated = true;
     this._fade();
     this.ctx.lineWidth = 1.25;
     this.ctx.lineCap = "round";
@@ -142,17 +166,18 @@ export class WindParticles {
   // Reduced motion: a still image of short streaks, no animation loop
   _drawStill() {
     if (!this.enabled || !this.grid) return;
+    const steps = this.reduceMotion ? STILL_STEPS : FROZEN_STEPS;
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.lineWidth = 1.25;
     this.ctx.lineCap = "round";
     const scale = this._scale(), bounds = this.map.getBounds();
     this.particles = Array.from({ length: PARTICLE_COUNT }, () => ({ ...this._spawn(), age: 0 }));
-    for (const p of this.particles) for (let i = 0; i < STILL_STEPS; i++) this._step(p, 0, scale, bounds);
+    for (const p of this.particles) for (let i = 0; i < steps; i++) this._step(p, 0, scale, bounds);
   }
 
   start() {
     if (!this.enabled) return;
-    if (this.reduceMotion) { this._drawStill(); return; }
+    if (this._still()) { this._drawStill(); return; }
     if (!this.raf) this.raf = requestAnimationFrame(() => this._frame());
   }
 

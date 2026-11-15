@@ -102,7 +102,8 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   return {
     render, seek, setPlaying, setData,
     toggle: () => setPlaying(!state.playing),
-    restart: () => { seek(playFrom); setPlaying(true); },
+    // Back to the first day, keeping the play / pause state (a paused player stays paused on a clean map)
+    restart: () => seek(start),
     jumpPeak: () => { if (current.story.peak) { setPlaying(false); seek(current.story.peak.end); } },
     step: (h) => { setPlaying(false); seek(state.hour + h); },
     start: () => requestAnimationFrame(frame),
