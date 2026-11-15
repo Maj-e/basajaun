@@ -2,7 +2,7 @@
 import { map, mapReady, mapError, updateSatellite, onSatelliteDate, setBasemap } from "./map.js";
 import { CONFIG } from "./config.js";
 import { state, setState, subscribe } from "./state.js";
-import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
+import { layers, manifest, loadData, addToMap, setHour, setLayerVisible, setHotspotFire, setPlayback, renderLegend, renderLayerList, prefetchLayers } from "./layers/loader.js";
 import { createTimeline } from "./timeline.js";
 import { computeStory, dayOf } from "./story.js";
 import { renderReadouts } from "./readouts.js";
@@ -92,7 +92,8 @@ async function main() {
   renderLayerList($("layer-list"), setLayerVisible);
 
   const timeline = createTimeline({ days, counts, story, start, end, playFrom });
-  subscribe((s) => {
+  subscribe((s, changes) => {
+    if ("playing" in changes) setPlayback(s.playing);
     timeline.render(s.hour);
     renderReadouts(scoped, s.hour, fmtDay(days[0]));
     renderAlerts(s.hour, (a) => alertScope(a));

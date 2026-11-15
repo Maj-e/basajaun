@@ -346,6 +346,11 @@ export function setHour(hour) {
   }
 }
 
+// The player started or paused: the wind particles move only while it plays
+export function setPlayback(playing) {
+  for (const entry of layers.values()) entry.particles?.setPlaying(playing);
+}
+
 export function setLayerVisible(id, visible) {
   const entry = layers.get(id);
   if (!map || !entry) return;

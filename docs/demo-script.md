@@ -8,7 +8,7 @@ Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer c
 
 | # | Beat | Screen | Presenter says |
 |---|---|---|---|
-| 1 | **Open** | Dark map of the Costa del Sol, caption *"MODIS + VIIRS merged · Sierra Bermeja (Málaga)"*. Opens **paused on the peak** (roads and groundwater on); `R` restarts from **8 Sep**. | "Two NASA instruments, two formats — we merged them into one view." |
+| 1 | **Open** | Dark map of the Costa del Sol, caption *"MODIS + VIIRS merged · Sierra Bermeja (Málaga)"*. Opens **paused on the peak** (roads and groundwater on); `R` goes back to **8 Sep** (stays paused if it was paused). | "Two NASA instruments, two formats — we merged them into one view." |
 | 2 | **Ignition** | `Space`: the first detections appear on the evening of **8 Sep** (12 detections). At **22:19 UTC** the first alert fires: **critical, ≈59,000 people within 5 km**. | "Within hours of the first detection, we know who is threatened: almost 60,000 people within 5 km." |
 | 3 | **Peak** | `P` (or the *Peak day* button) jumps to **9 Sep**: **625 detections** in one day, strongest fire **970 MW** (FRP, fire intensity) at 02:07 UTC. In the alert panel, click the fire: the list gives way to its detail (people within 1 / 5 / 10 km, each alert, the fire's figures); alerts are typed — **population** (≈59,000 people within 5 km), **smoke** (*smoke toward ≈135,000 people*), **water** (ash leachate risk for the Marbella aquifer); *All fires* returns to the list, filter it with the chips. | "Day two: 625 detections in 24 hours — and we see who breathes the smoke and which aquifer is at risk." |
 | 4 | **Second front** | Playback into **12 Sep**: a second surge (**490 detections**) and two new high alerts. Optional: tick *Satellite image of the day* (NASA VIIRS) to show the burn scar. | "And on day five it flares up again — the alerts follow, fire by fire." |
@@ -36,7 +36,7 @@ Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer c
 | `←` / `→` | Step one hour back / forward |
 | `R` | Restart from 9 Feb |
 
-- Every episode opens **paused on its peak**: Play (or `Space`) runs it forward, `R` restarts from the first day. The spark callout and the automatic pauses were removed on 15 Nov 2026.
+- Every episode opens **paused on its peak**: Play (or `Space`) runs it forward, `R` goes back to the first day and keeps the play / pause state. The spark callout and the automatic pauses were removed on 15 Nov 2026.
 - `?demo=1` only affects the banner; the presenter controls the timing with the keyboard. It is kept when switching episode in the list (the separate Demo button was removed).
 - The small tab on top of the timeline folds the chart down to the clock and the controls, to free the map.
 
