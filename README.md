@@ -1,83 +1,38 @@
+<div align="center">
+
 # Ulinautas
 
-Wildfire hotspots from the **MODIS** and **VIIRS** satellites (NASA FIRMS), **harmonized into one dataset** and replayed on a web map: fires that grow over time, wind, population alerts, risk and evacuation estimates.
+### Two satellites, one dataset, one map to understand a wildfire as it unfolds
 
-![MODIS and VIIRS hotspots harmonized and played over time](docs/media/basajaum_video_historic.gif)
+[![CI](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-open%20the%20map-f9a957)](https://maj-e.github.io/basajaun/)
+[![Documentation](https://img.shields.io/badge/docs-wiki-26344b)](docs/wiki/README.md)
 
-**Live demo: <https://maj-e.github.io/basajaun/>** (published from `main`; it opens on Sierra Bermeja, Málaga, paused on the peak of the fire — press play).
+<a href="https://maj-e.github.io/basajaun/">
+  <img src="docs/media/basajaum_video_historic.gif" alt="MODIS and VIIRS hotspots harmonized and replayed over time: the Sierra Bermeja fire growing on the map, with wind, perimeters and alerts" width="720">
+</a>
 
-> Hackathon project. **Everything in this repository is in English** — code, UI, documentation, data field names.
+**[▶ Open the live demo](https://maj-e.github.io/basajaun/)** — it opens on the Sierra Bermeja fire (Málaga, Sep 2021), paused on its peak. Press play.
 
----
-
-## What it does
-
-- **One dataset from two satellites.** MODIS (~1 km) and VIIRS (~375 m) normalized to one schema, double detections merged; the map keeps the origin visible (rings = MODIS, dots = VIIRS). → [Data sources](docs/wiki/data-sources.md)
-- **Playback.** Timeline with fires per day, peak day, speed control; perimeters, 6 h spread, evacuation zones and risk **evolve with the clock**; wind particles move while it plays. → [Features](docs/wiki/features.md)
-- **Predictive risk (AI).** A model scores the **ignition risk** of every cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. Ready on branch `IA`, pending merge into `dev`. → [AI module](docs/wiki/ai-risk.md)
-- **Alerts.** Per fire: people exposed (1 / 5 / 10 km), smoke downwind, strong wind, groundwater contamination by ash; combined risk score and evacuation estimate.
-- **Context layers.** Wind, rain, population density, water, rivers, roads, fire stations, water points for firefighting, aquifers, regions; Topo / Satellite / Dark base maps.
-- **Episodes.** Sierra Bermeja (Málaga, Sep 2021), Galicia (Aug 2025), Chile–Argentina (Feb 2026) and a **live** mode of the last 48 h. Same pipeline for any place on Earth.
-- **No server.** Python computes files, the page only reads them: nothing can go down during a demo. → [Architecture](docs/wiki/architecture.md)
-
-## Documentation
-
-| I want to… | Read |
-|---|---|
-| see what the page does today | [Features](docs/wiki/features.md) |
-| understand the project and the team | [Overview](docs/wiki/overview.md) |
-| know the stack, the data flow and why | [Architecture](docs/wiki/architecture.md) |
-| understand the AI ignition-risk model and its limits | [AI module](docs/wiki/ai-risk.md) |
-| know what each data source gives and its quirks | [Data sources](docs/wiki/data-sources.md) |
-| run the pipeline and know what each script does | [Data pipeline](docs/wiki/data-pipeline.md) |
-| read the data from the front end, or add a layer | [Using the data in the front end](docs/wiki/front-end.md) · [Front-end layers](docs/frontend_layers.md) |
-| know the exact format of every file | [Data contract](docs/data_contract.md) · [JSON schemas](docs/schemas/) |
-| handle the API key, quotas, deploy and live refresh | [Operations](docs/wiki/operations.md) |
-| tell the demo story on stage | [Demo script](docs/demo-script.md) |
-| see what is done, decided and next | [Status and decisions](docs/wiki/status.md) · [`TODO.md`](TODO.md) |
-| check licences and attribution | [Licences](docs/licenses.md) |
-| understand the fire model and data volume | [Fire modelling notes](docs/resources/firemodelling.es.md) (Spanish) · [Volume](docs/volume.md) |
-
-The wiki index is [`docs/wiki/`](docs/wiki/README.md). **Keep the wiki and `docs/frontend_layers.md` up to date in the same PR as the change they describe.**
+</div>
 
 ---
 
-## Getting started
+## The problem
 
-Requirements: [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs Python 3.11 if needed) and a [FIRMS API key](https://firms.modaps.eosdis.nasa.gov/api/map_key/) (only to rebuild data; the repository already contains the demo episodes).
+NASA's FIRMS service publishes wildfire detections from two families of satellites, **MODIS** (~1 km pixels) and **VIIRS** (~375 m). They are valuable, but hard to use together:
 
-```bash
-make serve               # the site at http://localhost:8000, no key needed
+- they use **different resolutions, confidence scales and column names**, and the same fire is often reported twice;
+- the output is a flat CSV: it says *where* a satellite saw heat, not **how the fire evolves**, **who is exposed**, or **where the wind is pushing it**;
+- people who must decide (civil protection, municipalities, journalists, citizens) need a picture, not a table.
 
-cp .env.example .env     # set FIRMS_MAP_KEY
-make install             # uv sync → .venv with the locked dependencies
-make test                # pytest
-make data                # the pipeline for the default episode → its folder in web/data/
-make data EPISODE=galicia-2025-08   # another episode (list: make episode, web/data/episodes.json)
-make live                # fresh download of the last 48 h → web/data/processed/live/
-```
+## Our proposal
 
-Add a dependency with `uv add <package>` (`uv add --dev <package>` for dev-only tools) and commit `uv.lock` with it. The detail of every step is in [Data pipeline](docs/wiki/data-pipeline.md); keys and quotas in [Operations](docs/wiki/operations.md).
+**Harmonize MODIS and VIIRS into a single dataset, and turn it into a replayable map that adds the context needed to read a fire:** wind, population, roads, water, risk and evacuation estimates. Everything runs from open data, with no server to operate, so it can be published, refreshed and trusted.
 
-## How it works
+## What we built
 
-```
-NASA FIRMS (MODIS, VIIRS) ─┐
-WorldPop · Open-Meteo ─────┼─► scripts/ (Python, `make data`) ─► web/data/episodes/<id>/*.geojson + manifest.json
-OpenStreetMap · EEA ───────┘                                              │
-                                                                          ▼
-                                        web/ (HTML + JS + MapLibre) ─► GitHub Pages
-```
-
-1. **Download** the FIRMS CSVs (MODIS Terra / Aqua, VIIRS S-NPP / NOAA-20 / NOAA-21) → `data/raw/`.
-2. **Harmonize** both sensors to one schema and deduplicate the double detections.
-3. **Enrich**: group hotspots into fires, add population, wind, accessibility and aquifers, then derive spread, evacuation and risk **per fire snapshot**; the AI module adds a daily **ignition-risk** grid (branch `IA`).
-4. **Publish**: styled files + a manifest per episode in `web/data/episodes/`, checked against [`docs/schemas/`](docs/schemas/).
-5. **Display**: the front end reads the manifest and builds each layer with one generic loader; filtering and animation happen in the browser.
-
-Stack: Python 3.11 + uv · static GeoJSON · plain JavaScript (ES modules, no build) · MapLibre GL JS 4.7.1 · GitHub Pages + Actions. Why, and what was set aside: [Architecture](docs/wiki/architecture.md).
-
-### MODIS / VIIRS harmonization
+**1 · One dataset from two satellites.** Both sensors are normalized to one schema (confidence, UTC time, FRP, brightness, resolution) and deduplicated: a fire seen by both becomes one hotspot, `detected_by: ["MODIS","VIIRS"]`. On the map MODIS shows as rings and VIIRS as dots, so the origin stays readable.
 
 | | MODIS | VIIRS | Harmonized |
 |---|---|---|---|
@@ -87,77 +42,105 @@ Stack: Python 3.11 + uv · static GeoJSON · plain JavaScript (ES modules, no bu
 | Date | `acq_date` + `acq_time` | same | `timestamp_utc` (ISO 8601) |
 | Double detection | — | — | a single hotspot, `detected_by: ["MODIS","VIIRS"]` |
 
-Full field mapping: [Data contract](docs/data_contract.md).
+**2 · A fire you can replay.** A timeline with the fires per day, a peak-day jump, speed control and a clock. Hotspots are grouped into fires whose **perimeters grow with the clock**; the 6-hour **spread** projection, the **evacuation zone** and the **risk level** are recomputed every 6 hours of each fire's life. Wind particles move while it plays. When a fire stops being detected, its zones disappear and only the faint burned area remains. Header figures and alerts follow the visible area: zoom on a zone or click a fire and everything is recomputed for it.
 
-### Files each episode publishes
+**3 · Context and exposure.** Layers for wind, rain, population density, water, rivers, roads, fire stations, water points for firefighting, aquifers and regions, over Topo, Satellite or Dark base maps. For every fire the page computes **typed alerts** (people within 1 / 5 / 10 km, smoke downwind, strong wind, groundwater contamination by ash), a **combined risk score** and an **evacuation estimate**.
 
-| File | Content | Produced by |
-|---|---|---|
-| `manifest.json` | layers available, their type, legend and toggle | `make_manifest.py` |
-| `hotspots.geojson` | one point per hotspot, MODIS and VIIRS harmonized | `export_hotspots.py`, `dedup.py`, `fires.py` |
-| `fires.geojson` | one polygon per fire (grouped hotspots) + risk and accessibility figures | `fires.py`, `osm.py`, `risk_score.py` |
-| `spread.geojson`, `evacuation.geojson`, `fire_risk.geojson` | zones per fire snapshot (`t_start`, `t_until`) | `spread.py`, `risk_score.py`, `fire_history.py` |
-| `alerts.json` | typed alerts per fire | `exposure.py`, `alert_types.py` |
-| `daily_summary.json`, `hourly_series.json` | hotspots and FRP per day / hour (timeline) | `export_hotspots.py`, `series.py` |
-| `weather.geojson` | hourly wind, rain, temperature on a 5×5 grid | `weather.py` |
-| `population.png` | population density | `population.py` |
-| `ignition_risk.geojson` | daily AI ignition risk on a 12 × 12 grid (branch `IA`) | `ml_features.py`, `risk_ml.py` |
-| `roads`, `rivers`, `water`, `fire_stations`, `water_points`, `groundwater`, `regions` `.geojson` | context layers | `osm.py`, `natural_earth_water.py`, `groundwater.py`, `regions.py` |
+**4 · Several places, one pipeline.** Three episodes ship ready — **Sierra Bermeja** (1,467 detections, every layer, real alerts), **Galicia, Aug 2025** (4,301 hotspots, 238 fires) and **Chile–Argentina, Feb 2026** — chosen from a selector. A new place is an entry in a JSON file and one command. A **live mode** refreshes the last 48 hours every 30 minutes.
 
-## Project layout
+**5 · Predictive ignition risk (AI).** A calibrated logistic-regression model scores the probability that a fire *starts* in each cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. Built and tested on its own branch (`IA`) and being integrated. → [AI module](docs/wiki/ai-risk.md)
+
+**6 · Built to be trusted.** The backend ships display-ready data and a manifest per episode; the front end is one generic loader, so adding a layer needs no front-end code. Every file is validated against a documented [data contract](docs/data_contract.md) in CI, an invalid refresh never reaches the published site, and the deploy is versioned so visitors never get a mix of old and new files. 200+ automated tests.
+
+### How it works
 
 ```
-├── README.md · TODO.md · Makefile · pyproject.toml + uv.lock · .env.example
-├── docs/
-│   ├── wiki/                  # project wiki (start at docs/wiki/README.md)
-│   ├── data_contract.md       # format of every data file
-│   ├── frontend_layers.md     # layers ready for the front end + changelog
-│   ├── demo-script.md · licenses.md · volume.md
-│   ├── schemas/               # JSON schemas checked by CI
-│   └── media/                 # README images (the demo GIF goes here)
-├── scripts/                   # BACKEND: the pipeline, one script per step (+ tests/)
-│   ├── config.py              # episode (bbox, dates, skips), paths, thresholds
-│   ├── download_firms · harmonize · export_hotspots · dedup · regions · fires · series
-│   ├── population · weather · terrain · osm · natural_earth_water · groundwater
-│   ├── spread · exposure · alert_types · risk_score · fire_history
-│   ├── ml_features · risk_ml      # AI ignition risk (branch IA, pending merge)
-│   ├── compact · make_manifest · validate · make_sample
-│   └── serve · version_assets · check_site · measure_volume
-├── .github/workflows/         # ci (tests + contract), deploy (Pages), e2e (published URL), update-data (live, every 30 min)
-├── data/raw/                  # downloaded FIRMS CSVs and other raw inputs (not versioned)
-└── web/                       # FRONT END: everything here is published
-    ├── index.html · style.css · config.js
-    ├── app.js · map.js · state.js · timeline.js · story.js · readouts.js · alerts.js
-    ├── layers/                # loader.js (manifest → layers), perimeter.js, particles.js, wind_particles.js
-    ├── vendor/                # MapLibre GL JS, self-hosted
-    └── data/                  # episodes.json, episodes/<id>/, processed/live/, static/, sample/
+NASA FIRMS (MODIS, VIIRS) ─┐
+WorldPop · Open-Meteo ─────┼─► scripts/ (Python, `make data`) ─► web/data/episodes/<id>/*.geojson + manifest.json
+OpenStreetMap · EEA ───────┘                                              │
+                                                                          ▼
+                                        web/ (HTML + JS + MapLibre) ─► GitHub Pages
 ```
 
-## Team workflow
+Python computes static files, the page only reads them: **nothing can go down during a demo**, and data is as fresh as FIRMS itself (~3 h after each satellite pass). Stack: Python 3.11 + [uv](https://docs.astral.sh/uv/), GeoJSON, plain JavaScript with MapLibre GL JS, GitHub Pages and Actions. Details and the alternatives we set aside: [Architecture](docs/wiki/architecture.md).
 
-| Role | Folders |
+## Try it
+
+```bash
+make serve               # the site at http://localhost:8000, no key needed
+
+cp .env.example .env     # FIRMS_MAP_KEY, only to rebuild data
+make install             # uv sync → .venv with the locked dependencies
+make test                # pytest
+make data                # the pipeline for the default episode
+make data EPISODE=galicia-2025-08   # another episode (list: make episode)
+make live                # last 48 h → web/data/processed/live/
+```
+
+## Documentation
+
+| I want to… | Read |
 |---|---|
-| **B1–B4** — Backend | `scripts/`, `docs/`, `.github/workflows/ci.yml`, `e2e.yml`, `update-data.yml`, `Makefile` |
-| **F** — Front end / DevOps | `web/`, `.github/workflows/deploy.yml`, domain |
+| see what the page does today | [Features](docs/wiki/features.md) |
+| understand the project and the team | [Overview](docs/wiki/overview.md) |
+| know the stack, data flow, files and layout | [Architecture](docs/wiki/architecture.md) |
+| understand the AI ignition-risk model and its limits | [AI module](docs/wiki/ai-risk.md) |
+| know what each data source gives and its quirks | [Data sources](docs/wiki/data-sources.md) |
+| run the pipeline and know what each script does | [Data pipeline](docs/wiki/data-pipeline.md) |
+| read the data from the front end, or add a layer | [Front end](docs/wiki/front-end.md) · [Front-end layers](docs/frontend_layers.md) |
+| know the exact format of every file | [Data contract](docs/data_contract.md) · [JSON schemas](docs/schemas/) |
+| handle the API key, quotas, deploy and live refresh | [Operations](docs/wiki/operations.md) |
+| tell the demo story on stage | [Demo script](docs/demo-script.md) |
+| see what is done, decided and next | [Status and decisions](docs/wiki/status.md) · [`TODO.md`](TODO.md) |
+| check licences and attribution | [Licences](docs/licenses.md) |
 
-- Branches: `feature/<task-id>-<name>` → PR to **`dev`** → `dev` is merged into **`main`** (published) once checked.
-- One task in `TODO.md` = one branch = one short PR, merged only with green CI. `main` always works and is always published.
-- Roles, tasks and future improvements: [`TODO.md`](TODO.md).
+The wiki index is [`docs/wiki/`](docs/wiki/README.md). Everything in this repository is in English. Keep the wiki and `docs/frontend_layers.md` up to date in the same PR as the change they describe.
 
-## Data sources and licences
+## Data sources
 
-| Use | Source | Access |
-|---|---|---|
-| MODIS / VIIRS hotspots | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | API with MAP_KEY |
-| Wind / weather | [Open-Meteo](https://open-meteo.com/) (historical archive, ERA5) | API, no key |
-| Population | [WorldPop](https://www.worldpop.org/) 1 km | GeoTIFF per country |
-| Water, roads, fire stations | [OpenStreetMap](https://www.openstreetmap.org/) | Overpass API |
-| Water and borders | [Natural Earth](https://www.naturalearthdata.com/), geoBoundaries | Downloads |
-| Groundwater bodies (Europe) | [EEA](https://www.eea.europa.eu/) | Download |
-| Relief / satellite base maps | Mapterhorn, EOX Sentinel-2 cloudless, NASA GIBS | Tiles, no key |
+| Use | Source |
+|---|---|
+| MODIS / VIIRS hotspots | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) (API with MAP_KEY) |
+| Wind and weather | [Open-Meteo](https://open-meteo.com/) historical archive (ERA5) |
+| Population | [WorldPop](https://www.worldpop.org/) 1 km |
+| Water, roads, fire stations | [OpenStreetMap](https://www.openstreetmap.org/) (Overpass) |
+| Water and borders | [Natural Earth](https://www.naturalearthdata.com/), geoBoundaries |
+| Groundwater bodies (Europe) | [EEA](https://www.eea.europa.eu/) |
+| Relief and satellite base maps | Mapterhorn, EOX Sentinel-2 cloudless, NASA GIBS |
 
 Attribution and usage terms per source (some still to verify before a public launch): [`docs/licenses.md`](docs/licenses.md).
 
-## Team
+## Team and workflow
 
-- _Name_ — role
+| Role | Focus |
+|---|---|
+| **B1–B4** — Backend | harmonization, ingestion and fires, aggregates and population, data platform and CI (`scripts/`, `docs/`, workflows) |
+| **F** — Front end / DevOps | the page, the layer loader, deployment (`web/`) |
+| **AI module** — Sergey | ignition-risk model (`ml_features.py`, `risk_ml.py`) |
+
+Branches: `feature/<task-id>-<name>` → PR to **`dev`** → `dev` is merged into **`main`** (published) once checked. One task in [`TODO.md`](TODO.md) = one branch = one short PR, merged only with green CI.
+
+## Future improvements
+
+What we would do next, roughly in order of value. The full list is in [`TODO.md`](TODO.md#5-future-improvements-found-while-polishing-the-demo-15-nov-2026).
+
+**Make the replay tighter**
+- Keep the map and the timeline perfectly in step on slower machines: lighter always-on layers, capped wind animation, shorter trails.
+- Timeline bars per hour (or a cumulative curve) instead of per day, so they follow each satellite pass.
+- Finer, continuous zones (spread, evacuation, risk) instead of 6-hour steps.
+
+**Go further with the data**
+- Merge the **AI ignition-risk** module into the main line and add it to every episode; validate it on more fires and more years before calling it a forecast.
+- Slope and land cover for every fire, and spread driven by them.
+- **Alerts on live data** and **notifications**, so the live mode warns instead of only showing.
+- Group alerts into incidents, and a region selector.
+- A *Live* button in the interface, and a calendar with filters.
+
+**Make it easier to trust and to share**
+- A *data transparency* panel: for every layer, what it is, where it comes from and how far to trust it.
+- Check and settle the **licences** marked "to verify" (and the non-commercial satellite base map) before any public launch.
+- Spanish interface, mobile polish and **animation export** (GIF / MP4).
+
+**Scale it**
+- Lighter large episodes (compression, trimmed properties, coarser weather) and self-hosted map tiles if traffic grows.
+- An automated browser test for the playback, and a stable public domain.
