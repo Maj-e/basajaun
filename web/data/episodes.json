@@ -1,6 +1,6 @@
 {
   "updated_at": "2026-11-14T20:45:07Z",
-  "default": "galicia-2025-08",
+  "default": "sierra-bermeja-2021-09",
   "episodes": [
     {
       "id": "sierra-bermeja-2021-09",
@@ -29,9 +29,6 @@
       "end": "2025-08-19",
       "dir": "episodes/galicia-2025-08",
       "manifest": "episodes/galicia-2025-08/manifest.json",
-      "skip": [
-        "osm"
-      ],
       "min_confidence": "medium",
       "thin": {
         "cell_deg": 0.01,
