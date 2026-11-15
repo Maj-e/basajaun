@@ -146,7 +146,7 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "particles",
         "temporal": True,
-        "active": False,
+        "active": True,
         # Surface wind at 10 m: the front end reads u / v (m/s) per grid point and hour
         "color": "#bae6fd",
         "legend": [{"color": "#bae6fd", "text": "Surface wind (10 m), faster = brighter"}],
