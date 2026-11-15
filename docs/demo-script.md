@@ -8,12 +8,12 @@ Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer c
 
 | # | Beat | Screen | Presenter says |
 |---|---|---|---|
-| 1 | **Open** | Dark map of the Costa del Sol, caption *"MODIS + VIIRS merged · Sierra Bermeja (Málaga)"*. Playback paused on **8 Sep**. | "Two NASA instruments, two formats — we merged them into one view." |
+| 1 | **Open** | Dark map of the Costa del Sol, caption *"MODIS + VIIRS merged · Sierra Bermeja (Málaga)"*. Opens **paused on the peak** (roads and groundwater on); `R` restarts from **8 Sep**. | "Two NASA instruments, two formats — we merged them into one view." |
 | 2 | **Ignition** | `Space`: the first detections appear on the evening of **8 Sep** (12 detections). At **22:19 UTC** the first alert fires: **critical, ≈59,000 people within 5 km**. | "Within hours of the first detection, we know who is threatened: almost 60,000 people within 5 km." |
 | 3 | **Peak** | `P` (or the *Peak day* button) jumps to **9 Sep**: **625 detections** in one day, strongest fire **970 MW** (FRP, fire intensity) at 02:07 UTC. In the alert panel, click the fire: the list gives way to its detail (people within 1 / 5 / 10 km, each alert, the fire's figures); alerts are typed — **population** (≈59,000 people within 5 km), **smoke** (*smoke toward ≈135,000 people*), **water** (ash leachate risk for the Marbella aquifer); *All fires* returns to the list, filter it with the chips. | "Day two: 625 detections in 24 hours — and we see who breathes the smoke and which aquifer is at risk." |
 | 4 | **Second front** | Playback into **12 Sep**: a second surge (**490 detections**) and two new high alerts. Optional: tick *Satellite image of the day* (NASA VIIRS) to show the burn scar. | "And on day five it flares up again — the alerts follow, fire by fire." |
 | 4b | **Rain** | Tick **Rain** in the Map panel, play into **13–15 Sep**: blue rain patches cover the area and the detections fall to **zero** from 13 Sep. | "And then the rain arrives — the satellites stop seeing fire." |
-| 5 | **National scale** | Episode list → **Galicia · Aug 2025** (`?demo=1` is kept; it is the default episode): 15–19 Aug 2025. Peak **1,227 burning 1 km cells on 17 Aug**, strongest fire **4,847 MW**, 238 fires; the heatmap shows Ourense ablaze. Zoom in: figures follow the zoom. | "From one fire to a whole country in a click — the record August 2025 season." |
+| 5 | **National scale** | Episode list → **Galicia · Aug 2025** (`?demo=1` is kept): 15–19 Aug 2025. Peak **1,227 burning 1 km cells on 17 Aug**, strongest fire **4,847 MW**, 238 fires; the heatmap shows Ourense ablaze. Zoom in: figures follow the zoom. | "From one fire to a whole country in a click — the record August 2025 season." |
 | 6 | **Anywhere** | Episode list → **Chile–Argentina, Feb 2026**: same screen, same pipeline. | "Any fire, anywhere on Earth: the same pipeline, fresh from NASA FIRMS." |
 
 **Zoom tip:** at beat 3, zoom on the fire or click its outline: every figure and alert is recomputed for that fire only (*Show whole area* returns).
@@ -36,8 +36,8 @@ Default episode of the site. **1,467 detections** (MODIS + VIIRS), every layer c
 | `←` / `→` | Step one hour back / forward |
 | `R` | Restart from 9 Feb |
 
-- The shared link (no parameter) **loops automatically** for the stand and for people opening the link alone; it no longer pauses by itself (the spark callout and the automatic pauses were removed on 15 Nov 2026).
-- `?demo=1` opens **paused**: the presenter controls the timing with the keyboard. It is kept when switching episode in the list (the separate Demo button was removed).
+- Every episode opens **paused on its peak**: Play (or `Space`) runs it forward, `R` restarts from the first day. The spark callout and the automatic pauses were removed on 15 Nov 2026.
+- `?demo=1` only affects the banner; the presenter controls the timing with the keyboard. It is kept when switching episode in the list (the separate Demo button was removed).
 - The small tab on top of the timeline folds the chart down to the clock and the controls, to free the map.
 
 ## What the backend must precompute

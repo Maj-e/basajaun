@@ -40,7 +40,7 @@ export const CONFIG = {
     : { top: 130, bottom: 200, left: 60, right: 60 },
   // Layers shown when the page opens; every other active layer starts unchecked in the Layers panel
   // (design council: one place to look during playback)
-  defaultLayers: ["hotspots", "fires"],
+  defaultLayers: ["hotspots", "fires", "roads", "groundwater"],
   // Point layers that also get a heatmap when zoomed out (readability of dense episodes)
   heatmapLayers: ["hotspots"],
   // Fires stay visible this many hours after their detection, fading out
