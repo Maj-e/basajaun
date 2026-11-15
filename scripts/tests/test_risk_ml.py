@@ -117,5 +117,50 @@ def test_run_risk_model_produces_contract_valid_geojson(tmp_path: Path):
     assert fc["model_metrics"]["val_roc_auc"] is not None
     assert fc["model_metrics"]["brier_score"] is not None
     sample_props = fc["features"][0]["properties"]
-    for key in ("cell_id", "ignition_prob", "risk_pct", "risk_level", "top_drivers", "drivers", "recommended_action"):
+    for key in ("cell_id", "ignition_prob", "risk_pct", "risk_level", "top_drivers", "drivers", "recommended_action", "color", "opacity"):
         assert key in sample_props
+    assert sample_props["color"] == sample_props["fill"]
+    assert sample_props["opacity"] == 0.42
+
+
+def test_run_risk_model_accepts_ia1_dataset(tmp_path: Path, monkeypatch):
+    """El episodio mínimo de IA1 entra por el normalizador: el respaldo no se llama."""
+    bbox = (-72.0, -38.0, -70.0, -33.0)
+    weather = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [-71.0, -35.5]},
+                "properties": {
+                    "timestamp_utc": day,
+                    "temperature": temp,
+                    "humidity": 40.0,
+                    "speed": 12.0,
+                    "rain": 0.0,
+                },
+            }
+            for day, temp in (("2026-02-01T12:00:00Z", 18.0), ("2026-02-02T12:00:00Z", 34.0))
+        ],
+    }
+    hotspots = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {"type": "Point", "coordinates": [-71.08, -35.4]},
+                "properties": {"timestamp_utc": "2026-02-02T15:00:00Z", "confidence": "high", "frp": 45.0},
+            }
+        ],
+    }
+    (tmp_path / "weather.geojson").write_text(json.dumps(weather), encoding="utf-8")
+    (tmp_path / "hotspots.geojson").write_text(json.dumps(hotspots), encoding="utf-8")
+
+    def fail_if_called(*_args, **_kwargs):
+        raise AssertionError("_fallback_build_dataset no debe ejecutarse")
+
+    monkeypatch.setattr("risk_ml._fallback_build_dataset", fail_if_called)
+
+    fc = run_risk_model(tmp_path, bbox)
+    assert len(fc["features"]) == 144
+    assert {f["properties"]["cell_id"] for f in fc["features"]} == {f"SEC-{i:03d}" for i in range(1, 145)}
