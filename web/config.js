@@ -10,6 +10,30 @@ export const CONFIG = {
     maxzoom: 9,
     attribution: "Imagery: NASA GIBS / VIIRS",
   },
+  // Base maps the user can pick (W3-F7). Static tiles: cached by the browser, never re-requested while the playback runs.
+  // `paint` dims and desaturates the imagery so the fires stay the brightest thing on screen.
+  // "dark" has no tiles: it is the offline land outline above, also what shows under the tiles while they load.
+  basemaps: {
+    default: "topo",
+    options: [
+      // Topo = terrain relief: open elevation tiles shaded by the GPU in dark tones.
+      // Mapterhorn: Terrarium in lossless WebP, 512 px tiles (a quarter of the requests of 256 px tiles), served from a CDN.
+      // 30 m worldwide, finer (down to 1 m lidar) where national agencies publish it.
+      // Fallback if it ever goes down: AWS Open Data, 256 px PNG, maxzoom 15:
+      //   https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png (attribution "Mapzen / AWS Terrain Tiles")
+      { id: "topo", name: "Topo", maxzoom: 16, tileSize: 512, encoding: "terrarium",
+        dem: "https://tiles.mapterhorn.com/{z}/{x}/{y}.webp",
+        attribution: "<a href='https://mapterhorn.com/attribution'>© Mapterhorn</a>",
+        paint: { "hillshade-exaggeration": 0.75, "hillshade-shadow-color": "#03060c", "hillshade-highlight-color": "#8aa0c4",
+                 "hillshade-accent-color": "#0a1424", "hillshade-illumination-anchor": "map" } },
+      { id: "satellite", name: "Satellite", maxzoom: 14, tileSize: 256,
+        tiles: "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2021_3857/default/g/{z}/{y}/{x}.jpg",
+        // CC BY-NC-SA 4.0: free for non-commercial use with this exact attribution; commercial use needs an EOX licence
+        attribution: "EOxCloudless https://cloudless.eox.at by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2021)",
+        paint: { "raster-brightness-max": 0.62, "raster-saturation": -0.25, "raster-contrast": 0.1 } },
+      { id: "dark", name: "Dark" },
+    ],
+  },
   // Map margins kept clear of the header and the timeline (mobile: taller header + panel bar)
   framePadding: window.matchMedia("(max-width: 760px)").matches
     ? { top: 170, bottom: 230, left: 16, right: 16 }
@@ -19,8 +43,6 @@ export const CONFIG = {
   defaultLayers: ["hotspots", "fires"],
   // Point layers that also get a heatmap when zoomed out (readability of dense episodes)
   heatmapLayers: ["hotspots"],
-  // Episodes offered by the Demo button, in pitch order (missing ones are skipped)
-  demoEpisodes: ["sierra-bermeja-2021-09", "spain-2025-08", "chile-2026-02"],
   // Fires stay visible this many hours after their detection, fading out
   trailHours: 24,
   // The backend "weather" layer is drawn as rain (blue, sized by mm/h, only where it rains). Exception to

@@ -1,6 +1,6 @@
 // Timeline strip (fires per day) + playback engine.
-// The engine owns state.hour; it pauses by itself on the story beats, like the presenter would.
-// setData() redraws the bars and beats when the figures change (e.g. a new visible area).
+// The engine owns state.hour; the peak day is highlighted and reachable with the Peak button (P).
+// setData() redraws the bars and the peak mark when the figures change (e.g. a new visible area).
 import { state, setState } from "./state.js";
 
 const H = 3600 * 1000;
@@ -27,7 +27,7 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   $("days").style.gridTemplateColumns = `repeat(${days.length}, 1fr)`;
   $("days").innerHTML = days.map((d, i) => `<span>${Number(d.slice(8))}${i === 0 ? ` <small>${month(d)}</small>` : ""}</span>`).join("");
 
-  // Bars (idle in the future, lit in the past) and the spark / peak marks
+  // Bars (idle in the future, lit in the past) and the peak mark
   function setData(counts, story) {
     current = { counts, story };
     dataLayer.replaceChildren();
@@ -51,11 +51,7 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
       lab.style.color = color;
       $("strip").appendChild(lab);
     };
-    if (story.spark) mark(story.spark.t, "Spark", "#ffd9a8", "left");
     if (story.peak) mark(story.peak.end - 12, `Peak · ${story.peak.count}`, "#f9a957", "right");
-    // Beats already behind the playhead are not replayed
-    seenSpark = story.spark ? state.hour >= story.spark.t : true;
-    seenPeak = story.peak ? state.hour >= story.peak.end : true;
   }
 
   // Hover tooltip and scrubbing
@@ -72,12 +68,9 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   svg.addEventListener("pointerdown", (e) => { setPlaying(false); seek(tAt(e)); });
 
   // ---------- Engine ----------
-  let seenSpark = false, seenPeak = false, holdUntil = 0, last = performance.now();
+  let holdUntil = 0, last = performance.now();
   function seek(t) {
     const hour = Math.min(Math.max(t, start), end - 0.01);
-    const { story } = current;
-    seenSpark = story.spark ? hour >= story.spark.t : true;
-    seenPeak = story.peak ? hour >= story.peak.end : true;
     holdUntil = 0;
     setState({ hour });
   }
@@ -88,14 +81,9 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   }
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    const { story } = current;
     if (state.playing && now >= holdUntil) {
-      let hour = state.hour;
-      const next = hour + dt * state.speed;
-      if (story.spark && !seenSpark && hour < story.spark.t && next >= story.spark.t) { hour = story.spark.t; seenSpark = true; holdUntil = now + 3500; }
-      else if (story.peak && !seenPeak && hour < story.peak.end && next >= story.peak.end) { hour = story.peak.end; seenPeak = true; holdUntil = now + 3500; }
-      else hour = next;
-      if (hour >= end) { hour = playFrom; seenSpark = story.spark ? playFrom >= story.spark.t : true; seenPeak = story.peak ? playFrom >= story.peak.end : true; holdUntil = now + 1500; }
+      let hour = state.hour + dt * state.speed;
+      if (hour >= end) { hour = playFrom; holdUntil = now + 1500; }
       setState({ hour });
     }
     requestAnimationFrame(frame);
@@ -116,7 +104,6 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
     toggle: () => setPlaying(!state.playing),
     restart: () => { seek(playFrom); setPlaying(true); },
     jumpPeak: () => { if (current.story.peak) { setPlaying(false); seek(current.story.peak.end); } },
-    jumpSpark: () => { if (current.story.spark) { setPlaying(false); seek(current.story.spark.t); } },
     step: (h) => { setPlaying(false); seek(state.hour + h); },
     start: () => requestAnimationFrame(frame),
   };

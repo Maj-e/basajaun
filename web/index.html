@@ -37,10 +37,6 @@
       <p class="caption"><strong>Active fires detected by NASA satellites</strong><br><span id="caption-scope">MODIS + VIIRS merged</span></p>
       <div class="episode-row">
         <label class="episode-pick">Episode <select id="episode-select" aria-label="Fire episode"></select></label>
-        <div class="demo-pick">
-          <button type="button" id="demo-toggle" aria-expanded="false" aria-controls="demo-menu">Demo</button>
-          <ul id="demo-menu" hidden></ul>
-        </div>
       </div>
       <p class="scope" id="scope"><span id="scope-text">Figures for the whole area</span> <button type="button" id="scope-reset" hidden>Show whole area</button></p>
     </div>
@@ -66,18 +62,21 @@
   </div>
 
   <aside class="alerts" id="alerts" aria-label="Population alerts" hidden>
-    <button type="button" id="alerts-toggle" aria-expanded="true" aria-controls="alerts-list">Alerts <span id="alerts-count">0</span></button>
-    <div class="alert-filters" id="alerts-filters" hidden></div>
-    <ol id="alerts-list"></ol>
+    <button type="button" id="alerts-toggle" aria-expanded="true" aria-controls="alerts-body">
+      <span class="lbl">Alerts</span><span id="alerts-title"></span><span id="alerts-count">0</span>
+      <svg class="chev" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="alerts-body">
+      <div class="alert-filters" id="alerts-filters" hidden></div>
+      <ol id="alerts-list"></ol>
+      <div class="alerts-detail" id="alerts-detail"></div>
+    </div>
   </aside>
-
-  <div class="peak-banner" id="peak-banner" hidden>
-    <div class="callout"><b>Peak day</b><span class="big" id="peak-count"></span> <span id="peak-text"></span></div>
-  </div>
 
   <aside id="panel-layers" class="layers-panel map-panel" aria-label="Map layers">
     <details id="panel-details" open>
       <summary>Map</summary>
+      <div class="basemap-switch" id="basemap-switch" role="radiogroup" aria-label="Base map"></div>
       <div id="layer-list"></div>
       <label><input type="checkbox" id="satellite-toggle"> Satellite image of the day <small>NASA VIIRS true color · needs internet</small></label>
       <label><input type="checkbox" id="labels-toggle"> Alerts on the map <small>circles + people within 5 km (the list stays on the right)</small></label>
@@ -95,6 +94,9 @@
   </nav>
 
   <section id="timeline" class="timeline" aria-label="Playback">
+    <button type="button" class="tl-fold" id="tl-fold" aria-expanded="true" aria-controls="strip" title="Hide the chart" aria-label="Hide the chart">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
     <div class="clock">
       <div>
         <div class="date" id="c-date">–</div>
@@ -104,8 +106,7 @@
         <button type="button" class="btn play" id="b-play" aria-label="Play">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" id="i-play"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
         </button>
-        <button type="button" class="btn" id="b-spark" title="Jump to the spark (S)">Spark</button>
-        <button type="button" class="btn" id="b-peak" title="Jump to the peak (P)">Peak</button>
+        <button type="button" class="btn" id="b-peak" title="Jump to the day with the most fires (P)">Peak day</button>
         <div class="speed" role="group" aria-label="Playback speed">
           <button type="button" class="btn" data-speed="3" aria-pressed="false">×1</button>
           <button type="button" class="btn" data-speed="8" aria-pressed="true">×2</button>
@@ -119,7 +120,7 @@
       <div class="tip" id="tip" hidden></div>
     </div>
     <div class="keys" aria-hidden="true">
-      <span><kbd>Space</kbd>play / pause</span><span><kbd>S</kbd>spark</span><span><kbd>P</kbd>peak</span>
+      <span><kbd>Space</kbd>play / pause</span><span><kbd>P</kbd>peak day</span>
       <span><kbd>←</kbd><kbd>→</kbd>one hour</span><span><kbd>R</kbd>restart</span>
     </div>
   </section>

@@ -162,11 +162,12 @@ def test_surface_wind_uv_points_where_the_wind_blows() -> None:
     assert wind_uv(0.0, 123.0) == (0.0, 0.0) or wind_uv(0.0, 123.0) == (-0.0, -0.0)
 
 
-def test_wind_particles_layer_reads_weather_and_is_off() -> None:
+def test_wind_particles_layer_reads_weather() -> None:
     import make_manifest
 
     [layer] = [l for l in make_manifest.LAYERS if l["id"] == "wind_particles"]
-    assert layer["type"] == "particles" and layer["temporal"] and not layer["active"]
+    # Active since the loader draws the `particles` type (web/layers/particles.js); hidden at start
+    assert layer["type"] == "particles" and layer["temporal"] and layer["active"]
     assert layer["file"].endswith("weather.geojson")
 
 

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-14T23:14:57Z",
+  "updated_at": "2026-11-14T23:43:35Z",
   "layers": [
     {
       "id": "hotspots",
@@ -75,7 +75,7 @@
         "evacuate_people",
         "warn_people"
       ],
-      "updated_at": "2026-11-14T23:14:04Z"
+      "updated_at": "2026-11-14T23:21:53Z"
     },
     {
       "id": "fire_risk",
@@ -110,7 +110,7 @@
           "text": "Low"
         }
       ],
-      "updated_at": "2026-11-14T23:14:04Z"
+      "updated_at": "2026-11-14T23:21:53Z"
     },
     {
       "id": "evacuation",
@@ -130,7 +130,7 @@
           "text": "Evacuate: fire + 1 km + 6 h spread"
         }
       ],
-      "updated_at": "2026-11-14T23:14:04Z"
+      "updated_at": "2026-11-14T23:21:53Z"
     },
     {
       "id": "spread",
@@ -148,7 +148,7 @@
         "spread_km",
         "area_km2"
       ],
-      "updated_at": "2026-11-14T20:34:59Z"
+      "updated_at": "2026-11-14T23:21:45Z"
     },
     {
       "id": "population",
@@ -193,7 +193,7 @@
       "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
       "type": "arrows",
       "temporal": true,
-      "active": true,
+      "active": false,
       "popup": [
         "timestamp_utc",
         "speed",
@@ -237,11 +237,11 @@
     },
     {
       "id": "wind_particles",
-      "name": "Wind (particles)",
+      "name": "Wind",
       "file": "episodes/sierra-bermeja-2021-09/weather.geojson",
       "type": "particles",
       "temporal": true,
-      "active": false,
+      "active": true,
       "color": "#bae6fd",
       "legend": [
         {

@@ -122,7 +122,8 @@ LAYERS: list[dict] = [
         "file": "processed/weather.geojson",
         "type": "arrows",
         "temporal": True,
-        "active": True,
+        # Replaced by the particles below (same wind, one layer is enough); kept for reference
+        "active": False,
         "popup": ["timestamp_utc", "speed", "direction"],
         "legend": [
             {"color": "#91cf60", "text": "< 15 km/h"},
@@ -142,11 +143,11 @@ LAYERS: list[dict] = [
     },
     {
         "id": "wind_particles",
-        "name": "Wind (particles)",
+        "name": "Wind",
         "file": "processed/weather.geojson",
         "type": "particles",
         "temporal": True,
-        "active": False,
+        "active": True,
         # Surface wind at 10 m: the front end reads u / v (m/s) per grid point and hour
         "color": "#bae6fd",
         "legend": [{"color": "#bae6fd", "text": "Surface wind (10 m), faster = brighter"}],

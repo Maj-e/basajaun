@@ -27,6 +27,7 @@ PIPELINE := \
 	groundwater \
 	exposure \
 	risk_score \
+	compact \
 	make_manifest \
 	validate
 
@@ -87,7 +88,7 @@ test:
 	$(RUN) pytest
 
 serve:
-	$(RUN) python -m http.server $(PORT) --directory web
+	$(RUN) scripts/serve.py $(PORT)
 
 clean:
 	rm -rf .pytest_cache

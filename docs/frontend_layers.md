@@ -37,7 +37,7 @@ Every layer comes **already styled**: the loader only maps feature properties (`
 | `fires` | fill | ✅ | | ✅ | ✅ | ✅ | ✅ | see [fire properties](#fire-properties) | color, opacity |
 | `weather` | circle | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, temperature, humidity, rain, speed | color, radius; also `u`, `v` (see [surface wind](#surface-wind)) |
 | `wind` | **arrows** | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | timestamp_utc, speed, direction | rotation, size, color (drawn by the loader's `arrows` type) |
-| `wind_particles` | **particles** | | ✅ `t` | ✅ | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — **needs the `particles` type in the loader** |
+| `wind_particles` | **particles** | ✅ | ✅ `t` | ✅ | ✅ | ✅ | — | — | layer-level `color`; per point `u`, `v` (m/s) — drawn by the loader's `particles` type (`layers/particles.js`) |
 | `fire_risk` | fill | | | ✅ | ✅ | — | — | fire_id, risk_level, risk_score, risk_factors, evacuate_people, warn_people | color, opacity (by risk level) |
 | `evacuation` | fill | | | ✅ | ✅ | — | — | fire_id, evacuate_people, warn_people | color, opacity |
 | `spread` | fill | ✅ | | ✅ | ✅ | ✅ | — | fire_id, horizon_hours, wind_speed_kmh, wind_to_deg, slope_deg, spread_km, area_km2 | color, opacity |
@@ -60,7 +60,7 @@ Each fire polygon in `fires.geojson` carries (a property can be missing or `null
 | `dist_road_km`, `dist_water_km`, `dist_fire_station_km` | accessibility: nearest road / water body / fire station |
 | `dist_water_point_km` | nearest place where crews can load water (hydrant, tank, well, spring…) |
 | `gw_body`, `gw_vulnerability`, `gw_chemical_status` | aquifer under the fire and how vulnerable it is to **ash leachate** (`high` = karst or already poor / at risk) — Europe only |
-| `risk_level`, `risk_score`, `risk_factors` | combined risk (W3-B9): `low` / `medium` / `high` / `extreme`, score 0–100, which factors are on (`fire`, `people`, `smoke`, `strong wind`) |
+| `risk_level`, `risk_score`, `risk_factors` | combined risk (W3-B11): `low` / `medium` / `high` / `extreme`, score 0–100, which factors are on (`fire`, `people`, `smoke`, `strong wind`) |
 | `evacuate_people`, `warn_people` | people in fire + 1 km + 6 h spread (evacuate) / the rest within 5 km (warning) |
 | `slope_deg`, `landcover` | terrain (W5-B3), only when `terrain.py` ran with its rasters |
 
@@ -88,7 +88,6 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 - **Fire sheet**: show the accessibility distances, the nearest water point and the aquifer risk (`gw_*`).
 - **Risk + evacuation**: `fire_risk` colours each fire by its combined level (legend explains the combinations), `evacuation` draws the zone; both `active: false`. Good candidates for the fire sheet: `risk_level`, `risk_factors`, `evacuate_people`.
 - **Alert types (W3-F5)**: `type` + ready-to-show `message` on every alert; icon / chip per type, colour by `risk`. Every type keeps `pop_5km`, `center`, `since`, so the current panel already lists them (as population figures).
-- **Wind particles (`particles` type)**: data ready in every episode with weather (`wind_particles`, `active: false`). Particle engine: Miguel's `wind_particles.js` from TerraFlow (`ui/js/wind_particles.js`: bilinear u/v + light curl, own canvas, `pointer-events: none`) — expects exactly the field above; respect `prefers-reduced-motion`.
 - **Live button (W4-F1)**: `processed/live/manifest.json` is published and refreshed every 30 min.
 - **Episode selector (W4-F2)**: `episodes.json`, start with `default`.
 
@@ -96,8 +95,9 @@ For particles: take the points of the current hour (`Math.floor(state.hour)`), s
 
 | Date | Change |
 |---|---|
+| 2026-11-15 | `particles` type in the loader (`layers/particles.js` + Miguel's TerraFlow engine `layers/wind_particles.js`); `wind_particles` active in every episode with weather; still image under reduced motion |
 | 2026-11-15 | `spread` fixed outside Chile: ellipses were drawn at about half their size (fixed Chile UTM zone); `area_km2` now matches the polygon. Evacuation and contamination alerts regenerated |
-| 2026-11-15 | Combined risk score + evacuation (W3-B9): layers `fire_risk`, `evacuation`; fire fields `risk_*`, `evacuate_people`, `warn_people` (Chile, Sierra Bermeja, Spain Aug 2025) |
+| 2026-11-15 | Combined risk score + evacuation (W3-B11): layers `fire_risk`, `evacuation`; fire fields `risk_*`, `evacuate_people`, `warn_people` (Chile, Sierra Bermeja, Spain Aug 2025) |
 | 2026-11-15 | Typed alerts (W3-B8): `type` + `message` on every alert; new `wind`, `smoke`, `contamination` alerts (Chile 129 alerts, Sierra Bermeja 16, Spain Aug 2025 1,437) |
 | 2026-11-14 | Rivers moved out of `water` into their own `rivers` line layer (a fill layer closed each river into a bogus polygon); the validator now rejects a layer whose geometries don't match its type |
 | 2026-11-14 | Surface wind `u`, `v` (m/s) on every `weather.geojson` point; new `wind_particles` layer, type `particles` (Chile, Sierra Bermeja, Los Angeles) |
