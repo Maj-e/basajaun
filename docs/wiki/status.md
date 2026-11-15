@@ -56,7 +56,7 @@ Live site: https://maj-e.github.io/ulinautas/ (shows `main`).
 
 | 2026-11-14 | Demo refocused on Spain: default episode **Sierra Bermeja (Málaga), Sep 2021**; front reads `episodes.json`, episode selector, world land outline | real episode with every layer computed, alerts included |
 
-| 2026-11-14 | Demo episodes: Málaga (story + alerts), Spain · Aug 2025 (national scale, 5–7 days, medium/high confidence, no OSM; Natural Earth major water), Chile (other continent); Madrid dropped | volume and readability at national scale |
+| 2026-11-14 | Demo episodes: Málaga (story + alerts), Galicia · Aug 2025 (regional scale, 5 days, medium/high confidence, no OSM; Natural Earth major water; was the whole peninsula until 2026-11-15, too heavy), Chile (other continent); Madrid dropped | volume and readability at national scale |
 | 2026-11-14 | Persistent Map panel (layers, satellite, alerts on map); alert circles only when ticked, list always open; heatmap when zoomed out; Demo button | the screen was saturated with population labels and overlapping circles |
 
 | 2026-11-15 | Front: spark callout and automatic pauses removed (peak day kept as a highlighted bar + button); Demo button removed (same episodes as the selector, `?demo=1` kept); single alert panel with a per-fire detail view linked to fire isolation; foldable timeline; readable popups | the spark beat felt forced and the screen had redundant controls; the alert list did not say where each fire was |

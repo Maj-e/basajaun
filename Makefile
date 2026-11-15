@@ -5,7 +5,7 @@ RUN  ?= uv run
 PORT ?= 8000
 
 # Episode to build (web/data/episodes.json); empty = the default episode.
-#   make data EPISODE=los-angeles-2025-01
+#   make data EPISODE=chile-2026-02
 EPISODE ?=
 export EPISODE
 
@@ -27,6 +27,7 @@ PIPELINE := \
 	groundwater \
 	exposure \
 	risk_score \
+	compact \
 	make_manifest \
 	validate
 

@@ -36,6 +36,7 @@ All outputs go to **`web/data/processed/`** (published with the site). Raw downl
 | Weather | `weather.py` | Open-Meteo → `weather.geojson` | W3-B2 |
 | Risk and alerts | `exposure.py` | fires + population + wind → `alerts.json` | W3-B1 |
 | OSM | `osm.py` | Overpass → `water`, `roads`, `fire_stations` | W3-B4 |
+| Compact | `compact.py` | GeoJSON with 5-decimal coordinates and no indentation (spread of the NW Spain episode: 8 MB → 1.8 MB); last step before the manifest | — |
 | Manifest | `make_manifest.py` | existing files → `manifest.json` | W1-B4 |
 | Validation | `validate.py` | everything → pass / fail against `docs/schemas/` | W1-B4 |
 

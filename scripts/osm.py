@@ -29,7 +29,7 @@ import shapely
 from shapely.geometry import LineString, Point, Polygon, box
 from shapely.ops import linemerge, polygonize, unary_union
 
-from config import BBOX, PROCESSED, RAW
+from config import BBOX, OSM_OPTIONS, PROCESSED, RAW
 
 def raw_file_for(query: str) -> Path:
     """Cache name carries a hash of the query: changing the query (new tags) downloads again."""
@@ -44,7 +44,11 @@ TIMEOUT_S = 300            # Overpass servers turn big requests away first when 
 MAXSIZE_BYTES = 512 * 1024 * 1024
 USER_AGENT = "ulinautas-hackathon/0.1"
 
-ROAD_TYPES = ("primary", "secondary", "tertiary", "track", "path")
+ALL_ROAD_TYPES = ("primary", "secondary", "tertiary", "track", "path")
+# A large episode can trim the download (episodes.json "osm_options"): fewer road classes, no urban hydrants
+ROAD_TYPES = tuple(t for t in ALL_ROAD_TYPES if t in OSM_OPTIONS.get("roads", ALL_ROAD_TYPES))
+HYDRANTS = OSM_OPTIONS.get("hydrants", True)
+POINT_TAGS = "fire_hydrant|water_tank|suction_point|fire_water_pond"
 # Display style per road type: (color, width px, simplify tolerance m)
 ROAD_STYLE = {
     "primary":   ("#f2a541", 2.4, 30),
@@ -75,10 +79,11 @@ COORD_GRID = 1e-4           # ~10 m: coordinates rounded to 4 decimals
 
 # --- download -------------------------------------------------------------------
 
-def overpass_query(bbox=BBOX, pad=PAD_DEG) -> str:
+def overpass_query(bbox=BBOX, pad=PAD_DEG, road_types=ROAD_TYPES, hydrants=HYDRANTS) -> str:
     west, south, east, north = bbox
     b = f"({south - pad},{west - pad},{north + pad},{east + pad})"
-    roads = "|".join(ROAD_TYPES)
+    roads = "|".join(road_types)
+    point_tags = POINT_TAGS if hydrants else POINT_TAGS.replace("fire_hydrant|", "")
     return f"""[out:json][timeout:{TIMEOUT_S}][maxsize:{MAXSIZE_BYTES}];
 (
   way["highway"~"^({roads})$"]{b};
@@ -89,7 +94,7 @@ def overpass_query(bbox=BBOX, pad=PAD_DEG) -> str:
   way["waterway"="river"]{b};
   node["amenity"="fire_station"]{b};
   way["amenity"="fire_station"]{b};
-  node["emergency"~"^(fire_hydrant|water_tank|suction_point|fire_water_pond)$"]{b};
+  node["emergency"~"^({point_tags})$"]{b};
   way["emergency"~"^(water_tank|fire_water_pond)$"]{b};
   node["man_made"~"^(water_tank|water_well|reservoir_covered)$"]{b};
   way["man_made"~"^(water_tank|reservoir_covered)$"]{b};
@@ -204,7 +209,7 @@ def parse(elements: list[dict]) -> dict[str, gpd.GeoDataFrame]:
             if tags.get("amenity") == "fire_station":
                 shape = Polygon(coords) if _is_closed(coords) else LineString(coords)
                 stations.append({"geometry": shape.centroid, "name": name})
-            elif tags.get("highway") in ROAD_TYPES:
+            elif tags.get("highway") in ALL_ROAD_TYPES:
                 roads.append({"geometry": LineString(coords), "highway": tags["highway"], "name": name})
             elif tags.get("waterway") == "river":
                 water.append({"geometry": LineString(coords), "kind": "river", "name": name})
@@ -289,7 +294,7 @@ def roads_layer(roads: gpd.GeoDataFrame, area) -> gpd.GeoDataFrame:
     out = gpd.GeoDataFrame(gpd.pd.concat(parts, ignore_index=True), crs="EPSG:4326")
     out["name"] = out["name"].replace("", None)
     # Draw minor roads first, major on top
-    order = {h: i for i, h in enumerate(reversed(ROAD_TYPES))}
+    order = {h: i for i, h in enumerate(reversed(ALL_ROAD_TYPES))}
     out = out.sort_values("highway", key=lambda s: s.map(order)).reset_index(drop=True)
     return _finish(out[["geometry", "name", "highway", "color", "width"]])
 
