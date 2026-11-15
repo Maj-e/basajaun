@@ -56,6 +56,8 @@ let detailFire = null; // fire shown in the detail view (null = the list)
 let handlers = { select: () => {}, clear: () => {} }; // wired by app.js: isolate a fire / back to the whole area
 let shownKey = null;
 let lastArgs = null;
+let openedFromList = false; // a row was activated: focus goes to the detail's Back button
+let returnTo = null; // Back was activated: focus returns to that fire's row
 const markers = new Map();
 const selected = new Set(); // empty = all types
 
@@ -77,21 +79,8 @@ export async function loadAlerts() {
   } catch {
     alerts = [];
   }
-  $("alerts").hidden = !alerts.length;
-  // The header folds the whole panel (filters + list), remembered per visitor
-  const fold = (folded) => {
-    $("alerts-body").hidden = folded;
-    $("alerts").classList.toggle("folded", folded);
-    $("alerts-toggle").setAttribute("aria-expanded", String(!folded));
-  };
-  let folded = false;
-  try { folded = localStorage.getItem("ulinautas-alerts") === "folded"; } catch { /* storage blocked */ }
-  fold(folded);
-  $("alerts-toggle").onclick = () => {
-    folded = !folded;
-    fold(folded);
-    try { localStorage.setItem("ulinautas-alerts", folded ? "folded" : "open"); } catch { /* fine */ }
-  };
+  // The Alerts tab of the map panel exists only when the episode has alerts
+  $("tab-alerts").hidden = !alerts.length;
   renderFilters();
   return alerts;
 }
@@ -104,7 +93,7 @@ function renderFilters() {
   if (!el) return;
   el.hidden = present.length < 2;
   el.innerHTML = `<button type="button" data-type="" aria-pressed="${!selected.size}">All</button>` +
-    present.map((t) => `<button type="button" data-type="${t}" aria-pressed="${selected.has(t)}" style="--c:${TYPES[t].color}">${icon(t)}${TYPES[t].label}<span class="n">${counts[t] ?? 0}</span></button>`).join("");
+    present.map((t) => `<button type="button" data-type="${t}" aria-pressed="${selected.has(t)}" style="--c:${TYPES[t].color}">${icon(t)}${TYPES[t].label} <span class="n">${counts[t] ?? 0}</span></button>`).join("");
   el.querySelectorAll("button").forEach((b) => (b.onclick = () => {
     const t = b.dataset.type;
     if (!t) selected.clear(); else if (selected.has(t)) selected.delete(t); else selected.add(t);
@@ -140,7 +129,7 @@ export function showAlertFire(id) {
   if (lastArgs) renderAlerts(...lastArgs);
 }
 
-const typeIcons = (kinds) => kinds.map((k) => `<span class="type" style="--c:${TYPES[k].color}" title="${TYPES[k].label}">${icon(k)}</span>`).join("");
+const typeIcons = (kinds) => kinds.map((k) => `<span class="type" style="--c:${TYPES[k].color}" title="${TYPES[k].label}">${icon(k)}<span class="sr-only">${TYPES[k].label} alert</span></span>`).join("");
 const badge = (risk) => `<em class="badge" style="--risk:${RISK_COLOR[risk]}">${risk}</em>`;
 const num = (n) => Math.round(n).toLocaleString("en");
 
@@ -155,6 +144,9 @@ export function renderAlerts(hour, inScope) {
   const key = `${detailFire}|` + active.map((a) => a.key).join(",") + "|" + started.length;
   if (key === shownKey) return;
   shownKey = key;
+  // Keep keyboard focus across redraws (WCAG 2.4.3): the list is rebuilt while the playback runs
+  const focusedFire = document.activeElement?.closest?.("#alerts-list .fire-row")?.dataset.fire;
+  const focusBack = document.activeElement?.id === "alerts-back";
 
   // Counts per type on the chips
   const newCounts = {};
@@ -170,8 +162,11 @@ export function renderAlerts(hour, inScope) {
   const groups = [...fires.values()];
   const top = groups.slice(0, MAX_SHOWN);
   const critical = groups.filter((g) => g[0].risk === "critical").length;
-  if ($("mb-alerts")) $("mb-alerts").textContent = groups.length;
-  $("alerts").classList.toggle("detail", detailFire !== null);
+  $("tp-alerts").classList.toggle("detail", detailFire !== null);
+  // Tab badge: fires with alerts, and how many are critical (in words, not only in red)
+  $("alerts-count").textContent = critical ? `${critical} critical` : groups.length;
+  $("tab-alerts").title = `${active.length} alerts on ${groups.length} fires`;
+  $("tab-alerts").classList.toggle("has-critical", critical > 0);
 
   let onMapAlerts;
   if (detailFire !== null) {
@@ -179,19 +174,17 @@ export function renderAlerts(hour, inScope) {
     const own = started.filter((a) => Number(a.fire_id) === detailFire)
       .sort((a, b) => RANK[a.risk] - RANK[b.risk]);
     const place = places.get(detailFire) ?? "Fire";
-    $("alerts-title").textContent = "1 fire selected";
-    $("alerts-count").hidden = true; // the risk is next to the fire's name
-    $("alerts-toggle").classList.remove("has-critical");
+    $("alerts-title").textContent = "";
     $("alerts-detail").innerHTML = renderDetail(detailFire, place, own);
-    $("alerts-back").onclick = () => handlers.clear();
+    $("alerts-back").onclick = () => { returnTo = detailFire; handlers.clear(); };
+    if (focusBack || openedFromList) $("alerts-back").focus();
+    openedFromList = false;
     onMapAlerts = own;
   } else {
     // ---------- List of fires ----------
-    $("alerts-title").textContent = groups.length ? `${groups.length} fire${groups.length > 1 ? "s" : ""}` : "none now";
-    $("alerts-count").hidden = false;
-    $("alerts-count").textContent = critical ? `${critical} critical` : groups.length;
-    $("alerts-count").title = `${active.length} alerts on ${groups.length} fires`;
-    $("alerts-toggle").classList.toggle("has-critical", critical > 0);
+    $("alerts-title").textContent = groups.length
+      ? `${active.length} alert${active.length > 1 ? "s" : ""} on ${groups.length} fire${groups.length > 1 ? "s" : ""}, worst first`
+      : "";
     $("alerts-list").innerHTML = groups.length
       ? top.map((g) => {
         const lead = g[0];
@@ -208,11 +201,14 @@ export function renderAlerts(hour, inScope) {
       : `<li class="none">No alert at this time</li>`;
     $("alerts-list").querySelectorAll(".fire-row").forEach((row) => {
       const g = fires.get(Number(row.dataset.fire)) ?? fires.get(row.dataset.fire);
-      row.onclick = () => handlers.select(Number(row.dataset.fire), g[0].center);
+      row.onclick = () => { openedFromList = true; handlers.select(Number(row.dataset.fire), g[0].center); };
       // Hovering a row makes its rings stand out on the map
       row.onmouseenter = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.add("hot"));
       row.onmouseleave = () => g.forEach((a) => markers.get(a.key)?.getElement().classList.remove("hot"));
     });
+    const refocus = focusedFire ?? (returnTo !== null ? String(returnTo) : null);
+    if (refocus !== null) ($("alerts-list").querySelector(`.fire-row[data-fire="${refocus}"]`) ?? $("tab-alerts")).focus();
+    returnTo = null;
     onMapAlerts = top.flat();
   }
 
@@ -239,10 +235,10 @@ function renderDetail(id, place, own) {
   return `<button type="button" class="back" id="alerts-back">
       <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2.5 4 6l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       All fires</button>
-    <div class="d-head"><h3>${place} <span class="fid">#${id}</span></h3>${own.length ? badge(own[0].risk) : ""}</div>
-    ${rings.length ? `<div class="d-section"><h4>People nearby</h4><dl class="rings">${rings.map(([k, v]) => `<div><dt>within ${k}</dt><dd>${num(v)}</dd></div>`).join("")}</dl></div>` : ""}
-    <div class="d-section"><h4>Alerts</h4>${own.length
+    <div class="d-head"><h2>${place} <span class="fid">#${id}</span></h2>${own.length ? badge(own[0].risk) : ""}</div>
+    ${rings.length ? `<div class="d-section"><h3>People nearby</h3><dl class="rings">${rings.map(([k, v]) => `<div><dt>within ${k}</dt><dd>${num(v)}</dd></div>`).join("")}</dl></div>` : ""}
+    <div class="d-section"><h3>Alerts</h3>${own.length
       ? `<ul class="d-alerts">${own.map((a) => `<li style="--c:${TYPES[a.kind].color}">${icon(a.kind)}<div><b>${TYPES[a.kind].label}</b> ${badge(a.risk)}<p>${a.message ?? ""}</p><small>since ${fmtTime(a.t)}</small></div></li>`).join("")}</ul>`
       : `<p class="none">No alert for this fire at this time.</p>`}</div>
-    ${facts.length ? `<div class="d-section"><h4>Fire</h4><dl class="facts">${facts.map(([k, v, f]) => `<div><dt>${k}</dt><dd>${f(v)}</dd></div>`).join("")}</dl></div>` : ""}`;
+    ${facts.length ? `<div class="d-section"><h3>Fire</h3><dl class="facts">${facts.map(([k, v, f]) => `<div><dt>${k}</dt><dd>${f(v)}</dd></div>`).join("")}</dl></div>` : ""}`;
 }

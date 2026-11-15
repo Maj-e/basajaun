@@ -5,6 +5,7 @@
 import { map } from "../map.js";
 import { CONFIG } from "../config.js";
 import { createParticlesLayer } from "./particles.js";
+import { indexByFire, perimetersAt } from "./perimeter.js";
 
 const dataUrl = (file) => CONFIG.dataRoot + file;
 
@@ -274,7 +275,31 @@ export function prefetchLayers() {
 export const isDefaultVisible = (layer) => CONFIG.defaultLayers.includes(layer.id);
 
 // A layer follows the playback if the manifest says so, or if its features carry a start time (fires: t_start)
-const followsTime = ({ layer, data }) => layer.temporal || data?.features?.[0]?.properties?.t_start !== undefined;
+const hasStart = (data) => data?.features?.[0]?.properties?.t_start !== undefined;
+// Polygons of a fire (spread, evacuation, risk) carry its fire_id but no time of their own: they start with their fire
+const linkedToFire = ({ layer, data }) => layer.id !== "fires" && ["fill", "line"].includes(layer.type) && !hasStart(data)
+  && data?.features?.[0]?.properties?.fire_id !== undefined;
+const followsTime = (entry) => entry.layer.temporal || hasStart(entry.data) || linkedToFire(entry);
+
+// Expression giving each feature the start time of its fire (hidden when the fire is unknown)
+function fireStartExpr() {
+  const fires = layers.get("fires")?.data?.features ?? [];
+  const pairs = fires.flatMap((f) => [Number(f.properties.fire_id), f.properties.t_start]);
+  return pairs.length ? ["match", ["to-number", ["get", "fire_id"], -1], ...pairs, 1e12] : 1e12;
+}
+
+// Fire perimeters as they were at `hour`: rebuilt from the hotspots so far (perimeter.js), once per playback hour.
+// entry.data keeps the final shapes: clicking a fire still frames its whole extent.
+function showPerimeters(entry, hour) {
+  const hotspots = layers.get("hotspots")?.data;
+  const source = map.getSource(entry.layer.id);
+  if (!hotspots || !source?.setData || !entry.data) return;
+  const h = Math.floor(hour);
+  if (entry.perimeterHour === h) return;
+  entry.perimeterHour = h;
+  entry.byFire ??= indexByFire(hotspots.features);
+  source.setData(perimetersAt(entry.data, entry.byFire, hour));
+}
 
 // Temporal layers: show features detected before `hour`, fading over the trail.
 export function setHour(hour) {
@@ -290,6 +315,7 @@ export function setHour(hour) {
   for (const entry of layers.values()) {
     const { mapLayerIds } = entry;
     if (entry.particles) { entry.particles.setHour(hour); continue; }
+    if (entry.layer.id === "fires" && mapLayerIds.length) showPerimeters(entry, hour);
     if (!followsTime(entry)) continue;
     if (entry.layer.temporal && !CONFIG.trailLayers.includes(entry.layer.id)) {
       // Weather / rain: swap the small current-hour source only when the hour changes (not every frame).
@@ -303,16 +329,26 @@ export function setHour(hour) {
       }
       continue;
     }
+    const startOf = linkedToFire(entry) ? fireStartExpr() : ["get", "t_start"];
+    // Visible from t_start; snapshots of a fire's zones (spread, evacuation, risk) also end at t_until, when the next one starts
+    // Fire perimeters stay once the fire stops growing, but fainter: what burned, no longer what is burning
+    const burnedOut = entry.layer.id === "fires" ? ["case", [">", hour, ["+", ["get", "t_end"], CONFIG.trailHours]], 0.6, 1] : 1;
+    const live = ["all", ["<=", startOf, hour], ["<", hour, ["coalesce", ["get", "t_until"], 1e12]]];
     for (const id of mapLayerIds) {
       const type = map.getLayer(id)?.type;
       if (id.endsWith("-heat")) map.setPaintProperty(id, "heatmap-weight", heatWeight);
       else if (id.endsWith("-glow")) map.setPaintProperty(id, "circle-opacity", glowFade);
       else if (id.endsWith("-ring")) map.setPaintProperty(id, "circle-stroke-opacity", fade);
       else if (type === "circle") { map.setPaintProperty(id, "circle-opacity", fade); map.setPaintProperty(id, "circle-stroke-opacity", fade); }
-      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", ["<=", ["get", "t_start"], hour], ["coalesce", ["get", "opacity"], 0.35], 0]);
-      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", ["<=", ["get", "t_start"], hour], 1, 0]);
+      else if (type === "fill") map.setPaintProperty(id, "fill-opacity", ["case", live, ["*", ["coalesce", ["get", "opacity"], 0.35], burnedOut], 0]);
+      else if (type === "line" && id.endsWith("-outline")) map.setPaintProperty(id, "line-opacity", ["case", live, burnedOut, 0]);
     }
   }
+}
+
+// The player started or paused: the wind particles move only while it plays
+export function setPlayback(playing) {
+  for (const entry of layers.values()) entry.particles?.setPlaying(playing);
 }
 
 export function setLayerVisible(id, visible) {
@@ -431,29 +467,37 @@ function enablePopup(layer, mapLayerIds) {
   });
 }
 
-// Legend built from the manifest, in the #legend aside.
-// Legend of every visible layer (manifest legend + CONFIG.legendExtras); redrawn when a box is ticked.
+// Legend of each visible layer (manifest legend + CONFIG.legendExtras), right under its box in the Layers tab;
+// redrawn when a box is ticked. `el` is the layer list.
 let legendEl = null;
 const SHAPE_BY_TYPE = { circle: "dot", fill: "area", image: "area", line: "line", arrows: "arrow", rain: "dot" };
 const ARROW = `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1 10 6H7.4v5H4.6V6H2z" fill="currentColor"/></svg>`;
 export function renderLegend(el) {
   legendEl = el;
-  const shown = [...layers.values()].filter((e) => !e.lazy && (e.visible ?? isDefaultVisible(e.layer)));
-  const blocks = shown.map(({ layer }) => {
-    const items = [...(layer.legend ?? []), ...(CONFIG.legendExtras[layer.id] ?? [])];
-    if (!items.length) return "";
-    const shape = SHAPE_BY_TYPE[layer.type] ?? "dot";
-    return `<h2>${layer.name}</h2>` + items.map((item) => item.note
-      ? `<div class="legend-note">${item.note}</div>`
-      : `<div class="legend-item"><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</div>`).join("");
-  }).filter(Boolean);
-  el.hidden = !blocks.length;
-  el.innerHTML = blocks.join("");
+  for (const box of el.querySelectorAll(".layer-legend")) {
+    const entry = layers.get(box.dataset.for);
+    const shown = entry && !entry.lazy && (entry.visible ?? isDefaultVisible(entry.layer));
+    const items = shown ? [...(entry.layer.legend ?? []), ...(CONFIG.legendExtras[entry.layer.id] ?? [])] : [];
+    box.hidden = !items.length;
+    if (!items.length) { box.innerHTML = ""; continue; }
+    const shape = SHAPE_BY_TYPE[entry.layer.type] ?? "dot";
+    const keys = items.filter((item) => !item.note);
+    const notes = items.filter((item) => item.note);
+    box.innerHTML = (keys.length ? `<ul class="legend-items">${keys.map((item) =>
+      `<li><i class="${item.shape ?? shape}" style="--c:${item.color}">${(item.shape ?? shape) === "arrow" ? ARROW : ""}</i>${item.text}</li>`).join("")}</ul>` : "") +
+      notes.map((item) => `<p class="legend-note">${item.note}</p>`).join("");
+  }
 }
 
-// Checkbox per loaded layer, in the layers panel.
+// Boxes in the Layers tab, grouped by theme (CONFIG.layerGroups), each with its legend underneath.
 export function renderLayerList(el, onToggle) {
-  el.innerHTML = [...layers.values()].map(({ layer }) =>
-    `<label><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> ${layer.name}</label>`).join("");
+  const all = [...layers.values()].map((e) => e.layer);
+  const listed = new Set(CONFIG.layerGroups.flatMap((g) => g.ids));
+  const groups = [...CONFIG.layerGroups.map((g) => ({ name: g.name, layers: g.ids.map((id) => all.find((l) => l.id === id)).filter(Boolean) })),
+    { name: "Other", layers: all.filter((l) => !listed.has(l.id)) }].filter((g) => g.layers.length);
+  el.innerHTML = groups.map((g) => `<fieldset class="group"><legend>${g.name}</legend>${g.layers.map((layer) =>
+    `<div class="layer-row"><label class="layer"><input type="checkbox" data-layer="${layer.id}"${isDefaultVisible(layer) ? " checked" : ""}> <span>${layer.name}</span></label>` +
+    `<div class="layer-legend" data-for="${layer.id}" hidden></div></div>`).join("")}</fieldset>`).join("");
   el.querySelectorAll("[data-layer]").forEach((box) => (box.onchange = () => toggleLayer(box.dataset.layer, box.checked)));
+  renderLegend(el);
 }

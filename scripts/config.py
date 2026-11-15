@@ -1,7 +1,7 @@
 """Shared settings: FIRMS key, area, period and paths — taken from the selected episode (W4-B5).
 
 Episodes are listed in web/data/episodes.json. Pick one with the EPISODE environment variable:
-    make data EPISODE=los-angeles-2025-01
+    make data EPISODE=galicia-2025-08
 Without EPISODE the default episode is used (Chile, data in web/data/processed/ as before).
 
     uv run scripts/config.py         # show the selected episode
@@ -80,6 +80,8 @@ BBOX = tuple(EPISODE["bbox"])                 # (west, south, east, north)
 IS_LIVE = bool(EPISODE.get("live"))          # live episode: the period moves with the clock
 START_DATE, END_DATE = live_dates() if IS_LIVE else (EPISODE["start"], EPISODE["end"])
 SKIP = set(EPISODE.get("skip", []))           # pipeline steps this episode doesn't run
+# Optional OSM trimming for large areas (osm.py): {"roads": ["primary", "secondary", "tertiary"], "hydrants": false}
+OSM_OPTIONS = EPISODE.get("osm_options", {})
 
 # Typed alerts (W3-B8): simple, documented thresholds read by scripts/alert_types.py
 ALERT_THRESHOLDS = {

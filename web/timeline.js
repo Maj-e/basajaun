@@ -1,5 +1,5 @@
 // Timeline strip (fires per day) + playback engine.
-// The engine owns state.hour; the peak day is highlighted and reachable with the Peak button (P).
+// The engine owns state.hour (it stops at the end; Play from there starts over); the peak day is highlighted and reachable with the Peak button (P).
 // setData() redraws the bars and the peak mark when the figures change (e.g. a new visible area).
 import { state, setState } from "./state.js";
 
@@ -52,6 +52,21 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
       $("strip").appendChild(lab);
     };
     if (story.peak) mark(story.peak.end - 12, `Peak · ${story.peak.count}`, "#f9a957", "right");
+    // Same figures as a table for screen readers (WCAG 1.1.1 / 1.3.1: the bars are not the only way to read them)
+    const body = $("days-table")?.tBodies[0];
+    if (body) body.innerHTML = days.map((d, i) =>
+      `<tr><th scope="row">${Number(d.slice(8))} ${month(d)}</th><td>${counts[d].toLocaleString("en")}${story.peak && i === story.peak.index ? " (peak day)" : ""}</td></tr>`).join("");
+    valueText = "";
+    // Days after the last detection have no bars: say why, so the burned area on the map is not read as a bug
+    const last = story.lastDetection;
+    if (Number.isFinite(last) && end - last >= 24) {
+      mark(last, "Last detection", "#8a96ad", "left");
+      const tail = document.createElement("div");
+      tail.className = "strip-mark tail";
+      tail.textContent = "No detections · burned area only";
+      tail.style.left = `${((x(last) + W) / 2 / W) * 100}%`;
+      $("strip").appendChild(tail);
+    }
   }
 
   // Hover tooltip and scrubbing
@@ -65,13 +80,29 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
     if (e.buttons === 1) seek(tAt(e));
   });
   svg.addEventListener("pointerleave", () => (tip.hidden = true));
+  // WCAG 1.4.13: the hover tip can be dismissed without moving the pointer
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") tip.hidden = true; });
+
+  // Keyboard scrubbing (WCAG 2.1.1): the chart is a slider over the playback time
+  svg.setAttribute("aria-valuemin", String(start));
+  svg.setAttribute("aria-valuemax", String(end));
+  svg.addEventListener("keydown", (e) => {
+    const moves = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 24, PageDown: -24 };
+    let t;
+    if (e.key in moves) t = state.hour + moves[e.key];
+    else if (e.key === "Home") t = start;
+    else if (e.key === "End") t = end;
+    else return;
+    e.preventDefault();
+    setPlaying(false);
+    seek(t);
+  });
   svg.addEventListener("pointerdown", (e) => { setPlaying(false); seek(tAt(e)); });
 
   // ---------- Engine ----------
-  let holdUntil = 0, last = performance.now();
+  let last = performance.now(), valueText = "";
   function seek(t) {
     const hour = Math.min(Math.max(t, start), end - 0.01);
-    holdUntil = 0;
     setState({ hour });
   }
   function setPlaying(playing) {
@@ -81,10 +112,13 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
   }
   function frame(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
-    if (state.playing && now >= holdUntil) {
-      let hour = state.hour + dt * state.speed;
-      if (hour >= end) { hour = playFrom; holdUntil = now + 1500; }
-      setState({ hour });
+    if (state.playing) {
+      const hour = state.hour + dt * state.speed;
+      if (hour >= end) {
+        // The last day is the end: stop there (the burned area stays on the map) instead of looping
+        setState({ hour: end - 0.01 });
+        setPlaying(false);
+      } else setState({ hour });
     }
     requestAnimationFrame(frame);
   }
@@ -96,13 +130,26 @@ export function createTimeline({ days, counts, story, start, end, playFrom }) {
     $("c-time").textContent = `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")} UTC`;
     head.setAttribute("x1", x(hour)); head.setAttribute("x2", x(hour));
     clipRect.setAttribute("width", Math.max(0, x(hour)));
+    // Slider value, refreshed only when the readable text changes (not every animation frame)
+    const day = d.toISOString().slice(0, 10);
+    const text = `${$("c-date").textContent}, ${$("c-time").textContent}, ${(current.counts[day] ?? 0).toLocaleString("en")} fires that day`;
+    if (text !== valueText) {
+      valueText = text;
+      svg.setAttribute("aria-valuenow", String(Math.round(hour)));
+      svg.setAttribute("aria-valuetext", text);
+    }
   }
 
   setData(counts, story);
   return {
     render, seek, setPlaying, setData,
-    toggle: () => setPlaying(!state.playing),
-    restart: () => { seek(playFrom); setPlaying(true); },
+    // Play at the very end starts over from the first day
+    toggle: () => {
+      if (!state.playing && state.hour >= end - 0.5) seek(start);
+      setPlaying(!state.playing);
+    },
+    // Back to the first day, keeping the play / pause state (a paused player stays paused on a clean map)
+    restart: () => seek(start),
     jumpPeak: () => { if (current.story.peak) { setPlaying(false); seek(current.story.peak.end); } },
     step: (h) => { setPlaying(false); seek(state.hour + h); },
     start: () => requestAnimationFrame(frame),

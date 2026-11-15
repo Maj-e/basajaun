@@ -306,19 +306,19 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: W3-B1, W3-B2, W3-B7, W5-B2
 
 - [ ] **W3-B9** · Group alerts into relevant incidents · **B1**
-  - Today: one alert per fire (Spain · Aug 2025: 788). Merge alerts that describe the same situation into one **incident**: fires closer than ~5 km or in the same region and time window, same type
+  - Today: one alert per fire (Galicia · Aug 2025: 238 fires, 494 alerts). Merge alerts that describe the same situation into one **incident**: fires closer than ~5 km or in the same region and time window, same type
   - Each incident: type(s), the worst risk, the people concerned **counted once** (union of the buffers, not a sum), first / last time, the fires it groups, a short `message`
   - Relevance: drop or fold incidents below a threshold (e.g. `low` risk and < 100 people) into an "other" counter; thresholds in `config.py`
   - Output `incidents.json` (contract + schema) next to `alerts.json`
-  - **Done when:** the Spain episode gives a readable list (tens, not hundreds) and the validator accepts it
+  - **Done when:** the Galicia episode gives a readable list (tens, not hundreds) and the validator accepts it
   - Depends on: W3-B1, W3-B8
 
 - [ ] **W3-F6** · Grouped alerts in the panel · **F** — *front part done: alerts grouped per fire (`fire_id`) with a detail view; switch to `incidents.json` once W3-B9 ships*
   - The alert panel lists **incidents** (from `incidents.json`) instead of single alerts: one line per incident (type icons, worst risk, people, fires grouped); expand to see its fires; click = zoom on the incident
-  - **Done when:** the Spain episode shows a short, sorted incident list on the published URL
+  - **Done when:** the Galicia episode shows a short, sorted incident list on the published URL
   - Depends on: W3-B9, W3-F5
 
-- [ ] **W3-F7** · Selectable base maps · **B4** — *code on branch `W3F7-basemaps`*
+- [x] **W3-F7** · Selectable base maps · **B4**
   - Picker in the Map panel: **Topo** (default: dark terrain relief from open Mapterhorn elevation tiles, 512 px WebP, shaded on the GPU), **Satellite** (Sentinel-2 cloudless, no clouds) and **Dark** (offline land outline); the daily NASA image stays a separate switch (it shows the real smoke and clouds)
   - Smooth: static tiles (cached, no per-day reload), all sources declared up front and only the chosen one visible, cross-fade once the new tiles are loaded, never `setStyle()`; imagery dimmed so the fires stay the brightest thing; offline falls back to the land outline
   - Config in `CONFIG.basemaps` (`config.js`); switch in `setBasemap()` (`map.js`)
@@ -404,3 +404,28 @@ Format: **what to do** · **files** · **done when** · **depends on**.
   - Depends on: —
 
 - [ ] **W5-F1** · Mobile, i18n, animation export · **F** — collapsible panels, `web/i18n.js` (Spanish UI), MP4 / GIF capture
+
+## 5. Future improvements (found while polishing the demo, 15 Nov 2026)
+
+Known limits, none of them blocks the demo. Roughly in order of value.
+
+**Playback sync (the one to look at first)**
+- [ ] The map can look a bit behind the timeline playhead. Measured on a software-GL machine: 60 fps paused, ~13 fps playing with the wind on, ~25 fps with it off; the map's hour always equals the clock's (0.0 h lag), so it is repaint speed plus the 24 h trails. Options: cap the wind particles at 30 fps, drop `trailHours` and `ACTIVE_HOURS` (`scripts/fire_history.py`) from 24 h to 12 h, lighten the always-on layers (roads, groundwater)
+- [ ] Timeline bars: hourly or 6-hourly bars (or a cumulative curve) instead of per UTC day, so they follow the satellite passes; today the 24 h trail smears each day's fire into the next one
+- [ ] `daily_summary.json` counts 5–10 % more hotspots than `hotspots.geojson` (summary built before the later steps); make both come from the same list
+- [ ] Zones (`spread`, `evacuation`, `fire_risk`) change every 6 h (`STEP_HOURS`); a finer or continuous step would look smoother. Earlier snapshots use people within 5 km of the perimeter of that moment, not the population alert
+- [ ] No automated test for the front end (no Node in CI): a headless-browser test that checks clock, map hour and playhead stay equal, and that restart / end-of-timeline behave
+
+**Front end**
+- [ ] `web/config.js` falls back silently to Chile if `episodes.json` does not load; show a visible warning instead
+- [ ] Demo banner overlaps the header caption; the map framing leaves empty space (Sierra Bermeja)
+- [ ] Sierra Bermeja runs to 20 Sep but its last detection is 12 Sep: either shorten the episode (8–14 was tried and felt too short) or keep the "Last detection" mark
+- [ ] Mapterhorn free endpoint has no stated usage terms: self-host PMTiles if traffic grows (`docs/licenses.md`)
+
+**Data / pipeline**
+- [ ] Galicia is 9.4 MB (roads 2.6 MB, hotspots 1.9 MB, rivers 1 MB, weather 0.9 MB): gzip in `scripts/serve.py` to match the published site, drop unused hotspot properties (`ring`, `country`, `region`), thin `weather.geojson` to 3-hourly
+- [ ] Spread / evacuation / risk per snapshot make `spread.geojson` 0.5 MB in Galicia; merge snapshots of tiny fires (1–2 hotspots)
+- [ ] Galicia has no slope or land cover, and Overpass was unreachable from some machines: keep the `osm_options` trimming and the cached raw files
+- [ ] W3-B10 (layer description / source / limits) is finished in a local stash (`W3B10-layer-info`) and still has to be rebased onto `dev`
+- [ ] Licences marked "to verify" in `docs/licenses.md` (FIRMS, WorldPop, Open-Meteo, OSM, Natural Earth, EEA, MapLibre) must be checked before a public launch
+

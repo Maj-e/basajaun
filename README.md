@@ -1,165 +1,38 @@
+<div align="center">
+
 # Ulinautas
 
-Wildfire hotspot visualization from the **MODIS** and **VIIRS** satellites (NASA FIRMS), harmonized into a single dataset and shown on a web page: layered map, calendar, population-density alerts and time playback.
+### Two satellites, one dataset, one map to understand a wildfire as it unfolds
 
-> Hackathon project (1 day). Work plan: [`TODO.md`](TODO.md) · data contract: [`docs/data_contract.md`](docs/data_contract.md) · **wiki: [`docs/wiki/`](docs/wiki/README.md)** (what we do, data sources, pipeline, operations, decisions).
+[![CI](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/Maj-e/basajaun/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-open%20the%20map-f9a957)](https://maj-e.github.io/basajaun/)
+[![Documentation](https://img.shields.io/badge/docs-wiki-26344b)](docs/wiki/README.md)
 
-**Convention:** everything in this repository is in English — code, UI, documentation, data field names.
+<a href="https://maj-e.github.io/basajaun/">
+  <img src="docs/media/basajaum_video_historic.gif" alt="MODIS and VIIRS hotspots harmonized and replayed over time: the Sierra Bermeja fire growing on the map, with wind, perimeters and alerts" width="720">
+</a>
 
----
+**[▶ Open the live demo](https://maj-e.github.io/basajaun/)** — it opens on the Sierra Bermeja fire (Málaga, Sep 2021), paused on its peak. Press play.
 
-## Stack
-
-| Part | Technology | Role |
-|---|---|---|
-| Data processing | **Python 3.11** · pandas · geopandas · rasterio · rasterstats · scikit-learn · requests | Download, harmonize and enrich the data |
-| Python environment | **[uv](https://docs.astral.sh/uv/)** (`pyproject.toml` + `uv.lock`) | Installs in seconds, pinned versions |
-| Data exchange | Static **GeoJSON / JSON** files | Contract between the scripts and the front end |
-| Front end | **HTML + JavaScript** (ES modules, no framework, no build) | User interface |
-| Map | **MapLibre GL JS 4.7.1** (self-hosted in `web/vendor/`) | Vector map, filters, animation, layers |
-| Hosting | **GitHub Pages** + custom domain | Published automatically on every push to `main`, free HTTPS |
-| CI/CD | **GitHub Actions** | Tests and validation on every PR, deploy of `web/`, automatic data refresh |
-
-### Why this stack
-
-- **No server to maintain.** Data is computed with Python, locally or in GitHub Actions every 30 min (as fresh as FIRMS itself, which publishes ~3 h after each satellite pass), and published as files. The page depends on no live API: nothing can go down during the demo.
-- **Python for geospatial work.** Projections, rasters, clustering and zonal statistics are much simpler in Python than in JavaScript.
-- **MapLibre for the map.** Free, no API key, renders tens of thousands of points smoothly and filters / animates them with expressions, without reloading data.
-- **No framework, no build.** Nobody loses time configuring npm, Webpack or Docker. It runs with `make serve`.
-- **Teams that don't block each other.** The data contract separates the backend from the front end: the front end moves forward with sample data while the scripts produce the real data.
-
-### Alternatives set aside (for now)
-
-| Alternative | Why not today | When it would make sense |
-|---|---|---|
-| React + Vite | Too much setup and state management for one day | If the project continues and the UI grows |
-| deck.gl | One more API to learn | If the MapLibre animation is not smooth enough |
-| Streamlit | Limited UI and animation | If nobody on the team writes JavaScript |
-| FastAPI + PostGIS | Too much infrastructure | For the real-time mode, after the hackathon |
-| Leaflet | Slower with many points | If someone masters it and the data is small |
-
-**Demo fallback:** if the front end fails, `web/data/processed/hotspots.geojson` can be dragged into [kepler.gl/demo](https://kepler.gl/demo) to get an animated map in 2 minutes.
+</div>
 
 ---
 
-## Architecture
+## The problem
 
-```
-                 ┌──────────────────── scripts/ (Python, run by make data) ─────────────────────┐
-                 │                                                                              │
- NASA FIRMS ───► │ download_firms.py ─► data/raw/*.csv ─► harmonize.py ─► fires.py ─► exposure.py │
- (MODIS, VIIRS)  │                                           │              │            ▲      │
-                 │                                           │              │            │      │
- WorldPop ─────► │ population.py ────────────────────────────┼──────────────┼────────────┤      │
- Open-Meteo ───► │ weather.py ───────────────────────────────┼──────────────┼────────────┘      │
- OpenStreetMap ► │ osm.py ───────────────────────────────────┼──────────────┤                   │
-                 └───────────────────────────────────────────┼──────────────┼───────────────────┘
-                                                             ▼              ▼
-                                    web/data/processed/*.geojson|json + web/data/manifest.json
-                                                             │
-                                                             ▼
-                                web/ (HTML + JS + MapLibre) ──► GitHub Pages ──► https://<domain>
-```
+NASA's FIRMS service publishes wildfire detections from two families of satellites, **MODIS** (~1 km pixels) and **VIIRS** (~375 m). They are valuable, but hard to use together:
 
-1. **Download**: FIRMS CSVs (MODIS + VIIRS S-NPP, NOAA-20, NOAA-21) are saved in `data/raw/`.
-2. **Harmonization**: both sensors are mapped to one schema (confidence, UTC datetime, FRP, brightness, resolution).
-3. **Enrichment**: MODIS/VIIRS deduplication, grouping into fires, exposed population, wind, distances to water, roads and fire stations.
-4. **Publication**: results are written to `web/data/processed/`, **already styled** (colors, sizes), and declared in `web/data/manifest.json`; they are versioned and published with the site.
-5. **Display**: the front end reads the manifest and builds each layer with a generic loader; all filtering and animation happen in the browser.
+- they use **different resolutions, confidence scales and column names**, and the same fire is often reported twice;
+- the output is a flat CSV: it says *where* a satellite saw heat, not **how the fire evolves**, **who is exposed**, or **where the wind is pushing it**;
+- people who must decide (civil protection, municipalities, journalists, citizens) need a picture, not a table.
 
----
+## Our proposal
 
-## Project layout
+**Harmonize MODIS and VIIRS into a single dataset, and turn it into a replayable map that adds the context needed to read a fire:** wind, population, roads, water, risk and evacuation estimates. Everything runs from open data, with no server to operate, so it can be published, refreshed and trusted.
 
-```
-ulinautas/
-├── README.md
-├── TODO.md                         # roles, tasks per role, waves, task details
-├── Makefile                        # install / data / sample / test / serve
-├── pyproject.toml, uv.lock         # dependencies (uv)
-├── .python-version                 # 3.11
-├── .env.example                    # FIRMS_MAP_KEY=
-├── .gitignore                      # .env, data/raw/, .venv/, __pycache__/
-├── docs/
-│   ├── data_contract.md            # format of every data file + layer manifest
-│   ├── wiki/                       # project wiki: overview, data sources, pipeline, front end, operations, status
-│   └── schemas/                    # JSON schemas checked by CI
-├── .github/
-│   └── workflows/
-│       ├── ci.yml                  # tests + contract validation on every PR
-│       ├── deploy.yml              # publishes web/ to GitHub Pages on every push to main
-│       ├── e2e.yml                 # validates the data served by the published URL
-│       └── update-data.yml         # refreshes recent data every 30 min (only if valid)
-│
-├── data/
-│   └── raw/                        # downloaded FIRMS CSVs (not versioned)
-│
-├── scripts/                        # BACKEND (B1–B4)
-│   ├── config.py                   # area (bbox), dates, paths, risk thresholds
-│   ├── make_sample.py              # sample data generated from the contract
-│   ├── download_firms.py           # MODIS + VIIRS download from the FIRMS API
-│   ├── harmonize.py                # MODIS / VIIRS normalization
-│   ├── export_hotspots.py          # hotspots.geojson (already styled) + daily_summary.json
-│   ├── dedup.py                    # MODIS / VIIRS deduplication
-│   ├── fires.py                    # grouping into fires → fires.geojson
-│   ├── series.py                   # hourly time series
-│   ├── population.py               # WorldPop crop → population.tif / population.png
-│   ├── weather.py                  # hourly wind and weather → weather.geojson
-│   ├── exposure.py                 # exposed population + risk + wind → alerts.json
-│   ├── osm.py                      # water, roads, fire stations + distances per fire
-│   ├── make_manifest.py            # manifest.json: list of available layers
-│   ├── validate.py                 # validates web/data/ against docs/schemas/
-│   ├── check_site.py               # end-to-end check against the published URL
-│   └── tests/
-│
-└── web/                            # FRONT END (F) — everything here is published
-    ├── CNAME                       # custom domain (later)
-    ├── index.html                  # page layout (map + panels + timeline)
-    ├── style.css
-    ├── config.js                   # demo area, data paths, basemap
-    ├── map.js                      # the single MapLibre map instance
-    ├── state.js                    # shared state (date, filters, playback hour, layers)
-    ├── app.js                      # entry point: loads data, wires modules, controls and presenter keys
-    ├── timeline.js                 # strip chart (fires per day) + playback engine
-    ├── story.js                    # peak day, computed from the data
-    ├── readouts.js                 # header figures: active fires, strongest fire
-    ├── layers/
-    │   └── loader.js               # generic loader: manifest → layers, temporal fading, rings, legend, popups
-    └── data/
-        ├── manifest.json           # available layers (generated by the backend)
-        ├── sample/                 # sample data from the contract (front-end development)
-        └── processed/              # pipeline outputs (versioned and published)
-            ├── demo/               # fixed episode for playback
-            └── live/               # last 48 h, refreshed by update-data.yml
-```
+## What we built
 
-### Layout rules
-
-- **Scripts write only to `web/data/`**: the local site and the published site read the same relative paths.
-- **Front-end paths are always relative** (`data/processed/hotspots.geojson`, never `/data/...`), so the site works on the custom domain and on `github.io/ulinautas/`.
-- **One layer = one already-styled data file + one entry in `web/data/manifest.json`.** The generic front-end loader (`web/layers/loader.js`) displays it with no new code; the `active` field is the feature toggle.
-- **One shared state** in `web/state.js`: modules read `state`, change it with `setState()` and react with `subscribe()`.
-- **`data/raw/` is not versioned** (size); `web/data/processed/` is (the demo works without re-running anything).
-
----
-
-## Data contract
-
-| File | Content | Produced by |
-|---|---|---|
-| `manifest.json` | List of available layers, their type, legend and toggle | `make_manifest.py` |
-| `hotspots.geojson` | One point per hotspot, MODIS and VIIRS harmonized | `export_hotspots.py`, completed by `dedup.py` / `fires.py` |
-| `daily_summary.json` | Hotspots and FRP per day (feeds the calendar) | `export_hotspots.py` |
-| `hourly_series.json` | Active hotspots and FRP per hour (timeline counter) | `series.py` |
-| `fires.geojson` | One polygon per fire (grouped hotspots) | `fires.py`, completed by `osm.py` |
-| `alerts.json` | One record per fire with exposed population and risk | `exposure.py` |
-| `population.png` | Population density cropped to the area | `population.py` |
-| `weather.geojson` | Wind, temperature, humidity, rain per hour | `weather.py` |
-| `water.geojson`, `roads.geojson`, `fire_stations.geojson` | OpenStreetMap layers | `osm.py` |
-
-Detailed schema of each file and MODIS / VIIRS field mapping: see [`docs/data_contract.md`](docs/data_contract.md).
-
-### MODIS / VIIRS harmonization (summary)
+**1 · One dataset from two satellites.** Both sensors are normalized to one schema (confidence, UTC time, FRP, brightness, resolution) and deduplicated: a fire seen by both becomes one hotspot, `detected_by: ["MODIS","VIIRS"]`. On the map MODIS shows as rings and VIIRS as dots, so the origin stays readable.
 
 | | MODIS | VIIRS | Harmonized |
 |---|---|---|---|
@@ -169,49 +42,105 @@ Detailed schema of each file and MODIS / VIIRS field mapping: see [`docs/data_co
 | Date | `acq_date` + `acq_time` | same | `timestamp_utc` (ISO 8601) |
 | Double detection | — | — | a single hotspot, `detected_by: ["MODIS","VIIRS"]` |
 
----
+**2 · A fire you can replay.** A timeline with the fires per day, a peak-day jump, speed control and a clock. Hotspots are grouped into fires whose **perimeters grow with the clock**; the 6-hour **spread** projection, the **evacuation zone** and the **risk level** are recomputed every 6 hours of each fire's life. Wind particles move while it plays. When a fire stops being detected, its zones disappear and only the faint burned area remains. Header figures and alerts follow the visible area: zoom on a zone or click a fire and everything is recomputed for it.
 
-## Getting started
+**3 · Context and exposure.** Layers for wind, rain, population density, water, rivers, roads, fire stations, water points for firefighting, aquifers and regions, over Topo, Satellite or Dark base maps. For every fire the page computes **typed alerts** (people within 1 / 5 / 10 km, smoke downwind, strong wind, groundwater contamination by ash), a **combined risk score** and an **evacuation estimate**.
 
-Requirements: [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs Python 3.11 if needed) and a [FIRMS API key](https://firms.modaps.eosdis.nasa.gov/api/map_key/).
+**4 · Several places, one pipeline.** Three episodes ship ready — **Sierra Bermeja** (1,467 detections, every layer, real alerts), **Galicia, Aug 2025** (4,301 hotspots, 238 fires) and **Chile–Argentina, Feb 2026** — chosen from a selector. A new place is an entry in a JSON file and one command. A **live mode** refreshes the last 48 hours every 30 minutes.
 
-```bash
-cp .env.example .env     # set FIRMS_MAP_KEY
-make install             # uv sync → .venv with the locked dependencies
-make test                # pytest
-make sample              # sample data → web/data/sample/
-make data                # run the pipeline in order → web/data/processed/
-make serve               # front end at http://localhost:8000
+**5 · Predictive ignition risk (AI).** A calibrated logistic-regression model scores the probability that a fire *starts* in each cell of a 12 × 12 grid, day by day, with the factors behind it and a recommended action. Built and tested on its own branch (`IA`) and being integrated. → [AI module](docs/wiki/ai-risk.md)
+
+**6 · Built to be trusted.** The backend ships display-ready data and a manifest per episode; the front end is one generic loader, so adding a layer needs no front-end code. Every file is validated against a documented [data contract](docs/data_contract.md) in CI, an invalid refresh never reaches the published site, and the deploy is versioned so visitors never get a mix of old and new files. 200+ automated tests.
+
+### How it works
+
+```
+NASA FIRMS (MODIS, VIIRS) ─┐
+WorldPop · Open-Meteo ─────┼─► scripts/ (Python, `make data`) ─► web/data/episodes/<id>/*.geojson + manifest.json
+OpenStreetMap · EEA ───────┘                                              │
+                                                                          ▼
+                                        web/ (HTML + JS + MapLibre) ─► GitHub Pages
 ```
 
-Add a dependency with `uv add <package>` (`uv add --dev <package>` for dev-only tools) and commit `uv.lock` with it.
+Python computes static files, the page only reads them: **nothing can go down during a demo**, and data is as fresh as FIRMS itself (~3 h after each satellite pass). Stack: Python 3.11 + [uv](https://docs.astral.sh/uv/), GeoJSON, plain JavaScript with MapLibre GL JS, GitHub Pages and Actions. Details and the alternatives we set aside: [Architecture](docs/wiki/architecture.md).
 
-### Publishing
-Every push to `main` deploys `web/` to GitHub Pages (`.github/workflows/deploy.yml`): https://maj-e.github.io/ulinautas/. The custom domain will be set in `web/CNAME` and in *Settings → Pages → Custom domain*. Recent data is refreshed automatically every 30 min (`.github/workflows/update-data.yml`, with `FIRMS_MAP_KEY` in the repository secrets).
+## Try it
 
----
+```bash
+make serve               # the site at http://localhost:8000, no key needed
 
-## Team workflow
+cp .env.example .env     # FIRMS_MAP_KEY, only to rebuild data
+make install             # uv sync → .venv with the locked dependencies
+make test                # pytest
+make data                # the pipeline for the default episode
+make data EPISODE=galicia-2025-08   # another episode (list: make episode)
+make live                # last 48 h → web/data/processed/live/
+```
 
-| Role | Folders |
+## Documentation
+
+| I want to… | Read |
 |---|---|
-| **B1–B4** — Backend | `scripts/`, `docs/`, `.github/workflows/ci.yml`, `e2e.yml`, `update-data.yml`, `Makefile` |
-| **F** — Front end / DevOps | `web/`, `.github/workflows/deploy.yml`, domain |
+| see what the page does today | [Features](docs/wiki/features.md) |
+| understand the project and the team | [Overview](docs/wiki/overview.md) |
+| know the stack, data flow, files and layout | [Architecture](docs/wiki/architecture.md) |
+| understand the AI ignition-risk model and its limits | [AI module](docs/wiki/ai-risk.md) |
+| know what each data source gives and its quirks | [Data sources](docs/wiki/data-sources.md) |
+| run the pipeline and know what each script does | [Data pipeline](docs/wiki/data-pipeline.md) |
+| read the data from the front end, or add a layer | [Front end](docs/wiki/front-end.md) · [Front-end layers](docs/frontend_layers.md) |
+| know the exact format of every file | [Data contract](docs/data_contract.md) · [JSON schemas](docs/schemas/) |
+| handle the API key, quotas, deploy and live refresh | [Operations](docs/wiki/operations.md) |
+| tell the demo story on stage | [Demo script](docs/demo-script.md) |
+| see what is done, decided and next | [Status and decisions](docs/wiki/status.md) · [`TODO.md`](TODO.md) |
+| check licences and attribution | [Licences](docs/licenses.md) |
 
-- Branches: `feature/<task-id>-<name>` → PR to **`dev`** → `dev` is merged into **`main`** (published) once checked.
-- One task in `TODO.md` = one branch = one short PR, merged only with green CI.
-- `main` always works and is always published.
+The wiki index is [`docs/wiki/`](docs/wiki/README.md). Everything in this repository is in English. Keep the wiki and `docs/frontend_layers.md` up to date in the same PR as the change they describe.
 
 ## Data sources
 
-| Use | Source | Access |
-|---|---|---|
-| MODIS / VIIRS hotspots | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | API with MAP_KEY |
-| Wind / weather | [Open-Meteo](https://open-meteo.com/) (historical archive, ERA5) | API, no key |
-| Population | [WorldPop](https://www.worldpop.org/) 1 km | GeoTIFF per country |
-| Water, roads, fire stations | [OpenStreetMap](https://www.openstreetmap.org/) | Overpass API |
-| Relief | Terrarium tiles (AWS Open Data) | Tiles, no key |
+| Use | Source |
+|---|---|
+| MODIS / VIIRS hotspots | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) (API with MAP_KEY) |
+| Wind and weather | [Open-Meteo](https://open-meteo.com/) historical archive (ERA5) |
+| Population | [WorldPop](https://www.worldpop.org/) 1 km |
+| Water, roads, fire stations | [OpenStreetMap](https://www.openstreetmap.org/) (Overpass) |
+| Water and borders | [Natural Earth](https://www.naturalearthdata.com/), geoBoundaries |
+| Groundwater bodies (Europe) | [EEA](https://www.eea.europa.eu/) |
+| Relief and satellite base maps | Mapterhorn, EOX Sentinel-2 cloudless, NASA GIBS |
 
-## Team
+Attribution and usage terms per source (some still to verify before a public launch): [`docs/licenses.md`](docs/licenses.md).
 
-- _Name_ — role
+## Team and workflow
+
+| Role | Focus |
+|---|---|
+| **B1–B4** — Backend | harmonization, ingestion and fires, aggregates and population, data platform and CI (`scripts/`, `docs/`, workflows) |
+| **F** — Front end / DevOps | the page, the layer loader, deployment (`web/`) |
+| **AI module** — Sergey | ignition-risk model (`ml_features.py`, `risk_ml.py`) |
+
+Branches: `feature/<task-id>-<name>` → PR to **`dev`** → `dev` is merged into **`main`** (published) once checked. One task in [`TODO.md`](TODO.md) = one branch = one short PR, merged only with green CI.
+
+## Future improvements
+
+What we would do next, roughly in order of value. The full list is in [`TODO.md`](TODO.md#5-future-improvements-found-while-polishing-the-demo-15-nov-2026).
+
+**Make the replay tighter**
+- Keep the map and the timeline perfectly in step on slower machines: lighter always-on layers, capped wind animation, shorter trails.
+- Timeline bars per hour (or a cumulative curve) instead of per day, so they follow each satellite pass.
+- Finer, continuous zones (spread, evacuation, risk) instead of 6-hour steps.
+
+**Go further with the data**
+- Merge the **AI ignition-risk** module into the main line and add it to every episode; validate it on more fires and more years before calling it a forecast.
+- Slope and land cover for every fire, and spread driven by them.
+- **Alerts on live data** and **notifications**, so the live mode warns instead of only showing.
+- Group alerts into incidents, and a region selector.
+- A *Live* button in the interface, and a calendar with filters.
+
+**Make it easier to trust and to share**
+- A *data transparency* panel: for every layer, what it is, where it comes from and how far to trust it.
+- Check and settle the **licences** marked "to verify" (and the non-commercial satellite base map) before any public launch.
+- Spanish interface, mobile polish and **animation export** (GIF / MP4).
+
+**Scale it**
+- Lighter large episodes (compression, trimmed properties, coarser weather) and self-hosted map tiles if traffic grows.
+- An automated browser test for the playback, and a stable public domain.
